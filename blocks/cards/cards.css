@@ -67,14 +67,19 @@
   text-decoration: underline;
 }
 
-/* Description: muted grey, smaller than body copy; 16px above (source). */
+/* Description: muted grey, smaller than body copy; 16px above (source).
+   The source shows it UPPERCASE, truncated to a single line with an ellipsis. */
 .cards .cards-card-body p {
   margin: 16px 0 0;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 400;
   line-height: 21px;
+  text-transform: uppercase;
   color: var(--text-muted-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (width >= 600px) {
