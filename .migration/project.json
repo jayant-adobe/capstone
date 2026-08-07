@@ -1,0 +1,10 @@
+{
+  "type": "da",
+  "sites": {
+    "capstone": {
+      "previewOrg": "jayant-adobe",
+      "previewSite": "capstone",
+      "libraryUrl": "https://main--sta-boilerplate--aemdemos.aem.page/tools/sidekick/library.json"
+    }
+  }
+}
