@@ -1,0 +1,36 @@
+{
+  "total": 7,
+  "offset": 0,
+  "limit": 7,
+  "data": [
+    {
+      "name": "Hero",
+      "path": "/block-library/hero"
+    },
+    {
+      "name": "Cards",
+      "path": "/block-library/cards"
+    },
+    {
+      "name": "Columns",
+      "path": "/block-library/columns"
+    },
+    {
+      "name": "Carousel",
+      "path": "/block-library/carousel"
+    },
+    {
+      "name": "Tabs",
+      "path": "/block-library/tabs"
+    },
+    {
+      "name": "Accordion",
+      "path": "/block-library/accordion"
+    },
+    {
+      "name": "Embed",
+      "path": "/block-library/embed"
+    }
+  ],
+  ":type": "sheet"
+}

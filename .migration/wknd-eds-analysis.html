@@ -1,0 +1,165 @@
+<body>
+  <header></header>
+  <main>
+    <div>
+      <h1>WKND Site Analysis — Edge Delivery Services Readiness Report</h1>
+      <p>An analysis of <a href="https://wknd.site/us/en.html">https://wknd.site/us/en.html</a> and the wider WKND site, assessed against Adobe Edge Delivery Services (EDS) principles. This report maps the existing experience to EDS sections and blocks, evaluates the content and authoring model, reviews performance and accessibility, and estimates the scope of a migration.</p>
+      <p><strong>Prepared:</strong> August 2026 &nbsp;·&nbsp; <strong>Source site:</strong> WKND Adventures &amp; Travel (Adobe demo) &nbsp;·&nbsp; <strong>Locale in scope:</strong> /us/en</p>
+    </div>
+    <div>
+      <h2>1. Executive Summary</h2>
+      <p>WKND is a content-rich travel and adventure site built on classic AEM Sites with Core Components. Its content is highly regular — a small set of page types repeated across many pages — which makes it an excellent candidate for Edge Delivery Services. The visual language is card-driven, image-led, and consistent, so a compact block palette can cover the whole site.</p>
+      <p>The homepage decomposes cleanly into six EDS sections built from four reusable blocks (hero, cards, teaser/columns, and carousel). Across the site, roughly <strong>7 page templates</strong> and an estimated <strong>10–12 blocks</strong> would cover all content. The two areas needing the most design attention are the adventure-detail metadata panel and the tabbed detail sections; everything else maps to standard boilerplate blocks.</p>
+      <table>
+        <tr><th>Dimension</th><th>Assessment</th></tr>
+        <tr><td>EDS fit</td><td>Strong — regular, card-based, content-first layouts</td></tr>
+        <tr><td>Page templates</td><td>7 (homepage, 2 listings, 2 details, FAQs, About)</td></tr>
+        <tr><td>Estimated block count</td><td>10–12 blocks, most from the boilerplate/Block Collection</td></tr>
+        <tr><td>Net-new blocks</td><td>2–3 (adventure metadata panel, tabs/accordion, carousel)</td></tr>
+        <tr><td>Migration complexity</td><td>Low–Medium</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>2. Site Structure &amp; Page Templates</h2>
+      <p>The /us/en tree resolves to seven distinct templates. Detail pages share a template with their siblings, so page volume is high but template variety is low — the ideal profile for template-driven authoring and import.</p>
+      <table>
+        <tr><th>Template</th><th>Example URL</th><th>Purpose</th><th>Est. pages</th></tr>
+        <tr><td>Homepage</td><td>/us/en.html</td><td>Landing / featured content hub</td><td>1</td></tr>
+        <tr><td>Adventures listing</td><td>/us/en/adventures.html</td><td>Filterable grid of trips</td><td>1</td></tr>
+        <tr><td>Adventure detail</td><td>/us/en/adventures/climbing-new-zealand.html</td><td>Single trip with metadata &amp; itinerary</td><td>~16</td></tr>
+        <tr><td>Magazine listing</td><td>/us/en/magazine.html</td><td>Featured + article grid</td><td>1</td></tr>
+        <tr><td>Magazine article</td><td>/us/en/magazine/western-australia.html</td><td>Long-form editorial article</td><td>~5+</td></tr>
+        <tr><td>FAQs</td><td>/us/en/faqs.html</td><td>Static Q&amp;A content</td><td>1</td></tr>
+        <tr><td>About Us</td><td>/us/en/about-us.html</td><td>Contributor / guide profile grids</td><td>1</td></tr>
+      </table>
+      <p><strong>Note:</strong> WKND also ships other locales (Canada, Switzerland, Germany, France, Spain, Italy). These reuse the same templates, so localisation is a content-volume concern, not a design one.</p>
+    </div>
+    <div>
+      <h2>3. Homepage — EDS Section &amp; Block Decomposition</h2>
+      <p>Following EDS principles, the homepage is a sequence of sections (separated by three dashes in a document, or top-level divs in markup). Each section is either default content (headings, text, buttons, images) or a block. Below is the recommended decomposition.</p>
+      <table>
+        <tr><th>#</th><th>Section</th><th>Source content</th><th>EDS treatment</th><th>Block</th></tr>
+        <tr><td>1</td><td>Hero</td><td>H1 "WKND Adventures", intro text, "View Trips" button</td><td>Full-bleed image with overlaid heading + CTA</td><td><strong>hero</strong> (autoblock)</td></tr>
+        <tr><td>2</td><td>Featured carousel</td><td>3 rotating image + caption slides</td><td>Rotating media with prev/next + dots</td><td><strong>carousel</strong> (net-new)</td></tr>
+        <tr><td>3</td><td>Featured article teaser</td><td>H2 "Camping in Western Australia", body, image, "Full Article" link</td><td>Image beside text with CTA</td><td><strong>columns</strong> (teaser variant)</td></tr>
+        <tr><td>4</td><td>Recent articles grid</td><td>4 article cards + "All Articles" link</td><td>Responsive card grid, image + title + summary</td><td><strong>cards</strong></td></tr>
+        <tr><td>5</td><td>Next adventure</td><td>H2 "Climbing New Zealand", body, image, "See Trip" link</td><td>Image beside text with CTA</td><td><strong>columns</strong> (teaser variant)</td></tr>
+        <tr><td>6</td><td>Adventure recommendations</td><td>H3 "Where do you want to go?", 4 adventure cards + "All Trips"</td><td>Responsive card grid</td><td><strong>cards</strong></td></tr>
+      </table>
+      <p>Sections 3 and 5 are the same pattern (media + copy + single CTA), so a single <strong>columns</strong> teaser variant serves both. Sections 4 and 6 are both card grids served by one <strong>cards</strong> block. This reuse is the essence of EDS: fewer, well-modelled blocks over many bespoke components.</p>
+    </div>
+    <div>
+      <h2>4. Recommended Block Inventory</h2>
+      <p>The palette below covers the entire site. Items marked "boilerplate/Collection" already exist in the AEM boilerplate or the public Block Collection and need only styling; "net-new" blocks require decoration code.</p>
+      <table>
+        <tr><th>Block</th><th>Used by</th><th>Origin</th><th>Notes</th></tr>
+        <tr><td>header</td><td>All pages</td><td>Boilerplate</td><td>Logo, nav, language selector, sign-in</td></tr>
+        <tr><td>footer</td><td>All pages</td><td>Boilerplate</td><td>Nav repeat, social links, legal/disclaimer</td></tr>
+        <tr><td>hero</td><td>Home, listings, details</td><td>Autoblock</td><td>First section image + H1 overlay</td></tr>
+        <tr><td>cards</td><td>Home, listings, About</td><td>Boilerplate</td><td>Variants: article, adventure, profile</td></tr>
+        <tr><td>columns</td><td>Home teasers, articles</td><td>Boilerplate</td><td>Media + copy + CTA teaser variant</td></tr>
+        <tr><td>carousel</td><td>Home, adventure detail</td><td>Collection / net-new</td><td>Rotating slides with controls</td></tr>
+        <tr><td>tabs</td><td>Adventure detail</td><td>Collection / net-new</td><td>Overview / Itinerary / What to Bring</td></tr>
+        <tr><td>fact-panel</td><td>Adventure detail</td><td>Net-new</td><td>Price, length, group size, difficulty, activity</td></tr>
+        <tr><td>quote</td><td>Magazine article</td><td>Boilerplate</td><td>Pull quote / definition box</td></tr>
+        <tr><td>article-header</td><td>Magazine article</td><td>Autoblock</td><td>Title, byline, hero image + caption</td></tr>
+        <tr><td>author-bio</td><td>Magazine article, About</td><td>Net-new (small)</td><td>Portrait, name, role, social links</td></tr>
+        <tr><td>embed</td><td>Social share buttons</td><td>Collection</td><td>Pinterest / share widgets</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>5. Content Model &amp; Authoring Approach</h2>
+      <p>EDS blocks are authored as simple tables; the content model is the contract between author and developer. The key models below keep authoring intuitive and forgiving of missing fields.</p>
+      <h3>cards (article / adventure / profile)</h3>
+      <p>One row per card. Column 1 = image; column 2 = text (title as a link, then summary). A section-level variant class (cards (adventure)) switches styling. Authors add or remove rows freely; the grid reflows responsively.</p>
+      <h3>columns teaser</h3>
+      <p>A single row with two cells: image in one, heading + body + a linked CTA in the other. Swapping cell order gives image-left vs image-right without new code.</p>
+      <h3>fact-panel (adventure detail)</h3>
+      <p>A two-column key/value table: label in the left cell (Price, Trip Length, Group Size, Difficulty, Activity), value in the right. The block renders it as a compact definition list. Authors only fill the values they have.</p>
+      <h3>tabs (adventure detail)</h3>
+      <p>Each row is a tab: cell 1 = tab label, cell 2 = tab body (rich content). Authors reorder or drop tabs by editing rows.</p>
+      <h3>Authoring recommendations</h3>
+      <ul>
+        <li>Convert the static FAQ "bold question + paragraph" pattern into an <strong>accordion</strong> block for better scannability, while keeping the underlying content as plain heading/paragraph pairs so it degrades gracefully.</li>
+        <li>Use <strong>section metadata</strong> for background/style variations (e.g. the "highlight" style already used in the boilerplate) rather than bespoke blocks.</li>
+        <li>Lean on <strong>autoblocking</strong> for hero and article headers so authors write a normal H1 + image and the block is built automatically.</li>
+        <li>Model the language/region selector via metadata + a fragment, not a hand-built block, so it stays consistent across locales.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>6. Performance Review (Keeping it 100)</h2>
+      <p>EDS targets a perfect Lighthouse score through eager/lazy/delayed phasing and image optimisation. The current WKND site relies on Core Components and client libraries; the migration is an opportunity to hit those targets by default.</p>
+      <table>
+        <tr><th>Area</th><th>Current risk</th><th>EDS recommendation</th></tr>
+        <tr><td>LCP</td><td>Hero image is large and homepage is image-heavy</td><td>Make the hero image the eager-loaded LCP candidate; size it responsively; avoid lazy-loading it</td></tr>
+        <tr><td>Carousel</td><td>Carousels commonly ship heavy JS and block rendering</td><td>Load carousel JS lazily; render first slide as static markup; use CSS scroll-snap where possible</td></tr>
+        <tr><td>Images</td><td>Many full-width photos</td><td>Rely on EDS auto-optimised picture element with width/format params; set explicit width/height to avoid CLS</td></tr>
+        <tr><td>Fonts</td><td>Custom brand fonts</td><td>Preload and use font-display: swap; define in fonts.css; keep fallback metrics close</td></tr>
+        <tr><td>Third-party</td><td>Social share widgets</td><td>Defer to the delayed phase via delayed.js</td></tr>
+        <tr><td>CSS/JS weight</td><td>Global client libraries</td><td>Minimal styles.css for LCP; per-block CSS/JS via automatic code splitting</td></tr>
+      </table>
+      <p><strong>Target:</strong> PageSpeed Insights 100 on the feature-preview URL before merging, per the project's publishing process.</p>
+    </div>
+    <div>
+      <h2>7. Accessibility Review (WCAG 2.1 AA)</h2>
+      <table>
+        <tr><th>Area</th><th>Observation</th><th>Recommendation</th></tr>
+        <tr><td>Heading hierarchy</td><td>Homepage mixes H1/H2/H3; the recommendations grid uses H3 without a preceding H2 in one flow</td><td>Enforce a single H1 per page and sequential heading levels; audit during import</td></tr>
+        <tr><td>Image alt text</td><td>Decorative and meaningful images not consistently distinguished</td><td>Require descriptive alt for content images; empty alt for decorative</td></tr>
+        <tr><td>Carousel</td><td>Rotating content needs pause + keyboard controls</td><td>Add pause/stop, arrow-key navigation, ARIA roles, and visible focus</td></tr>
+        <tr><td>Links / CTAs</td><td>Repeated "Full Article" / "See Trip" labels</td><td>Ensure link text or aria-label is unique and descriptive in context</td></tr>
+        <tr><td>Color contrast</td><td>Text overlaid on hero photos</td><td>Verify 4.5:1 contrast; add scrim/overlay behind overlaid text</td></tr>
+        <tr><td>Keyboard nav</td><td>Menu, language selector, tabs</td><td>Full keyboard operability with visible focus states and correct tab order</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>8. Migration Scope &amp; Effort</h2>
+      <p>Effort is driven by block design, not page count — detail pages are template clones populated by import. Ratings are relative (Low / Medium / High).</p>
+      <table>
+        <tr><th>Template</th><th>Blocks involved</th><th>Design effort</th><th>Import effort</th></tr>
+        <tr><td>Homepage</td><td>hero, carousel, columns, cards</td><td>Medium</td><td>Low (single page)</td></tr>
+        <tr><td>Adventures listing</td><td>hero, cards, (filter)</td><td>Medium</td><td>Low</td></tr>
+        <tr><td>Adventure detail</td><td>carousel, fact-panel, tabs, embed</td><td>High</td><td>Medium (~16 pages)</td></tr>
+        <tr><td>Magazine listing</td><td>hero, cards</td><td>Low</td><td>Low</td></tr>
+        <tr><td>Magazine article</td><td>article-header, columns, quote, cards, author-bio</td><td>Medium</td><td>Medium (per-article)</td></tr>
+        <tr><td>FAQs</td><td>accordion (or default content)</td><td>Low</td><td>Low</td></tr>
+        <tr><td>About Us</td><td>cards (profile), author-bio</td><td>Low</td><td>Low</td></tr>
+      </table>
+      <h3>Reuse vs net-new</h3>
+      <ul>
+        <li><strong>Reuse from boilerplate / Block Collection:</strong> header, footer, hero, cards, columns, quote, embed.</li>
+        <li><strong>Net-new (or Collection + styling):</strong> carousel, tabs, fact-panel, author-bio, listing filter.</li>
+        <li><strong>Autoblocking candidates:</strong> hero and article-header — reduces authoring burden and net-new code.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>9. Recommended Next Steps</h2>
+      <ol>
+        <li>Confirm the block palette (Section 4) and lock content models with the authoring team.</li>
+        <li>Build/style reuse blocks first (hero, cards, columns, footer, header), then the net-new detail blocks.</li>
+        <li>Generate import infrastructure per template and run a template-driven bulk import.</li>
+        <li>Validate each imported template against the source (content completeness + visual critique).</li>
+        <li>Run PageSpeed Insights against feature-preview URLs; iterate to a score of 100.</li>
+        <li>Complete an accessibility pass (headings, alt text, carousel/tabs keyboard support) before go-live.</li>
+      </ol>
+      <p><em>This report scopes the migration; it does not perform it. Actual block development and content import are separate, subsequent phases.</em></p>
+    </div>
+    <div>
+      <div class="metadata">
+        <div>
+          <div>Title</div>
+          <div>WKND Site Analysis — EDS Readiness Report</div>
+        </div>
+        <div>
+          <div>Description</div>
+          <div>Analysis of the WKND site (wknd.site/us/en) against Adobe Edge Delivery Services principles: section/block decomposition, content model, performance, accessibility, and migration scope.</div>
+        </div>
+        <div>
+          <div>Robots</div>
+          <div>noindex, nofollow</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer></footer>
+</body>
