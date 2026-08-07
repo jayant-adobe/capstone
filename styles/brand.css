@@ -1,0 +1,34 @@
+/*
+ * brand.css — WKND brand design tokens extracted from https://wknd.site/us/en.html
+ * Imported at the top of styles.css.
+ */
+
+:root {
+  /* fonts */
+  --heading-font-family: "Asar", georgia, "Times New Roman", times, serif;
+  --body-font-family: "Source Sans Pro", "Helvetica Neue", helvetica, arial, sans-serif;
+
+  /* colors */
+  --background-color: #fff;
+  --text-color: #202020;
+  --text-muted-color: #696969;
+  --link-color: #202020;
+  --link-hover-color: #202020;
+  --accent-color: #ffea00;
+  --accent-text-color: #202020;
+  --light-color: #ebebeb;
+  --dark-color: #202020;
+
+  /* spacing */
+  --section-padding: 40px;
+  --content-max-width: 1164px;
+  --nav-height: 80px;
+
+  /* heading sizes (desktop) */
+  --heading-size-xxl: 54px;
+  --heading-size-xl: 36px;
+  --heading-size-l: 24px;
+  --heading-size-m: 16px;
+  --heading-size-s: 18px;
+  --heading-size-xs: 16px;
+}

@@ -1,3 +1,21 @@
+/*
+ * Columns block — WKND teaser treatments.
+ *
+ * Two authored instances share the same content model but get different visual
+ * treatments, distinguished by the presence of an eyebrow <strong>:
+ *   Instance A — "Featured Article"   -> .columns:has(strong)      (grey box, image-left)
+ *   Instance B — "Climbing New Zealand" -> .columns:not(:has(strong)) (full-bleed + white overlay)
+ *
+ * Decorated DOM (both instances, via columns.js):
+ *   .columns.block.columns-1-cols
+ *     > div                     (leaked "Columns" label row — hidden below)
+ *     > div                     (content row — :has(.columns-img-col))
+ *         > div.columns-img-col > picture > img
+ *         > div                 (copy cell)
+ * All values measured from https://wknd.site/us/en.html @1440px.
+ */
+
+/* ---------------------------------------------------------------- generic base */
 .columns > div {
   display: flex;
   flex-direction: column;
@@ -15,19 +33,198 @@
   order: 0;
 }
 
+/* Instance A (Featured Article) stacks copy-box FIRST, image BELOW on mobile,
+   matching the source. (The generic rule above puts the image first; this flips
+   it back for the featured teaser only. Restored to image-left at >=900px.) */
+.columns:has(strong) > div > div {
+  order: 0;
+}
+
+.columns:has(strong) > div > .columns-img-col {
+  order: 1;
+}
+
 .columns > div > .columns-img-col img {
   display: block;
 }
 
+/* --------------------------------------------------- shared teaser CTA button */
+
+/* Source CTAs render as WKND yellow buttons, but these authored links are not
+   auto-buttonized (project only buttonizes strong/em links), so style directly. */
+.columns > div:has(.columns-img-col) > div a:any-link {
+  display: inline-block;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 14px 35px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
+}
+
+.columns > div:has(.columns-img-col) > div a:any-link:hover {
+  background-color: var(--text-color);
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+/* the paragraph wrapping the CTA — space it away from the description */
+.columns > div:has(.columns-img-col) > div p:last-child:has(a) {
+  margin: 24px 0 0;
+}
+
+/* ============================================================== INSTANCE A */
+
+/* Featured Article: image left, copy right in a light-grey box. */
+
+/* copy cell — grey box (measured background #ebebeb, padding 63px 36px 36px) */
+/* stylelint-disable-next-line no-descending-specificity */
+.columns:has(strong) > div:has(.columns-img-col) > div:last-child {
+  padding: 63px 36px 36px;
+  background-color: var(--light-color);
+}
+
+/* eyebrow "Featured Article" — Source Sans Pro 18px / 700 / #202020,
+   line-height 45px, margin-bottom 13.5px (source) */
+.columns:has(strong) > div:has(.columns-img-col) > div:last-child > p:first-child {
+  margin: 0 0 13.5px;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 45px;
+}
+
+/* the eyebrow text sits in a <strong> — pin it to 700 (source), not the UA's 900 */
+.columns:has(strong) > div:has(.columns-img-col) > div:last-child > p:first-child strong {
+  font-weight: 700;
+}
+
+/* heading — Asar 36px / 400 (globals supply family/size); margin 18px 0 (source) */
+.columns:has(strong) > div:has(.columns-img-col) > div:last-child > h2 {
+  margin: 18px 0;
+  color: var(--text-color);
+}
+
+/* description — 14px / 400 / #202020, line-height 24.5px */
+/* stylelint-disable-next-line no-descending-specificity */
+.columns:has(strong) > div:has(.columns-img-col) > div:last-child h2 + p {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+/* ============================================================== INSTANCE B */
+
+/* Climbing New Zealand: full-bleed photo with a white content box below. */
+
+/* content row is a stacking context, not a flex row */
+/* stylelint-disable-next-line no-descending-specificity */
+.columns:not(:has(strong)) > div:has(.columns-img-col) {
+  display: block;
+  position: relative;
+}
+
+/* full-bleed image (breaks out of the centered content wrapper) */
+.columns:not(:has(strong)) > div:has(.columns-img-col) > .columns-img-col {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+}
+
+.columns:not(:has(strong)) > div:has(.columns-img-col) > .columns-img-col img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* white content box */
+/* stylelint-disable-next-line no-descending-specificity */
+.columns:not(:has(strong)) > div:has(.columns-img-col) > div:last-child {
+  position: relative;
+  z-index: 1;
+  padding: 24px 24px 32px;
+  background-color: var(--background-color);
+}
+
+.columns:not(:has(strong)) > div:has(.columns-img-col) > div:last-child > h2 {
+  margin: 0 0 8px;
+  color: var(--text-color);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.columns:not(:has(strong)) > div:has(.columns-img-col) > div:last-child > p {
+  margin: 0;
+  color: var(--text-color);
+}
+
+/* --------------------------------------------------------------- >= 600px */
+@media (width >= 600px) {
+  /* give the full-bleed hero image a banner crop on tablet+ */
+  .columns:not(:has(strong)) > div:has(.columns-img-col) > .columns-img-col img {
+    height: 440px;
+    object-fit: cover;
+  }
+}
+
+/* --------------------------------------------------------------- >= 900px */
 @media (width >= 900px) {
-  .columns > div {
-    align-items: center;
-    flex-direction: unset;
-    gap: 24px;
+  /* --- INSTANCE A: two columns, image 62.44% left / copy 37.56% right --- */
+  .columns:has(strong) > div:has(.columns-img-col) {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
   }
 
-  .columns > div > div {
-    flex: 1;
-    order: unset;
+  /* restore source order at desktop: image LEFT, copy RIGHT
+     (the mobile rule flips copy-first; undo it here) */
+  .columns:has(strong) > div:has(.columns-img-col) > .columns-img-col {
+    flex: 0 0 62.44%;
+    order: 0;
+  }
+
+  .columns:has(strong) > div:has(.columns-img-col) > div:last-child {
+    box-sizing: border-box;
+    flex: 0 0 37.56%;
+    order: 1;
+  }
+
+  /* image cover-fills the grey box height (col is stretched by align-items) */
+  .columns:has(strong) > div:has(.columns-img-col) > .columns-img-col picture {
+    display: block;
+    height: 100%;
+  }
+
+  .columns:has(strong) > div:has(.columns-img-col) > .columns-img-col img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* --- INSTANCE B: full-bleed image + overlapping white box --- */
+  .columns:not(:has(strong)) > div:has(.columns-img-col) > .columns-img-col img {
+    height: 640px;
+  }
+
+  .columns:not(:has(strong)) > div:has(.columns-img-col) > div:last-child {
+    max-width: var(--content-max-width);
+    margin: -180px auto 0;
+    padding: 28px 28px 32px;
+  }
+}
+
+/* -------------------------------------------------------------- >= 1200px */
+@media (width >= 1200px) {
+  /* description in the featured box reads at its measured 14px with room to breathe */
+  .columns:has(strong) > div:has(.columns-img-col) > div:last-child {
+    padding: 63px 36px 36px;
   }
 }

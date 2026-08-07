@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "projectType": "da"
+  },
+  "templates": [
+    {
+      "name": "homepage",
+      "urls": [
+        "https://wknd.site/us/en.html"
+      ],
+      "coverageGaps": [],
+      "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+      "blocks": [
+        {
+          "name": "carousel",
+          "instances": [
+            "div.carousel.cmp-carousel--hero"
+          ]
+        },
+        {
+          "name": "columns",
+          "instances": [
+            "div.teaser.cmp-teaser--featured",
+            "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            "div.image-list.list"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc2",
+          "name": "Hero",
+          "selector": "div.carousel.cmp-carousel--hero",
+          "style": null,
+          "blocks": [
+            "carousel"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc3",
+          "name": "Featured Article",
+          "selector": "div.teaser.cmp-teaser--featured",
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc5",
+          "name": "Recent Articles",
+          "selector": "div.image-list.list",
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": [
+            "div.title.cmp-title--underline:nth-of-type(2)",
+            "div.button.cmp-button--primary",
+            "div.separator"
+          ]
+        },
+        {
+          "id": "rc9",
+          "name": "Next Adventures",
+          "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": [
+            "div.title.cmp-title--underline:nth-of-type(6)"
+          ]
+        },
+        {
+          "id": "rc11",
+          "name": "Where do you want to go?",
+          "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": [
+            "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
+            "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
+            "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
+          ]
+        }
+      ]
+    }
+  ]
+}

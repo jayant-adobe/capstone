@@ -10,63 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
+@import url('brand.css');
+
 :root {
-  /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+  /* body sizes (mobile-first; WKND body copy is 18px) */
+  --body-font-size-m: 18px;
+  --body-font-size-s: 16px;
+  --body-font-size-xs: 14px;
 
-  /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
-
-  /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 19px;
-  --body-font-size-xs: 17px;
-
-  /* heading sizes */
-  --heading-font-size-xxl: 55px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
-  --heading-font-size-s: 24px;
-  --heading-font-size-xs: 22px;
-
-  /* nav height */
-  --nav-height: 64px;
-}
-
-/* fallback fonts */
-@font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
-  src: local('Arial');
-}
-
-@font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
-  src: local('Arial');
+  /* heading sizes (mobile) — desktop values come from brand.css at >=900px */
+  --heading-font-size-xxl: 36px;
+  --heading-font-size-xl: 28px;
+  --heading-font-size-l: 24px;
+  --heading-font-size-m: 18px;
+  --heading-font-size-s: 18px;
+  --heading-font-size-xs: 16px;
 }
 
 @media (width >= 900px) {
   :root {
-    /* body sizes */
-    --body-font-size-m: 18px;
-    --body-font-size-s: 16px;
-    --body-font-size-xs: 14px;
-
-    /* heading sizes */
-    --heading-font-size-xxl: 45px;
-    --heading-font-size-xl: 36px;
-    --heading-font-size-l: 28px;
-    --heading-font-size-m: 22px;
-    --heading-font-size-s: 20px;
-    --heading-font-size-xs: 18px;
+    /* heading sizes (desktop) mapped from WKND source */
+    --heading-font-size-xxl: var(--heading-size-xxl);
+    --heading-font-size-xl: var(--heading-size-xl);
+    --heading-font-size-l: var(--heading-size-l);
+    --heading-font-size-m: var(--heading-size-m);
+    --heading-font-size-s: var(--heading-size-s);
+    --heading-font-size-xs: var(--heading-size-xs);
   }
 }
 
@@ -77,7 +46,7 @@ body {
   color: var(--text-color);
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
 body.appear {
@@ -107,8 +76,8 @@ h6 {
   margin-top: 0.8em;
   margin-bottom: 0.25em;
   font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 400;
+  line-height: 1.5;
   scroll-margin: 40px;
 }
 
@@ -156,6 +125,7 @@ button {
 /* links */
 a:any-link {
   color: var(--link-color);
+  font-weight: 600;
   text-decoration: none;
   overflow-wrap: break-word;
 }
@@ -178,13 +148,18 @@ button.button {
   justify-content: center;
   max-width: 100%;
   margin: 0;
-  border: 2px solid transparent;
-  border-radius: 2.4em;
-  padding: 0.5em 1.2em;
-  font: inherit;
-  font-weight: 500;
-  line-height: 1.25;
+  border: 2px solid var(--accent-color);
+  border-radius: 0;
+  padding: 0.75em 2em;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   text-decoration: none;
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -199,18 +174,19 @@ button.button:disabled {
 
 a.button.primary,
 button.button.primary {
-  border-color: var(--text-color);
-  background-color: var(--text-color);
-  color: var(--background-color);
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
 }
 
 a.button.primary:hover,
 a.button.primary:focus-visible,
 button.button.primary:hover,
 button.button.primary:focus-visible {
-  border-color: var(--dark-color);
-  background-color: var(--dark-color);
-  color: var(--light-color);
+  border-color: var(--text-color);
+  background-color: var(--text-color);
+  color: var(--accent-color);
+  text-decoration: none;
 }
 
 a.button.primary[aria-disabled="true"],
@@ -295,19 +271,80 @@ main img {
   width: 100%;
 }
 
-/* sections */
+/* sections — WKND flows as a tight single column; the two deliberate vertical
+   gaps (after the hero, before "Next Adventures") are added at specific blocks
+   below, so the sections themselves carry no extra vertical margin. This keeps
+   the section boundaries tight, matching the source at desktop and mobile. */
 main > .section {
-  margin: 40px 0;
+  margin: 0;
 }
 
 main > .section > div {
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   margin: auto;
   padding: 0 24px;
 }
 
-main > .section:first-of-type {
-  margin-top: 0;
+/* 72px breathing space between the hero and the first content block (source). */
+main > .section .carousel-wrapper {
+  margin-bottom: 72px;
+}
+
+/* WKND section-title accent: short yellow bar (84px) beneath default-content
+   section headings, matching the source's cmp-title--underline ::after. */
+main > .section > div > h2 {
+  padding-bottom: 12px;
+}
+
+main > .section > div > h2::after {
+  content: '';
+  display: block;
+  width: 84px;
+  margin-top: 12px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/* ~130px break before the "Next Adventures" group (source). The heading sits
+   right after the "All Articles" CTA + divider in the same default-content flow;
+   this adjacent-sibling selector targets only that heading. Placed after the
+   generic h2 rules so specificity is non-descending. */
+main .default-content-wrapper p:has(> a:only-child) + h2 {
+  margin-top: 90px;
+}
+
+/* WKND standalone default-content CTAs (e.g. "All Articles", "All Trips")
+   render as the yellow WKND button, matching the source. */
+main .default-content-wrapper p > a:only-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
+  border: 2px solid var(--accent-color);
+  padding: 0.75em 2em;
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
+}
+
+main .default-content-wrapper p > a:only-child:hover,
+main .default-content-wrapper p > a:only-child:focus-visible {
+  border-color: var(--text-color);
+  background-color: var(--text-color);
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+/* WKND horizontal divider rule: the source renders a thin grey rule
+   (1px solid #ebebeb) after each primary CTA ("All Articles", "All Trips").
+   Reproduce it as a full-width rule beneath the CTA paragraph. */
+main .default-content-wrapper p:has(> a:only-child) {
+  margin-bottom: 0;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--light-color);
 }
 
 @media (width >= 900px) {
