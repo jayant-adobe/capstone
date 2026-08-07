@@ -35,7 +35,7 @@
 .cards > ul > li img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 765 / 535;
   object-fit: cover;
   border-radius: 0;
 }
@@ -45,13 +45,15 @@
   padding: 0;
 }
 
-/* Title: WKND renders card titles in the BODY font even though authored as h3. */
+/* Title: WKND renders card titles in the BODY font (Source Sans Pro),
+   18px/600, UPPERCASE, even though authored as h3. */
 .cards .cards-card-body h3 {
   margin: 16px 0 0;
   font-family: var(--body-font-family);
   font-size: 18px;
   font-weight: 600;
   line-height: 27px;
+  text-transform: uppercase;
   color: var(--text-color);
 }
 
@@ -65,9 +67,9 @@
   text-decoration: underline;
 }
 
-/* Description: muted grey, smaller than body copy. */
+/* Description: muted grey, smaller than body copy; 16px above (source). */
 .cards .cards-card-body p {
-  margin: 8px 0 0;
+  margin: 16px 0 0;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 400;
