@@ -35,7 +35,7 @@
 .cards > ul > li img {
   display: block;
   width: 100%;
-  aspect-ratio: 765 / 535;
+  aspect-ratio: 1.3;
   object-fit: cover;
   border-radius: 0;
 }
