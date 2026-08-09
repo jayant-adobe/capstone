@@ -602,6 +602,14 @@ main > .section.cards-byline-container + .section li {
    section. Make the section a 4-column grid: the heading blocks span the full
    row (starting a new grid row), and each profile wrapper occupies one cell —
    reproducing the 4-up then 3-up source grids. Stacks on mobile. */
+
+/* ~66px of clear space below the last profile row before the footer, at ALL
+   widths (the source leaves ~66px on both desktop and mobile). This overrides
+   the generic 62px last-section default for the About Us page. */
+main > .section.cards-profile-container {
+  margin-bottom: 66px;
+}
+
 @media (width >= 900px) {
   main > .section.cards-profile-container {
     display: grid;
