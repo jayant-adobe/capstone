@@ -1,20 +1,209 @@
+/*
+ * WKND footer — dark band.
+ * Values extracted from https://wknd.site/us/en.html @1440px:
+ *   band bg #202020, color #ebebeb, padding 16px 0 24px.
+ *   Top row: light WKND logo (128px) left | uppercase nav (Source Sans Pro
+ *   14px/400 #ebebeb, underline on hover) center | FOLLOW US H4 (16px/600) +
+ *   three 48x48 grey (#ebebeb) social squares with dark (#202020) icons right.
+ *   Thin <hr> separator. Copyright / disclaimer / Adobe Stock at 12px/15px #f7f7f7.
+ * Colors/fonts mapped to brand tokens.
+ */
+
 footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+  background-color: var(--dark-color);
+  color: var(--light-color);
+  font-family: var(--body-font-family);
 }
 
-footer .footer > div {
-  margin: auto;
-  max-width: 1200px;
-  padding: 40px 24px 24px;
+footer .footer-inner {
+  box-sizing: border-box;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 16px 24px 24px;
 }
 
-footer .footer p {
+/* ------------------------------------------------------------- top row */
+footer .footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 32px;
+}
+
+/* brand / logo */
+footer .footer-brand {
+  flex: 0 0 auto;
+}
+
+footer .footer-brand p {
+  margin: 0;
+  line-height: 0;
+}
+
+footer .footer-brand a {
+  display: inline-block;
+  line-height: 0;
+}
+
+footer .footer-brand img {
+  display: block;
+  width: 128px;
+  height: auto;
+}
+
+/* primary nav */
+footer .footer-nav {
+  flex: 1 1 auto;
+}
+
+footer .footer-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+footer .footer-nav li {
   margin: 0;
 }
 
-@media (width >= 900px) {
-  footer .footer > div {
-    padding: 40px 32px 24px;
+/* hidden "Home" link — present in the source footer DOM but not shown */
+footer .footer-nav .footer-nav-hidden {
+  display: none;
+}
+
+footer .footer-nav a {
+  display: block;
+  padding: 15px 17px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--light-color);
+  text-decoration: none;
+}
+
+footer .footer-nav a:hover {
+  color: var(--light-color);
+  text-decoration: underline;
+}
+
+/* follow us + social */
+footer .footer-social {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+footer .footer-social h4 {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--light-color);
+}
+
+footer .footer-social-list {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+footer .footer-social-list li {
+  margin: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+footer .footer-social-list a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  text-decoration: none;
+}
+
+footer .footer-social-list a:hover {
+  background-color: #fff;
+  color: var(--dark-color);
+}
+
+footer .footer-social-list img {
+  width: 18px;
+  height: 18px;
+}
+
+/* separator — the source renders its <hr> with no visible line (border-width 0);
+   it only reserves vertical space. Source gaps: social row → separator ≈ 37px,
+   separator → copyright ≈ 18px. Reproduce with asymmetric margins. */
+footer .footer-separator {
+  height: 0;
+  margin: 28px 0 18px;
+  border: 0;
+}
+
+/* ------------------------------------------------------------- legal */
+footer .footer-legal p {
+  margin: 0 0 13.5px;
+  font-size: 12px;
+  line-height: 15px;
+  color: #f7f7f7;
+}
+
+footer .footer-legal a:any-link {
+  color: #f7f7f7;
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+footer .footer-legal a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ============================================================= tablet/mobile */
+@media (width < 900px) {
+  /* Row 1: logo (left) + nav column (right) share a line; the Follow Us / social
+     group wraps to a full-width row below — matching the source at 390px. */
+  footer .footer-top {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 16px 24px;
+  }
+
+  footer .footer-brand {
+    flex: 0 0 auto;
+  }
+
+  footer .footer-nav {
+    flex: 1 1 auto;
+  }
+
+  footer .footer-nav ul {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  footer .footer-nav a {
+    padding: 8px 0;
+  }
+
+  /* Follow Us heading stacks above the row of social squares */
+  footer .footer-social {
+    flex: 0 0 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 }
