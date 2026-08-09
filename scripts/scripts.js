@@ -74,6 +74,45 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
+ * Build the adventure-detail breadcrumb ("ADVENTURES ▸ <Title>"), matching the
+ * source, which shows a breadcrumb above the mini carousel on every
+ * /adventures/<slug> detail page. Derived from the URL path + document title —
+ * no authored content needed. Only runs on adventure-detail pages (a path like
+ * /…/adventures/<slug>, i.e. a segment AFTER "adventures"); the Adventures
+ * landing itself has no breadcrumb.
+ * @param {Element} main The container element
+ */
+function buildBreadcrumb(main) {
+  const segs = window.location.pathname.replace(/\.html$/, '').split('/').filter(Boolean);
+  const advIdx = segs.indexOf('adventures');
+  // must have a slug segment after "adventures" (detail page), not the landing
+  if (advIdx === -1 || advIdx >= segs.length - 1) return;
+  if (main.querySelector('.breadcrumb')) return;
+
+  const parentPath = `/${segs.slice(0, advIdx + 1).join('/')}`;
+  const title = (document.querySelector('main h1')?.textContent || document.title).trim();
+
+  const nav = document.createElement('nav');
+  nav.className = 'breadcrumb';
+  nav.setAttribute('aria-label', 'Breadcrumb');
+  const ol = document.createElement('ol');
+
+  const parentLi = document.createElement('li');
+  const parentLink = document.createElement('a');
+  parentLink.href = parentPath;
+  parentLink.textContent = 'Adventures';
+  parentLi.append(parentLink);
+
+  const currentLi = document.createElement('li');
+  currentLi.setAttribute('aria-current', 'page');
+  currentLi.textContent = title;
+
+  ol.append(parentLi, currentLi);
+  nav.append(ol);
+  main.prepend(nav);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -187,6 +226,10 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('body > header'));
 
   const main = doc.querySelector('main');
+  // Adventure-detail breadcrumb — built in the lazy phase (after loadHeader) so it
+  // never interferes with the header fragment's eager decoration. Safe to defer:
+  // the breadcrumb sits above the mini carousel but is not LCP-critical.
+  buildBreadcrumb(main);
   await loadSections(main);
 
   const { hash } = window.location;
