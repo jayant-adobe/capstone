@@ -1,40 +1,40 @@
+/*
+ * WKND category filter bar — matches the source cmp-tabs tablist on the
+ * Adventures landing page: a row of uppercase pills with NO gaps. The active
+ * category is a solid dark (#202020) pill with white text; inactive categories
+ * are transparent with dark text. The tablist carries 18px vertical margin
+ * (18px above and below), giving the ~32px gap below the "Current Adventures"
+ * heading and ~18px above the card grid.
+ */
 .tabs-filter .tabs-filter-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5ch;
+  gap: 0;
   max-width: 100%;
-  margin-bottom: 24px;
+  margin: 18px 0;
   font-size: var(--body-font-size-xs);
   overflow-x: auto;
-}
-
-@media (width >= 600px) {
-  .tabs-filter .tabs-filter-list {
-    font-size: var(--body-font-size-s);
-  }
-}
-
-@media (width >= 900px) {
-  .tabs-filter .tabs-filter-list {
-    font-size: var(--body-font-size-m);
-  }
 }
 
 .tabs-filter .tabs-filter-list button {
   flex: 0 0 max-content;
   margin: 0;
-  border: 1px solid #dadada;
+  border: 0;
   border-radius: 0;
-  padding: 0.5em 1em;
-  background-color: var(--light-color);
-  color: initial;
-  font-weight: bold;
-  line-height: unset;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
   text-align: initial;
+  text-transform: uppercase;
   text-overflow: unset;
+  white-space: nowrap;
   overflow: unset;
-  white-space: unset;
-  transition: background-color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .tabs-filter .tabs-filter-list button p {
@@ -42,12 +42,11 @@
 }
 
 .tabs-filter .tabs-filter-list button:hover {
-  border-color: var(--dark-color, #000);
+  background-color: var(--light-color);
 }
 
 .tabs-filter .tabs-filter-list button[aria-selected='true'] {
-  border-color: var(--dark-color, #000);
-  background-color: var(--dark-color, #000);
-  color: var(--background-color, #fff);
+  background-color: var(--dark-color);
+  color: var(--background-color);
   cursor: initial;
 }
