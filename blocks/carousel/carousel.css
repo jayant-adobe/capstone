@@ -211,3 +211,18 @@
     min-height: min(80vh, 640px);
   }
 }
+
+/* Adventure-detail carousel is a short image BANNER (source: ~400px tall, ratio
+   ~3.6 at 1440px), not the tall homepage hero. These pages contain the
+   .table-overview block, so scope the shorter banner height to them only; the
+   homepage hero keeps its 640px height. The image is the full slide here (no
+   overlapping content box), so the slide min-height sets the banner height. */
+main:has(.table-overview) .carousel .carousel-slide {
+  min-height: 300px;
+}
+
+@media (width >= 900px) {
+  main:has(.table-overview) .carousel .carousel-slide {
+    min-height: 400px;
+  }
+}

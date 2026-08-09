@@ -65,3 +65,58 @@
 .table-overview.block.bordered table td {
   border: 1px solid;
 }
+
+/* -------------------------------------------------- adventure-detail spec list
+   On adventure-detail pages the overview table is rendered as a stacked spec
+   list (source cmp-contentfragment): each row is a block with a 5px grey
+   (#ebebeb) left border and padding 0 18px, holding a 12px uppercase grey
+   (#696969) label above a 14px/600 dark value. Scope to adventure-detail via the
+   ancestor page that also contains the tabs; the table markup (thead/tbody, tr,
+   th/td) is unchanged — CSS restyles it into the stacked, bordered spec list. */
+main:has(.table-overview) .table-overview.block {
+  overflow-x: visible;
+}
+
+/* This section restyles the same tr/th/td selectors used by the base table
+   variants above; the descending-specificity warnings are cosmetic ordering
+   (page-scoped restyle, not an override), so disable the rule for the block. */
+/* stylelint-disable no-descending-specificity */
+main:has(.table-overview) .table-overview.block table,
+main:has(.table-overview) .table-overview.block table thead,
+main:has(.table-overview) .table-overview.block table tbody,
+main:has(.table-overview) .table-overview.block table tr,
+main:has(.table-overview) .table-overview.block table th,
+main:has(.table-overview) .table-overview.block table td {
+  display: block;
+  width: auto;
+  border: 0;
+}
+
+/* each spec row: grey left-border accent bar, stacked label/value */
+main:has(.table-overview) .table-overview.block table tr {
+  margin-bottom: 22.5px;
+  padding: 0 18px;
+  border-left: 5px solid var(--light-color);
+}
+
+/* label (first cell = th or td): 12px uppercase grey */
+main:has(.table-overview) .table-overview.block table tr > :first-child {
+  padding: 0;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--text-muted-color, #696969);
+}
+
+/* value (second cell): 14px / 600 dark */
+main:has(.table-overview) .table-overview.block table tr > :nth-child(2) {
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+main:has(.table-overview) .table-overview.block table tr p {
+  margin: 0;
+}
+/* stylelint-enable no-descending-specificity */

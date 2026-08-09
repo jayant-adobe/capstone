@@ -627,6 +627,81 @@ main > .section.cards-byline-container + .section li {
   }
 }
 
+/* Adventure-detail H1 ("Bali Surf Camp") carries the WKND short yellow underline
+   accent (cmp-title--underline), like the FAQs/section titles. 84px / 2px bar. */
+main:has(.table-overview) > .section:has(.table-overview) > .default-content-wrapper:first-child h1 {
+  padding-bottom: 12px;
+}
+
+main:has(.table-overview) > .section:has(.table-overview) > .default-content-wrapper:first-child h1::after {
+  content: '';
+  display: block;
+  width: 84px;
+  margin-top: 12px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/* ------------------------------------------------ adventure-detail breadcrumb
+   "ADVENTURES ▸ <Title>" bar above the mini carousel (auto-generated in
+   scripts.js buildBreadcrumb). Source: 14px uppercase, parent bold #202020 link,
+   a small brand-yellow triangle separator, current page in the same style.
+   Sits in the centered content column with ~24px of space below it. */
+main > .breadcrumb {
+  max-width: var(--content-max-width);
+  margin: 24px auto;
+  padding: 0 24px;
+}
+
+main > .breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+main > .breadcrumb li {
+  display: flex;
+  align-items: center;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+/* brand-yellow triangle separator before every item except the first */
+main > .breadcrumb li:not(:first-child)::before {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid var(--accent-color);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+main > .breadcrumb a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+main > .breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+@media (width >= 900px) {
+  main > .breadcrumb {
+    padding: 0 32px;
+  }
+}
+
 /* ------------------------------------------------------------- About Us page
    Source layout: two team-profile grids — "Our Contributors" (4 across) and
    "WKND Guides" (3 across) — each an aem-GridColumn--default--3 row of circular
