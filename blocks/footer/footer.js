@@ -33,14 +33,19 @@ function rebaseImages(root, footerPath) {
  * @param {Element} block The footer block element
  */
 export default async function decorate(block) {
-  // load footer as fragment. Dual-fetch: `/content/footer` for local `aem up`,
-  // else the metadata path (or `/footer`) for DA/EDS production.
+  // load footer as fragment. The local `aem up --html-folder content` server
+  // serves it under `/content/footer`; DA/EDS production serves it at the content
+  // root (`/footer`). Pick the order by environment so production does not log a
+  // 404 for the local-only path: localhost tries `/content/footer` first,
+  // production tries the metadata path (or `/footer`) first. Each still falls back.
   const footerMeta = getMetadata('footer');
   const footerPath = footerMeta ? new URL(footerMeta, window.location).pathname : '/footer';
-  let loadedPath = '/content/footer';
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const candidates = isLocal ? ['/content/footer', footerPath] : [footerPath, '/content/footer'];
+  let loadedPath = candidates[0];
   let fragment = await loadFragment(loadedPath);
   if (!fragment) {
-    loadedPath = footerPath;
+    [, loadedPath] = candidates;
     fragment = await loadFragment(loadedPath);
   }
   if (!fragment) return;
