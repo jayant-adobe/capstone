@@ -400,11 +400,13 @@ main .section.highlight {
   }
 
   /* the section wrappers no longer center/max-width themselves — the grid
-     column is their bounding box now. */
+     column is their bounding box now. Reset only the horizontal centering
+     (max-width / auto side-margins / side-padding); leave vertical margins free
+     so the source spacing rhythm below still applies. */
   main:has(> .section.accordion-container .accordion) > .section > div {
     max-width: none;
-    margin: 0;
-    padding: 0;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 }
 
@@ -428,6 +430,26 @@ main > .section.accordion-container:has(.accordion) h1::after {
 /* FAQs intro paragraph: source uses relaxed 45px line spacing. */
 main > .section.accordion-container:has(.accordion) > .default-content-wrapper p {
   line-height: 2.5;
+}
+
+/* FAQs spacing rhythm (match source): H1 -> image ~21px, image -> intro ~14px,
+   intro -> accordion ~14px. The image and intro are each their own <p>; the
+   accordion is a sibling .accordion-wrapper. */
+main > .section.accordion-container:has(.accordion) > .default-content-wrapper p:has(img) {
+  /* H1 -> image gap is ~21px in the source. The image <p>'s top margin collapses
+     with the H1's 13.5px bottom margin, so set 21px here to win the collapse. */
+  margin-top: 21px;
+  margin-bottom: 14px;
+}
+
+main > .section.accordion-container:has(.accordion) > .accordion-wrapper {
+  margin-top: 14px;
+}
+
+/* Source leaves ~48px of clear space below the accordion before the footer.
+   Reserve it on the accordion section so the two-column grid keeps a bottom gap. */
+main > .section.accordion-container:has(.accordion) {
+  margin-bottom: 48px;
 }
 
 /* "Need more help?" sidebar (source): the heading is the 24px Asar serif title
