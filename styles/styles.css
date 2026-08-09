@@ -606,10 +606,17 @@ main > .section.cards-byline-container + .section li {
   main > .section.cards-profile-container {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 48px 24px;
+
+    /* source rhythm: ~23px between an intro block and the profile row below it.
+       The intro paragraph's own bottom margin adds ~5px, so an 18px row-gap
+       lands the visible gap at ~23px. 24px column-gap. The larger ~45px gap
+       above the "WKND Guides" heading is added via its margin-top. */
+    gap: 18px 24px;
     align-items: start;
     max-width: var(--content-max-width);
-    margin: 0 auto;
+
+    /* ~66px of clear space below the last profile row before the footer */
+    margin: 0 auto 66px;
     padding: 0 32px;
     box-sizing: border-box;
   }
@@ -628,6 +635,26 @@ main > .section.cards-byline-container + .section li {
     grid-column: 1 / -1;
   }
 
+  /* source has ~41px between the H1 and the "Our Contributors" H2; nudge that
+     H2's top margin up from the default ~29px. */
+  main > .section.cards-profile-container > .default-content-wrapper h1 + h2 {
+    margin-top: 41px;
+  }
+
+  /* the "WKND Guides" heading (a default-content-wrapper that follows a profile
+     row) gets extra top space so the contributor row -> Guides gap is ~45px.
+     Its own H2 top margin is zeroed (below) so the gap is exactly row-gap(18) +
+     this margin(27) ≈ 45px. */
+  main > .section.cards-profile-container > .cards-profile-wrapper ~ .default-content-wrapper {
+    margin-top: 27px;
+  }
+
+  /* the Guides heading block's H2 must not add its default ~29px top margin on
+     top of the wrapper margin above (grid items don't margin-collapse). */
+  main > .section.cards-profile-container > .cards-profile-wrapper ~ .default-content-wrapper h2:first-child {
+    margin-top: 0;
+  }
+
   /* each profile occupies a single grid cell (its inner single-card grid just
      fills the cell). */
   main > .section.cards-profile-container > .cards-profile-wrapper {
@@ -640,10 +667,10 @@ main > .section.cards-byline-container + .section li {
   main > .section.cards-profile-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 48px 24px;
+    gap: 23px 24px;
     align-items: start;
     max-width: var(--content-max-width);
-    margin: 0 auto;
+    margin: 0 auto 66px;
     padding: 0 32px;
     box-sizing: border-box;
   }
@@ -656,5 +683,9 @@ main > .section.cards-byline-container + .section li {
 
   main > .section.cards-profile-container > .default-content-wrapper {
     grid-column: 1 / -1;
+  }
+
+  main > .section.cards-profile-container > .cards-profile-wrapper ~ .default-content-wrapper {
+    margin-top: 22px;
   }
 }
