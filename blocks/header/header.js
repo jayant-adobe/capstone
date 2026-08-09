@@ -186,15 +186,19 @@ function buildUtilityBar(signInContent, localeContent) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // load nav as fragment. Dual-fetch: `/content/nav` serves the local file under
-  // `aem up --html-folder content`; the metadata path (or `/nav`) serves it on
-  // DA/EDS production where the content root has no `/content` prefix.
+  // load nav as fragment. The local `aem up --html-folder content` server serves
+  // the file under `/content/nav`, while DA/EDS production serves it at the
+  // content root (`/nav`). Pick the order by environment so production does not
+  // log a 404 for the local-only path: localhost tries `/content/nav` first,
+  // production tries the metadata path (or `/nav`) first. Each still falls back.
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
-  let loadedPath = '/content/nav';
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const candidates = isLocal ? ['/content/nav', navPath] : [navPath, '/content/nav'];
+  let loadedPath = candidates[0];
   let fragment = await loadFragment(loadedPath);
   if (!fragment) {
-    loadedPath = navPath;
+    [, loadedPath] = candidates;
     fragment = await loadFragment(loadedPath);
   }
   if (!fragment) return;
