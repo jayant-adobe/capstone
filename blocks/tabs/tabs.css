@@ -50,6 +50,12 @@
   background-color: var(--light-color);
 }
 
+/* visible keyboard focus ring (the source has none; build standards require it) */
+.tabs .tabs-list button:focus-visible {
+  outline: 2px solid var(--text-color);
+  outline-offset: 2px;
+}
+
 .tabs .tabs-list button[aria-selected='true'] {
   background-color: var(--dark-color);
   color: var(--background-color);
