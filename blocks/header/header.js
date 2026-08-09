@@ -50,6 +50,30 @@ function normalizeInternalLinks(root) {
 }
 
 /**
+ * Wire the scroll-triggered header shadow. Matches the source, which toggles a
+ * `scrolly` class once the page is scrolled past ~15px; the CSS then fades in the
+ * header's drop shadow (`header.scrolly .nav-wrapper`). Identical on all widths.
+ * Uses requestAnimationFrame to coalesce scroll events (passive listener) and
+ * sets the initial state in case the page loads already scrolled (deep link/hash).
+ * @param {Element} header the semantic <header> element that carries the class
+ */
+function setupScrollShadow(header) {
+  const THRESHOLD = 15; // px; source adds `scrolly` at scrollY 16 (> 15)
+  let ticking = false;
+  const update = () => {
+    header.classList.toggle('scrolly', window.scrollY > THRESHOLD);
+    ticking = false;
+  };
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  update(); // initial state
+}
+
+/**
  * Collapse the mobile nav and reset the hamburger to its closed state.
  * @param {Element} nav The nav element
  */
@@ -328,4 +352,7 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // scroll-triggered drop shadow on the fixed header (matches source)
+  setupScrollShadow(block.closest('header') || document.querySelector('header'));
 }
