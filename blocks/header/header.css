@@ -207,6 +207,15 @@ header .nav-main {
   background-color: var(--background-color);
 }
 
+/* Desktop: the source white bar is taller (~169px) — the 48px logo sits with
+   ~60px of clear space above and below. Match that generous vertical padding at
+   >=900px (mobile keeps the compact 12px override below). */
+@media (width >= 900px) {
+  header .nav-main {
+    padding: 54px 24px;
+  }
+}
+
 /* brand / logo */
 header .nav-brand {
   flex: 0 0 auto;
