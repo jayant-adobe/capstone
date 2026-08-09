@@ -1,0 +1,53 @@
+.tabs-filter .tabs-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5ch;
+  max-width: 100%;
+  margin-bottom: 24px;
+  font-size: var(--body-font-size-xs);
+  overflow-x: auto;
+}
+
+@media (width >= 600px) {
+  .tabs-filter .tabs-filter-list {
+    font-size: var(--body-font-size-s);
+  }
+}
+
+@media (width >= 900px) {
+  .tabs-filter .tabs-filter-list {
+    font-size: var(--body-font-size-m);
+  }
+}
+
+.tabs-filter .tabs-filter-list button {
+  flex: 0 0 max-content;
+  margin: 0;
+  border: 1px solid #dadada;
+  border-radius: 0;
+  padding: 0.5em 1em;
+  background-color: var(--light-color);
+  color: initial;
+  font-weight: bold;
+  line-height: unset;
+  text-align: initial;
+  text-overflow: unset;
+  overflow: unset;
+  white-space: unset;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.tabs-filter .tabs-filter-list button p {
+  margin: 0;
+}
+
+.tabs-filter .tabs-filter-list button:hover {
+  border-color: var(--dark-color, #000);
+}
+
+.tabs-filter .tabs-filter-list button[aria-selected='true'] {
+  border-color: var(--dark-color, #000);
+  background-color: var(--dark-color, #000);
+  color: var(--background-color, #fff);
+  cursor: initial;
+}

@@ -5,9 +5,7 @@
 // Orchestrates block parsers + site-wide transformers (cleanup -> links -> sections).
 
 // PARSER IMPORTS
-import carouselParser from './parsers/carousel.js';
-import columnsParser from './parsers/columns.js';
-import cardsParser from './parsers/cards.js';
+import cardsBylineParser from './parsers/cards-byline.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -16,98 +14,52 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
 const parsers = {
-  'carousel': carouselParser,
-  'columns': columnsParser,
-  'cards': cardsParser,
+  'cards-byline': cardsBylineParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
-  "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "name": "magazine-article",
+  "description": "Magazine article page (5 pages, structurally identical). Structure: (1) article body (main.cmp-layout-container--fixed): full-bleed lead image + H1 + byline (h4) + long-form rich text (paragraphs, a blockquote pull-quote, H2 subheads, inline images) -> ALL DEFAULT CONTENT; (2) author bio experience fragment (portrait + name h2 + role + social icon links) -> cards-byline (new horizontal author-card variant); (3) related-articles sidebar (aside.cmp-layoutcontainer--sidebar: 'SHARE THIS STORY' h5 + a list of 4 related-article links with dates, hrefs -> /us/en/magazine/<slug>.html) -> default content. The footer teaser (Follow Us) and breadcrumb are site chrome, not page content.",
   "urls": [
-    "https://wknd.site/us/en.html"
+    "https://wknd.site/us/en/magazine/arctic-surfing.html",
+    "https://wknd.site/us/en/magazine/guide-la-skateparks.html",
+    "https://wknd.site/us/en/magazine/san-diego-surf.html",
+    "https://wknd.site/us/en/magazine/ski-touring.html",
+    "https://wknd.site/us/en/magazine/western-australia.html"
   ],
   "blocks": [
     {
-      "name": "carousel",
+      "name": "cards-byline",
       "instances": [
-        "div.carousel.cmp-carousel--hero"
-      ]
-    },
-    {
-      "name": "columns",
-      "instances": [
-        "div.teaser.cmp-teaser--featured",
-        "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
-      ]
-    },
-    {
-      "name": "cards",
-      "instances": [
-        "div.image-list.list"
+        "main main div.experiencefragment"
       ]
     }
   ],
   "sections": [
     {
-      "id": "rc2",
-      "name": "Hero",
-      "selector": "div.carousel.cmp-carousel--hero",
+      "id": "rc1",
+      "name": "Article Body",
+      "selector": "main main.container.responsivegrid.cmp-layout-container--fixed",
       "style": null,
       "blocks": [
-        "carousel"
+        "cards-byline"
       ],
-      "defaultContent": []
+      "defaultContent": [
+        "main main.container.responsivegrid.cmp-layout-container--fixed h1",
+        "main main.container.responsivegrid.cmp-layout-container--fixed h4",
+        "main main.container.responsivegrid.cmp-layout-container--fixed article"
+      ]
     },
     {
       "id": "rc3",
-      "name": "Featured Article",
-      "selector": "div.teaser.cmp-teaser--featured",
+      "name": "Related Articles",
+      "selector": "aside.container.responsivegrid.cmp-layoutcontainer--sidebar",
       "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": []
-    },
-    {
-      "id": "rc5",
-      "name": "Recent Articles",
-      "selector": "div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
-      ],
+      "blocks": [],
       "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(2)",
-        "div.button.cmp-button--primary",
-        "div.separator"
-      ]
-    },
-    {
-      "id": "rc9",
-      "name": "Next Adventures",
-      "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(6)"
-      ]
-    },
-    {
-      "id": "rc11",
-      "name": "Where do you want to go?",
-      "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
-      ],
-      "defaultContent": [
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
+        "aside.container.responsivegrid.cmp-layoutcontainer--sidebar h5",
+        "aside.container.responsivegrid.cmp-layoutcontainer--sidebar ul"
       ]
     }
   ]

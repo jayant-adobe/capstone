@@ -13,3 +13,9 @@ helix-importer-ui
 !AGENTS.md
 migration-work/navigation-validation/
 migration-work/footer-validation/
+
+# Import build artifacts (generated; not source)
+tools/importer/*.bundle.js
+tools/importer/reports/
+tools/importer/urls-*.txt
+.migration/da-upload/

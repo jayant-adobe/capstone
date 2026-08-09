@@ -3,13 +3,21 @@
 /**
  * Parser for variant: carousel
  * Base block: carousel
- * Source: https://wknd.site/us/en.html (div.carousel.cmp-carousel--hero)
- * Generated: 2026-08-07
+ * Source: https://wknd.site/us/en.html and adventure-detail pages
+ *   Instances:
+ *     - div.carousel.cmp-carousel--hero (homepage): multi-slide, image + title + description + CTA
+ *     - div.carousel.panelcontainer.cmp-carousel--mini (adventure detail): image-only slides,
+ *       often a SINGLE slide, NO title / description / CTA
+ * Generated: 2026-08-07 (extended 2026-08-09 for the MINI image-only variant)
  *
  * Block Collection "Carousel" model: 2 columns.
  *   Row 1: block name ("Carousel").
  *   One row PER SLIDE (dynamic): [ image | content ].
  *   Content cell = H2 title + description paragraph + optional CTA link.
+ *
+ * Handles BOTH shapes:
+ *   - HERO slide: .cmp-teaser scaffold (title/description/CTA) → full content cell.
+ *   - MINI slide: bare div.image → image only; content cell emitted EMPTY.
  */
 export default function parse(element, { document }) {
   // Pick the highest-resolution candidate: the base `src` is a capped web
@@ -56,15 +64,16 @@ export default function parse(element, { document }) {
   }
 
   slides.forEach((slide) => {
-    // Image cell — source image lives in the teaser image wrapper.
+    // Image cell — source image lives in the teaser image wrapper (HERO) or a
+    // bare .cmp-image (MINI).
     const srcImg = slide.querySelector('.cmp-teaser__image img, .cmp-image img, img');
     const imageCell = cleanImage(srcImg);
 
-    // Content cell — title + description + optional CTA.
+    // Content cell — title + description + optional CTA. MINI slides have none.
     const contentCell = [];
 
     const title = slide.querySelector('.cmp-teaser__title, h2, [class*="title"]');
-    if (title) {
+    if (title && title.textContent.trim()) {
       const h2 = document.createElement('h2');
       h2.textContent = title.textContent.trim();
       contentCell.push(h2);
@@ -89,14 +98,16 @@ export default function parse(element, { document }) {
       contentCell.push(link);
     }
 
-    // Only add the slide row if it has real content.
+    // Only add the slide row if it has real content. Content cell may be EMPTY
+    // (MINI image-only slide) — still emit the slide with an empty content cell.
     if (imageCell || contentCell.length) {
       cells.push([imageCell || '', contentCell.length ? contentCell : '']);
     }
   });
 
-  // Empty-block guard: no slides found → unwrap gracefully.
-  if (cells.length === 1) {
+  // Empty-block guard: no slides found → unwrap gracefully. (cells does NOT
+  // include the createBlock name row, so a single valid slide has length 1.)
+  if (cells.length === 0) {
     element.replaceWith(...element.childNodes);
     return;
   }

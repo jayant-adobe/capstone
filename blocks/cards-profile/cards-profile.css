@@ -1,0 +1,140 @@
+/*
+ * cards-profile — WKND team-member / contributor profile grid.
+ *
+ * Variant of the vanilla `cards` block, created from
+ * https://wknd.site/us/en/about-us.html (the "Our Contributors" and
+ * "WKND Guides" grids). Distinct from the project's article `cards` block
+ * (rectangular 1.3-ratio image, left-aligned uppercase title, ellipsis
+ * description): profile cards use a CIRCULAR centered portrait, a centered
+ * name + role, and a centered horizontal row of dark social-icon buttons.
+ *
+ * Content model (per card row): cell 1 = portrait image, cell 2 = text
+ * (h3 name, h5 role, and social links Facebook/Twitter/Instagram).
+ *
+ * Values measured from the source @1440px. Colors/fonts use brand tokens.
+ * NOTE: icon-only rendering of the social links (swapping the label text for
+ * the platform SVG icons) is finalized during content import + visual
+ * critique; this file establishes the faithful layout + button treatment.
+ */
+
+.cards-profile > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px 24px;
+}
+
+.cards-profile > ul > li {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  min-width: 0;
+  text-align: center;
+}
+
+/* ---------------------------------------------------- circular portrait */
+.cards-profile .cards-profile-card-image {
+  display: block;
+  line-height: 0;
+}
+
+.cards-profile .cards-profile-card-image picture {
+  display: inline-block;
+}
+
+.cards-profile > ul > li img {
+  display: block;
+  width: 165px;
+  max-width: 100%;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------- text content */
+.cards-profile .cards-profile-card-body {
+  margin: 0;
+  padding: 0;
+}
+
+/* name — heading font (Asar), centered */
+.cards-profile .cards-profile-card-body h3 {
+  margin: 20px 0 0;
+  font-family: var(--heading-font-family);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-color);
+}
+
+/* role — body font, uppercase, muted grey, tracked out */
+.cards-profile .cards-profile-card-body h5 {
+  margin: 8px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted-color, #696969);
+}
+
+/* ------------------------------------------------- social button row */
+
+/* Center the social links as a horizontal row. Links may arrive as direct
+   anchors or each wrapped in its own paragraph; handle both so the row stays
+   centered regardless of the imported shape. */
+.cards-profile .cards-profile-card-body p:has(> a) {
+  display: inline;
+  margin: 0;
+}
+
+.cards-profile .cards-profile-card-body h5 + p,
+.cards-profile .cards-profile-card-body h3 + p:has(> a) {
+  margin-top: 16px;
+}
+
+.cards-profile .cards-profile-card-body a:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 16px 4px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+  text-decoration: none;
+  background-color: var(--text-color);
+  color: var(--background-color);
+  vertical-align: top;
+}
+
+.cards-profile .cards-profile-card-body a:any-link:hover {
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
+}
+
+/* ------------------------------------------------------------ >= 600px */
+@media (width >= 600px) {
+  .cards-profile > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------ >= 900px */
+@media (width >= 900px) {
+  /* 4-up desktop grid, matching the source contributor layout
+     (aem-GridColumn--default--3). The 3-item Guides grid left-aligns. */
+  .cards-profile > ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

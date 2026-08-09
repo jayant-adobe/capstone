@@ -29,6 +29,23 @@ function rebaseImages(root, footerPath) {
 }
 
 /**
+ * Normalize internal WKND links to the Edge Delivery convention (extensionless).
+ * The authored fragment carries source-style `.html` links but EDS serves
+ * extensionless paths — the `.html` form 404s. Strip the extension from
+ * root-relative internal links, preserving any ?query/#hash. Absolute external
+ * links and `#` anchors are left untouched.
+ * @param {Element} root element containing the links
+ */
+function normalizeInternalLinks(root) {
+  root.querySelectorAll('a[href]').forEach((a) => {
+    const raw = a.getAttribute('href');
+    if (!raw || !raw.startsWith('/')) return;
+    const next = raw.replace(/\.html?(?=($|[?#]))/i, '');
+    if (next !== raw) a.setAttribute('href', next);
+  });
+}
+
+/**
  * loads and decorates the footer
  * @param {Element} block The footer block element
  */
@@ -51,6 +68,7 @@ export default async function decorate(block) {
   if (!fragment) return;
 
   rebaseImages(fragment, loadedPath);
+  normalizeInternalLinks(fragment);
 
   const sections = [...fragment.children];
   const mainContent = contentOf(sections[0]);
@@ -87,7 +105,9 @@ export default async function decorate(block) {
       top.append(nav);
       // The "Home" link is present in the source footer DOM but hidden; keep it
       // for parity and tag its <li> so CSS hides it (visible nav = 4 items).
-      const homeLink = nav.querySelector('a[href="/us/en.html"], a[href$="/us/en.html"]');
+      // Links are normalized to extensionless above; match `/us/en` with the
+      // legacy `.html` form as a fallback.
+      const homeLink = nav.querySelector('a[href="/us/en"], a[href$="/us/en"], a[href="/us/en.html"], a[href$="/us/en.html"]');
       const homeLi = homeLink ? homeLink.closest('li') : null;
       if (homeLi) homeLi.classList.add('footer-nav-hidden');
     }

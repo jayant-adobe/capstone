@@ -5,8 +5,8 @@
 // Orchestrates block parsers + site-wide transformers (cleanup -> links -> sections).
 
 // PARSER IMPORTS
-import carouselParser from './parsers/carousel.js';
 import columnsParser from './parsers/columns.js';
+import tabsFilterParser from './parsers/tabs-filter.js';
 import cardsParser from './parsers/cards.js';
 
 // TRANSFORMER IMPORTS
@@ -16,54 +16,53 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
 const parsers = {
-  'carousel': carouselParser,
   'columns': columnsParser,
+  'tabs-filter': tabsFilterParser,
   'cards': cardsParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
-  "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "name": "section-landing-adventures",
+  "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers, (4) a separator. Reuses columns (teaser) + cards (image-list); tab filter maps to a tabs block wrapping the cards.",
   "urls": [
-    "https://wknd.site/us/en.html"
+    "https://wknd.site/us/en/adventures.html"
   ],
   "blocks": [
     {
-      "name": "carousel",
+      "name": "columns",
       "instances": [
-        "div.carousel.cmp-carousel--hero"
+        "div.teaser.cmp-teaser--hero"
       ]
     },
     {
-      "name": "columns",
+      "name": "tabs-filter",
       "instances": [
-        "div.teaser.cmp-teaser--featured",
-        "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
+        "div.tabs.panelcontainer"
       ]
     },
     {
       "name": "cards",
       "instances": [
-        "div.image-list.list"
+        "div.cmp-tabs__tabpanel--active div.image-list.list"
       ]
     }
   ],
   "sections": [
     {
       "id": "rc2",
-      "name": "Hero",
-      "selector": "div.carousel.cmp-carousel--hero",
+      "name": "Page Title",
+      "selector": "main.container.responsivegrid.cmp-layout-container--fixed:nth-of-type(1)",
       "style": null,
-      "blocks": [
-        "carousel"
-      ],
-      "defaultContent": []
+      "blocks": [],
+      "defaultContent": [
+        "main.container.responsivegrid.cmp-layout-container--fixed:nth-of-type(1) h1"
+      ]
     },
     {
       "id": "rc3",
-      "name": "Featured Article",
-      "selector": "div.teaser.cmp-teaser--featured",
+      "name": "Intro Teaser",
+      "selector": "div.teaser.cmp-teaser--hero",
       "style": null,
       "blocks": [
         "columns"
@@ -72,42 +71,25 @@ const PAGE_TEMPLATE = {
     },
     {
       "id": "rc5",
-      "name": "Recent Articles",
-      "selector": "div.image-list.list",
+      "name": "Current Adventures",
+      "selector": "div.tabs.panelcontainer",
       "style": null,
       "blocks": [
+        "tabs-filter",
         "cards"
       ],
       "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(2)",
-        "div.button.cmp-button--primary",
+        "div.title.cmp-title--underline"
+      ]
+    },
+    {
+      "id": "rc6",
+      "name": "Closing Divider",
+      "selector": "div.separator",
+      "style": null,
+      "blocks": [],
+      "defaultContent": [
         "div.separator"
-      ]
-    },
-    {
-      "id": "rc9",
-      "name": "Next Adventures",
-      "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(6)"
-      ]
-    },
-    {
-      "id": "rc11",
-      "name": "Where do you want to go?",
-      "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
-      ],
-      "defaultContent": [
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
       ]
     }
   ]

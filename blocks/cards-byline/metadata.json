@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-byline",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-08-09T11:58:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/magazine/arctic-surfing.html",
+    "originPage": "Magazine article (arctic-surfing) - end-of-article author byline",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "author-byline",
+    "imagePattern": "small"
+  },
+  "contentPattern": {
+    "structure": "portrait + name + role + social icon row (single horizontal byline)",
+    "buttonCount": 3,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "end-of-article author bylines (blog / magazine articles)",
+      "single-author attribution rows with photo + name + role + social links",
+      "compact horizontal person rows preceded by a separator"
+    ],
+    "notSuitableFor": [
+      "team / contributor GRIDS with centered circular portraits (use cards-profile)",
+      "article / blog card grids with rectangular imagery (use the article cards block)",
+      "product cards with price/CTA"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/magazine/arctic-surfing"],
+    "reuseCount": 1,
+    "lastUsed": "2026-08-09T11:58:00.000Z"
+  }
+}

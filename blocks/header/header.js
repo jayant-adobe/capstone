@@ -32,6 +32,24 @@ function rebaseImages(root, navPath) {
 }
 
 /**
+ * Normalize internal WKND links to the Edge Delivery convention (extensionless).
+ * The authored fragment carries source-style `.html` links (e.g. `/us/en.html`,
+ * `/us/en/magazine.html`) but EDS serves extensionless paths (`/us/en`,
+ * `/us/en/magazine`) — the `.html` form 404s. Strip the extension from
+ * root-relative internal links, preserving any ?query/#hash. Absolute external
+ * links, `#` anchors, and mailto:/tel: are left untouched.
+ * @param {Element} root element containing the links
+ */
+function normalizeInternalLinks(root) {
+  root.querySelectorAll('a[href]').forEach((a) => {
+    const raw = a.getAttribute('href');
+    if (!raw || !raw.startsWith('/')) return; // only root-relative internal links
+    const next = raw.replace(/\.html?(?=($|[?#]))/i, '');
+    if (next !== raw) a.setAttribute('href', next);
+  });
+}
+
+/**
  * Collapse the mobile nav and reset the hamburger to its closed state.
  * @param {Element} nav The nav element
  */
@@ -209,6 +227,7 @@ export default async function decorate(block) {
   if (!fragment) return;
 
   rebaseImages(fragment, loadedPath);
+  normalizeInternalLinks(fragment);
 
   // fragment sections in authored order: brand, primary nav, sign-in, locale
   const sections = [...fragment.children];
@@ -244,8 +263,10 @@ export default async function decorate(block) {
     while (navContent.firstElementChild) navSections.append(navContent.firstElementChild);
   }
   // The "Home" link is a mobile-drawer-only item (the source shows it only in the
-  // mobile menu). Tag its <li> so CSS can hide it at desktop width.
-  const homeLink = navSections.querySelector('a[href="/us/en.html"], a[href$="/us/en.html"]');
+  // mobile menu). Tag its <li> so CSS can hide it at desktop width. Links are
+  // normalized to extensionless above, so match `/us/en` (with the legacy
+  // `.html` form as a fallback).
+  const homeLink = navSections.querySelector('a[href="/us/en"], a[href$="/us/en"], a[href="/us/en.html"], a[href$="/us/en.html"]');
   if (homeLink) {
     const homeLi = homeLink.closest('li');
     if (homeLi) homeLi.classList.add('nav-home-mobile');
