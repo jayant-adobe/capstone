@@ -31,10 +31,29 @@ header {
   }
 }
 
+/* Sticky header — matches the source (position: fixed, top:0, z-index 1030),
+   pinned at all widths. The `header` element stays in flow as the height-reserve
+   spacer (min-height above), so pulling .nav-wrapper out with position:fixed does
+   NOT shift the page content or reintroduce CLS — the fixed bar overlays exactly
+   where the spacer sits. The box-shadow is scroll-triggered (see header.scrolly
+   below): none at rest, fading in once the page is scrolled, mirroring the source
+   which toggles a `scrolly` class past ~15px of scroll. */
 header .nav-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1030;
   width: 100%;
   background-color: var(--background-color);
   font-family: var(--body-font-family);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Scrolled state: `scrolly` is added to the header by the JS scroll listener once
+   scrollY > 15px (exact source threshold). Shadow value measured from the source
+   header bar: 0 8px 20px 0 rgba(0,0,0,.26). */
+header.scrolly .nav-wrapper {
+  box-shadow: 0 8px 20px 0 rgb(0 0 0 / 26%);
 }
 
 header nav {
