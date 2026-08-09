@@ -80,26 +80,28 @@
   text-align: center;
 }
 
-/* name — heading font (Asar), centered */
+/* name — Asar serif 24px/36px, ~14px below the portrait, 6px above the role
+   (values measured from the source). */
 .cards-profile .cards-profile-card-body h3 {
-  margin: 20px 0 0;
+  margin: 14px 0 6px;
   font-family: var(--heading-font-family);
   font-size: 24px;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.5;
   color: var(--text-color);
 }
 
-/* role — body font, uppercase, muted grey, tracked out; 16px gap to icon row */
+/* role — Source Sans Pro 14px/21px 600 uppercase, dark ink (#202020), no
+   letter-spacing (source). 16px gap down to the social icon row. */
 .cards-profile .cards-profile-card-body h5 {
-  margin: 8px 0 16px;
+  margin: 0 0 16px;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: 0.06em;
+  line-height: 1.5;
+  letter-spacing: normal;
   text-transform: uppercase;
-  color: var(--text-muted-color, #696969);
+  color: var(--text-color);
 }
 
 /* ------------------------------------------------- social link row
