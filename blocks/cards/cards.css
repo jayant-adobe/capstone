@@ -29,6 +29,13 @@
   line-height: 0;
 }
 
+/* the image is wrapped in a link to the card's detail page (see cards.js) */
+.cards .cards-card-image a {
+  display: block;
+  line-height: 0;
+  cursor: pointer;
+}
+
 .cards .cards-card-image picture {
   display: block;
 }

@@ -13,5 +13,24 @@ export default function decorate(block) {
     ul.append(li);
   });
   ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
+
+  // Make the card image clickable, linking to the same target as the card title
+  // (matches the source, where each card has both an image link and a title link
+  // to the detail page). The image link is marked aria-hidden + tabindex="-1" so
+  // it is not a duplicate tab stop / duplicate screen-reader announcement of the
+  // title link — mouse users get a clickable image, keyboard/AT users use the title.
+  ul.querySelectorAll('li').forEach((li) => {
+    const imageWrap = li.querySelector('.cards-card-image');
+    const picture = imageWrap && imageWrap.querySelector('picture');
+    const titleLink = li.querySelector('.cards-card-body a[href]');
+    if (!picture || !titleLink || imageWrap.querySelector('a')) return;
+    const link = document.createElement('a');
+    link.href = titleLink.getAttribute('href');
+    link.setAttribute('aria-hidden', 'true');
+    link.setAttribute('tabindex', '-1');
+    picture.replaceWith(link);
+    link.append(picture);
+  });
+
   block.replaceChildren(ul);
 }
