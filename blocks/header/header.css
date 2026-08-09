@@ -14,11 +14,21 @@
  */
 
 /* header is in-flow and sizes to its content. The eager styles.css reserves the
-   header height (via --nav-height) before this block hydrates, so the nav does
-   not shift the hero on load (prevents CLS). Allow it to grow if content wraps. */
+   header height (via --nav-height, and 194px at desktop) before this block
+   hydrates, so the nav does not shift the hero on load (prevents CLS). This lazy
+   block CSS loads AFTER styles.css, so it MUST keep the same reserved heights —
+   otherwise it would lower min-height back to --nav-height (109px) at desktop,
+   collapsing the empty header and reintroducing the shift. Allow growth if
+   content wraps. */
 header {
   min-height: var(--nav-height);
   height: auto;
+}
+
+@media (width >= 900px) {
+  header {
+    min-height: 194px;
+  }
 }
 
 header .nav-wrapper {
