@@ -377,3 +377,65 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+
+/* ---------------------------------------------------------------- FAQs page
+   The source renders FAQs as a two-column desktop layout: the main content
+   (title + image + intro + accordion) sits in a ~66% left column and the
+   "Need more help?" block is a ~30% right sidebar, both starting at the same
+   top. The migrated page has exactly two sections in <main> — the accordion
+   section (main) and a following default-content section (the sidebar) — so we
+   make <main> a two-column grid at desktop and stack on mobile (matching the
+   source's responsive behavior). Scoped via :has() so only the FAQs-style page
+   (a section that contains an accordion) is affected. */
+@media (width >= 900px) {
+  main:has(> .section.accordion-container .accordion) {
+    display: grid;
+    grid-template-columns: 748fr 291fr; /* source column ratio (main : sidebar) */
+    column-gap: 48px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* the section wrappers no longer center/max-width themselves — the grid
+     column is their bounding box now. */
+  main:has(> .section.accordion-container .accordion) > .section > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* FAQs H1: source uses the 40px title size (not the 54px hero H1) with the
+   WKND short yellow underline accent (cmp-title--underline). */
+main > .section.accordion-container:has(.accordion) h1 {
+  font-size: 40px;
+  margin-top: 27px;
+  margin-bottom: 13.5px;
+  padding-bottom: 12px;
+}
+
+main > .section.accordion-container:has(.accordion) h1::after {
+  content: '';
+  display: block;
+  width: 84px;
+  margin-top: 12px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/* FAQs intro paragraph: source uses relaxed 45px line spacing. */
+main > .section.accordion-container:has(.accordion) > .default-content-wrapper p {
+  line-height: 2.5;
+}
+
+/* "Need more help?" heading: source renders it as plain 18px body-weight text,
+   not the large serif h3. */
+main > .section.accordion-container:has(.accordion) + .section h3 {
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0 0 0.25em;
+}
