@@ -53,8 +53,17 @@ body.appear {
   display: block;
 }
 
+/* Reserve the WKND header's rendered height before the nav block hydrates so it
+   does not push the hero down on load (prevents CLS). Mobile header is ~109px,
+   desktop ~133px. min-height reserves the space but lets the header grow. */
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+}
+
+@media (width >= 900px) {
+  header {
+    min-height: 133px;
+  }
 }
 
 header .header,
@@ -343,8 +352,16 @@ main .default-content-wrapper p > a:only-child:focus-visible {
    Reproduce it as a full-width rule beneath the CTA paragraph. */
 main .default-content-wrapper p:has(> a:only-child) {
   margin-bottom: 0;
-  padding-bottom: 28px;
+  padding-bottom: 51px;
   border-bottom: 1px solid var(--light-color);
+}
+
+/* The final CTA divider ("All Trips") is the last thing in main and would sit
+   flush against the footer, hiding the rule. The source leaves ~112px of clear
+   space below it before the footer — reserve that gap on the last section only
+   so the mid-page "All Articles" divider is unaffected. */
+main > .section:last-child {
+  margin-bottom: 112px;
 }
 
 @media (width >= 900px) {
