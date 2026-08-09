@@ -106,8 +106,8 @@
 
 /* ------------------------------------------------- social link row
    Each social link is imported wrapped in its own <p>. The source renders these
-   as bare icon-only buttons: a 48x48 hit area with NO background, border, or
-   radius, holding a ~17.5px light-grey (#ebebeb) brand glyph. We reproduce the
+   as icon-only buttons: a 48x48 SQUARE (no radius) with a dark (#202020)
+   background holding a ~17.5px light-grey (#ebebeb) brand glyph. We reproduce the
    real Facebook / Twitter / Instagram glyphs (icons/social-*.svg) as a CSS mask
    so the glyph colour is driven by background-color. Each <p> collapses to an
    inline-block so the three buttons sit side by side (they'd stack if promoted
@@ -131,7 +131,7 @@
   font-size: 0; /* hide the "Facebook"/"Twitter"/"Instagram" label text */
   line-height: 0;
   text-decoration: none;
-  background-color: transparent;
+  background-color: var(--dark-color); /* source: dark #202020 square */
   vertical-align: top;
 }
 
@@ -160,7 +160,11 @@
   --profile-social-icon: url('/icons/social-instagram.svg');
 }
 
-/* affordance on hover: darken the light-grey glyph toward the brand ink */
+/* affordance on hover: brand-yellow square with dark glyph */
+.cards-profile .cards-profile-card-body a:any-link:hover {
+  background-color: var(--accent-color);
+}
+
 .cards-profile .cards-profile-card-body a:any-link:hover::before {
   background-color: var(--text-color);
 }
