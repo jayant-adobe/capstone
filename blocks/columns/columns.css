@@ -91,23 +91,20 @@
   background-color: var(--light-color);
 }
 
-/* eyebrow "Featured Article" — Source Sans Pro 18px / semibold / #202020,
-   line-height 45px, margin-bottom 13.5px. Uses weight 600 (not 700): the
-   source's physical Source Sans Pro renders lighter than the Google Fonts
-   700 build, so 600 matches its on-screen appearance. */
+/* eyebrow "Featured Article" — Source Sans Pro 18px / bold (700) / #202020,
+   line-height 45px, margin-bottom 13.5px (measured from the source). */
 .columns:has(strong) > div:has(.columns-img-col) > div:last-child > p:first-child {
   margin: 0 0 13.5px;
   color: var(--text-color);
   font-family: var(--body-font-family);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 45px;
 }
 
-/* the eyebrow text sits in a <strong> — pin it to 600 (semibold), overriding
-   the UA's default 700/bold so it matches the source's lighter weight. */
+/* the eyebrow text sits in a <strong>; keep it bold (700) to match the source. */
 .columns:has(strong) > div:has(.columns-img-col) > div:last-child > p:first-child strong {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* heading — Asar 36px / 54px / 400, margin 18px 0 (source keeps this size at

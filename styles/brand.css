@@ -21,7 +21,10 @@
 
   /* spacing */
   --section-padding: 40px;
-  --content-max-width: 1164px;
+
+  /* centered content column — matches the source's 1136px content grid
+     (aem-Grid --default--12 inside a 1164px teaser gutter). */
+  --content-max-width: 1136px;
 
   /* height reserved for the WKND header before its block hydrates (mobile);
      desktop overrides to 133px in styles.css. Prevents layout shift (CLS). */

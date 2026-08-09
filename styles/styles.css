@@ -295,15 +295,19 @@ main > .section > div {
   padding: 0 24px;
 }
 
-/* 72px breathing space between the hero and the first content block (source). */
-main > .section .carousel-wrapper {
-  margin-bottom: 72px;
+/* Hero rhythm (source @1440px): the tall homepage hero carousel measures ~740px
+   and the first content block sits flush beneath it. In the source the ~72px of
+   space below the slide dots is part of the carousel element itself, so reserve it
+   as the carousel block's own bottom padding rather than a wrapper margin. The
+   carousel element then matches the source height (~740px) and the next section
+   flows flush, keeping the total hero-region height identical to the source. */
+main:not(:has(.table-overview)) > .section .carousel {
+  padding-bottom: 58px;
 }
 
 /* Adventure-detail pages open with a MINI image carousel (not the tall homepage
    hero). The source leaves only ~27px below it before the H1. The H1 also has a
-   ~16px top margin that adds to the gap, so use ~11px here to land near 27px.
-   Override the 72px hero spacing on pages that contain the adventure table. */
+   ~16px top margin that adds to the gap, so use ~11px here to land near 27px. */
 main:has(.table-overview) > .section .carousel-wrapper {
   margin-bottom: 11px;
 }
