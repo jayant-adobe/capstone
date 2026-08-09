@@ -34,13 +34,21 @@ header nav {
 
 /* ---------------------------------------------------------- utility bar (dark) */
 header .nav-utility {
+  background-color: var(--dark-color);
+}
+
+/* Utility content aligns to the same centered content column as the main bar
+   (source: Sign In + locale sit above the search box, not flush to the window
+   edge). Right-aligned within the 1164px column. */
+header .nav-utility-inner {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 21px;
+  gap: 28px;
+  max-width: var(--content-max-width);
   min-height: 25px;
+  margin: 0 auto;
   padding: 0 24px;
-  background-color: var(--dark-color);
 }
 
 header .nav-signin a,
@@ -82,8 +90,8 @@ header .nav-locale-toggle {
 }
 
 header .nav-locale-flag {
-  width: 21px;
-  height: 15px;
+  width: 25px;
+  height: 18px;
   object-fit: cover;
   vertical-align: middle;
 }

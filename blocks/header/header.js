@@ -107,8 +107,13 @@ function buildSearch() {
  * @returns {Element} the utility bar element
  */
 function buildUtilityBar(signInContent, localeContent) {
+  // Full-width dark band; its inner wrapper centers the content to the same
+  // 1164px column as the main bar so Sign In + locale align above the search box.
   const utility = document.createElement('div');
   utility.className = 'nav-utility';
+  const inner = document.createElement('div');
+  inner.className = 'nav-utility-inner';
+  utility.append(inner);
 
   // Sign In
   const signInLink = signInContent ? signInContent.querySelector('a') : null;
@@ -116,7 +121,7 @@ function buildUtilityBar(signInContent, localeContent) {
     const signIn = document.createElement('div');
     signIn.className = 'nav-signin';
     signIn.append(signInLink);
-    utility.append(signIn);
+    inner.append(signIn);
   }
 
   // Locale selector — the first country's first locale link is the "current"
@@ -175,7 +180,7 @@ function buildUtilityBar(signInContent, localeContent) {
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    utility.append(locale);
+    inner.append(locale);
   }
 
   return utility;
