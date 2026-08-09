@@ -369,6 +369,36 @@ main .default-content-wrapper p:has(> a:only-child) {
   border-bottom: 1px solid var(--light-color);
 }
 
+/* Adventures landing: the source closes the "Current Adventures" card grid with
+   a thin full-width grey rule (1px #ebebeb) before the footer. Our landing has no
+   trailing CTA to carry the shared divider rule, so draw it on the card grid's
+   wrapper (capped to the 1136px content column). ~40px of clear space sits above
+   the rule; the section's trailing margin below spaces it off the footer. */
+main:has(.tabs-filter) .cards-wrapper {
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--light-color);
+}
+
+/* Adventures landing H1 — the source uses the 40px title size (not the 54px hero
+   H1), line-height 60px, margin 27px 0 13.5px, and NO underline accent. Our global
+   h1 defaults to the 54px hero size, so pin it down here to match the source. */
+main:has(.tabs-filter) > .section > div > h1 {
+  font-size: 40px;
+  line-height: 60px;
+  margin-top: 27px;
+  margin-bottom: 13.5px;
+}
+
+/* "Current Adventures" heading — match the source's title rhythm
+   (margin 27px 0 13.5px) rather than the global h2 default (0.8em/0.25em).
+   Ordering warning is cosmetic — this is a page-scoped margin tweak, not an
+   override of the earlier CTA-divider `+ h2` rule. */
+/* stylelint-disable-next-line no-descending-specificity */
+main:has(.tabs-filter) > .section > div > h2 {
+  margin-top: 27px;
+  margin-bottom: 13.5px;
+}
+
 /* Trailing space before the footer, per page type.
    Default: content pages (magazine landing, magazine article) leave ~62px below
    the last block before the footer, matching the source. More-specific overrides

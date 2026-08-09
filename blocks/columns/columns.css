@@ -219,6 +219,8 @@
   }
 
   .columns:not(:has(strong)) > div:has(.columns-img-col) > div:last-child {
+    box-sizing: border-box;
+    min-height: 180px;
     max-width: var(--content-max-width);
     margin: -180px auto 0;
     padding: 28px 28px 32px;

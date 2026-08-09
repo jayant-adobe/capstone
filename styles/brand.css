@@ -30,8 +30,10 @@
      desktop overrides to 133px in styles.css. Prevents layout shift (CLS). */
   --nav-height: 109px;
 
-  /* heading sizes (desktop) */
-  --heading-size-xxl: 54px;
+  /* heading sizes (desktop). The WKND source uses a 40px title for every page
+     H1 (cmp-title, e.g. Adventures/About Us/article titles) — there is no 54px
+     heading anywhere in the source — so xxl is 40px. */
+  --heading-size-xxl: 40px;
   --heading-size-xl: 36px;
   --heading-size-l: 24px;
   --heading-size-m: 16px;
