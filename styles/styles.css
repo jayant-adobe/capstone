@@ -430,12 +430,25 @@ main > .section.accordion-container:has(.accordion) > .default-content-wrapper p
   line-height: 2.5;
 }
 
-/* "Need more help?" heading: source renders it as plain 18px body-weight text,
-   not the large serif h3. */
+/* "Need more help?" sidebar (source): the heading is the 24px Asar serif title
+   (weight 400); the contact paragraph is 14px/35px body copy with blue links. */
 main > .section.accordion-container:has(.accordion) + .section h3 {
-  font-family: var(--body-font-family);
-  font-size: 18px;
+  font-family: var(--heading-font-family);
+  font-size: 24px;
   font-weight: 400;
   line-height: 1.5;
-  margin: 0 0 0.25em;
+  margin: 27px 0 13.5px;
+}
+
+main > .section.accordion-container:has(.accordion) + .section .default-content-wrapper p {
+  font-size: 14px;
+  line-height: 35px;
+  color: var(--text-color);
+  margin: 0 0 13.5px;
+}
+
+main > .section.accordion-container:has(.accordion) + .section .default-content-wrapper p a:any-link {
+  font-weight: 400;
+  color: #0045ff;
+  text-decoration: none;
 }
