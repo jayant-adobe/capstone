@@ -379,6 +379,16 @@ main:has(.tabs-filter) .cards-wrapper {
   border-bottom: 1px solid var(--light-color);
 }
 
+/* Adventures landing H1 — the source uses the 40px title size (not the 54px hero
+   H1), line-height 60px, margin 27px 0 13.5px, and NO underline accent. Our global
+   h1 defaults to the 54px hero size, so pin it down here to match the source. */
+main:has(.tabs-filter) > .section > div > h1 {
+  font-size: 40px;
+  line-height: 60px;
+  margin-top: 27px;
+  margin-bottom: 13.5px;
+}
+
 /* "Current Adventures" heading — match the source's title rhythm
    (margin 27px 0 13.5px) rather than the global h2 default (0.8em/0.25em).
    Ordering warning is cosmetic — this is a page-scoped margin tweak, not an
