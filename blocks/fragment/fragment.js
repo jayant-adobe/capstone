@@ -45,6 +45,26 @@ export async function loadFragment(path) {
       resetAttributeBase('img', 'src');
       resetAttributeBase('source', 'srcset');
 
+      // Unwrap rasterized SVGs. The authored fragment wraps SVG logos/icons in a
+      // <picture> with type="image/webp" <source>s (…format=webply), which tell the
+      // browser to rasterize a vector to WebP at width=2000 — wasteful and served
+      // unreliably by the pipeline (failed/aborted requests). SVGs should render
+      // natively, so for any <picture> whose <img> is an SVG, drop the non-SVG
+      // <source>s and keep the <img>. Runs while `main` is detached, so the bad
+      // webp requests never fire.
+      main.querySelectorAll('picture').forEach((picture) => {
+        const img = picture.querySelector('img');
+        const imgSrc = img && img.getAttribute('src');
+        if (!imgSrc || !/\.svg(\?|$)/i.test(imgSrc)) return;
+        picture.querySelectorAll('source').forEach((source) => {
+          const srcset = source.getAttribute('srcset') || '';
+          // keep only a native-SVG source (if any); remove webp/other rasterized ones
+          if (source.getAttribute('type') !== 'image/svg+xml' || /format=webply/i.test(srcset)) {
+            source.remove();
+          }
+        });
+      });
+
       decorateMain(main);
       await loadSections(main);
       return main;
