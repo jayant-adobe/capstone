@@ -55,3 +55,15 @@
 .tabs .tabs-panel[aria-hidden='true'] {
   display: none;
 }
+
+/* Pre-hydration CLS guard: before the block JS runs there is no tablist yet —
+   every authored row (one per tab: [label | panel]) is stacked and visible, so
+   the block is ~N× its final height. When JS collapses it to a single visible
+   panel the page shifts badly (measured CLS 1.46 on adventure-detail, where the
+   block also sits in a fixed-row two-column grid). Until the tablist is inserted
+   (JS prepends `.tabs-list`), show only the first authored row so the
+   undecorated height ~= the final single-panel height. Once `.tabs-list` exists
+   this guard switches off and the normal aria-hidden panel logic takes over. */
+.tabs:not(:has(> .tabs-list)) > div:nth-child(n+2) {
+  display: none;
+}
