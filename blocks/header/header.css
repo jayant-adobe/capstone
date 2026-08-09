@@ -13,9 +13,11 @@
  * Colors/fonts mapped to brand tokens.
  */
 
-/* header is in-flow and sizes to its content (overrides the boilerplate
-   fixed --nav-height reserve in styles.css). */
+/* header is in-flow and sizes to its content. The eager styles.css reserves the
+   header height (via --nav-height) before this block hydrates, so the nav does
+   not shift the hero on load (prevents CLS). Allow it to grow if content wraps. */
 header {
+  min-height: var(--nav-height);
   height: auto;
 }
 

@@ -53,8 +53,17 @@ body.appear {
   display: block;
 }
 
+/* Reserve the WKND header's rendered height before the nav block hydrates so it
+   does not push the hero down on load (prevents CLS). Mobile header is ~109px,
+   desktop ~133px. min-height reserves the space but lets the header grow. */
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+}
+
+@media (width >= 900px) {
+  header {
+    min-height: 133px;
+  }
 }
 
 header .header,
