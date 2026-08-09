@@ -92,9 +92,9 @@
 }
 
 /* role — Source Sans Pro 14px/21px 600 uppercase, dark ink (#202020), no
-   letter-spacing (source). 16px gap down to the social icon row. */
+   letter-spacing (source). ~22px gap down to the social icon row (source). */
 .cards-profile .cards-profile-card-body h5 {
-  margin: 0 0 16px;
+  margin: 0 0 22px;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 600;
@@ -105,10 +105,11 @@
 }
 
 /* ------------------------------------------------- social link row
-   Each social link is imported wrapped in its own <p>. Render them as a compact
-   CENTERED HORIZONTAL ROW of dark circular buttons, each showing the real
-   Facebook / Twitter / Instagram brand glyph (from icons/social-*.svg, applied
-   as a CSS mask so the button colour drives the glyph). Each <p> collapses to an
+   Each social link is imported wrapped in its own <p>. The source renders these
+   as icon-only buttons: a 48x48 SQUARE (no radius) with a dark (#202020)
+   background holding a ~17.5px light-grey (#ebebeb) brand glyph. We reproduce the
+   real Facebook / Twitter / Instagram glyphs (icons/social-*.svg) as a CSS mask
+   so the glyph colour is driven by background-color. Each <p> collapses to an
    inline-block so the three buttons sit side by side (they'd stack if promoted
    into the card-body's flex column). */
 .cards-profile .cards-profile-card-body p:has(> a) {
@@ -120,26 +121,26 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin: 0 4px;
+  width: 48px;
+  height: 48px;
+  margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
   overflow: hidden;
   font-size: 0; /* hide the "Facebook"/"Twitter"/"Instagram" label text */
   line-height: 0;
   text-decoration: none;
-  background-color: var(--text-color);
+  background-color: var(--dark-color); /* source: dark #202020 square */
   vertical-align: top;
 }
 
-/* the brand glyph: a masked square coloured with the button's contrasting ink */
+/* the brand glyph: a ~17.5px masked square in the source's light grey (#ebebeb) */
 .cards-profile .cards-profile-card-body a:any-link::before {
   content: '';
-  width: 18px;
-  height: 18px;
-  background-color: var(--background-color);
+  width: 17.5px;
+  height: 17.5px;
+  background-color: var(--light-color);
   mask: var(--profile-social-icon) center / contain no-repeat;
 
   /* stylelint-disable-next-line property-no-vendor-prefix */
@@ -159,12 +160,13 @@
   --profile-social-icon: url('/icons/social-instagram.svg');
 }
 
+/* affordance on hover: brand-yellow square with dark glyph */
 .cards-profile .cards-profile-card-body a:any-link:hover {
   background-color: var(--accent-color);
 }
 
 .cards-profile .cards-profile-card-body a:any-link:hover::before {
-  background-color: var(--accent-text-color);
+  background-color: var(--text-color);
 }
 
 /* ------------------------------------------------------------ >= 600px */
