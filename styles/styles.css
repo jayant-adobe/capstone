@@ -592,3 +592,69 @@ main > .section.cards-byline-container + .section li {
     grid-row: 2 / span 2;
   }
 }
+
+/* ------------------------------------------------------------- About Us page
+   Source layout: two team-profile grids — "Our Contributors" (4 across) and
+   "WKND Guides" (3 across) — each an aem-GridColumn--default--3 row of circular
+   portrait cards. The migration produced one `.cards-profile` block per profile
+   (seven sibling `.cards-profile-wrapper` divs) plus two `.default-content-wrapper`
+   headings ("Our Contributors" and "WKND Guides"), all direct children of the
+   section. Make the section a 4-column grid: the heading blocks span the full
+   row (starting a new grid row), and each profile wrapper occupies one cell —
+   reproducing the 4-up then 3-up source grids. Stacks on mobile. */
+@media (width >= 900px) {
+  main > .section.cards-profile-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 48px 24px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* the section's own children no longer center themselves — the grid cell is
+     their box. Neutralize the wrappers' horizontal centering. */
+  main > .section.cards-profile-container > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  /* headings ("About Us"/"Our Contributors" and "WKND Guides") span the full
+     row so the profile row below them always starts at column 1. */
+  main > .section.cards-profile-container > .default-content-wrapper {
+    grid-column: 1 / -1;
+  }
+
+  /* each profile occupies a single grid cell (its inner single-card grid just
+     fills the cell). */
+  main > .section.cards-profile-container > .cards-profile-wrapper {
+    grid-column: span 1;
+  }
+}
+
+/* On tablet (>=600px, <900px) show 2-up to match the block's own breakpoint. */
+@media (width >= 600px) and (width < 900px) {
+  main > .section.cards-profile-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 24px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  main > .section.cards-profile-container > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  main > .section.cards-profile-container > .default-content-wrapper {
+    grid-column: 1 / -1;
+  }
+}

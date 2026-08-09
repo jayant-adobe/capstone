@@ -17,16 +17,21 @@
  * critique; this file establishes the faithful layout + button treatment.
  */
 
+/* On About Us the import produced one profile per block (a single-card ul), and
+   the page-level section grid (styles.css) arranges the blocks into the 4-up /
+   3-up rows. So the block's own list is a plain full-width block, not a grid —
+   a single-item grid track was resolving the card's `width:100%` against its
+   own content width and collapsing the card. If this variant is ever authored
+   as a multi-card block, the section grid still lays the siblings out. */
 .cards-profile > ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 48px 24px;
 }
 
 .cards-profile > ul > li {
+  display: block;
+  width: 100%;
   margin: 0;
   padding: 0;
   border: none;
@@ -36,30 +41,43 @@
   text-align: center;
 }
 
-/* ---------------------------------------------------- circular portrait */
+/* ---------------------------------------------------- circular portrait
+   Size the circle on the image CELL and the <picture> wrapper (164px), then let
+   the <img> fill it. Sizing only the <img> fails: the inline-block <picture>
+   collapses to a tiny width and the global `main img{max-width:100%}` then clamps
+   the image down to that collapsed width. */
 .cards-profile .cards-profile-card-image {
   display: block;
+  width: 164px;
+  margin: 0 auto;
   line-height: 0;
 }
 
 .cards-profile .cards-profile-card-image picture {
-  display: inline-block;
+  display: block;
+  width: 164px;
+  height: 164px;
 }
 
 .cards-profile > ul > li img {
   display: block;
-  width: 165px;
+  width: 164px;
+  height: 164px;
   max-width: 100%;
   margin: 0 auto;
-  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 50%;
 }
 
-/* --------------------------------------------------------- text content */
+/* --------------------------------------------------------- text content
+   Centered block: name/role are block headings; the social <p>s flow inline as
+   a centered row (see below). (A flex column would force the three social <p>s
+   to stack, so plain centered block layout is used instead.) */
 .cards-profile .cards-profile-card-body {
+  width: 100%;
   margin: 0;
   padding: 0;
+  text-align: center;
 }
 
 /* name — heading font (Asar), centered */
@@ -72,9 +90,9 @@
   color: var(--text-color);
 }
 
-/* role — body font, uppercase, muted grey, tracked out */
+/* role — body font, uppercase, muted grey, tracked out; 16px gap to icon row */
 .cards-profile .cards-profile-card-body h5 {
-  margin: 8px 0 0;
+  margin: 8px 0 16px;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 600;
@@ -84,19 +102,17 @@
   color: var(--text-muted-color, #696969);
 }
 
-/* ------------------------------------------------- social button row */
-
-/* Center the social links as a horizontal row. Links may arrive as direct
-   anchors or each wrapped in its own paragraph; handle both so the row stays
-   centered regardless of the imported shape. */
+/* ------------------------------------------------- social link row
+   Each social link is imported wrapped in its own <p>. The source shows small
+   icon-only buttons; we can't reproduce its proprietary wknd-icon-font glyphs,
+   so render the links as a compact CENTERED HORIZONTAL ROW of circular buttons
+   showing the platform initial (f / t / i) — faithful in shape/placement and,
+   unlike empty boxes, still legible. Each <p> collapses to an inline-block so
+   the three buttons sit side by side (they'd stack if promoted into the
+   card-body's flex column). */
 .cards-profile .cards-profile-card-body p:has(> a) {
-  display: inline;
+  display: inline-block;
   margin: 0;
-}
-
-.cards-profile .cards-profile-card-body h5 + p,
-.cards-profile .cards-profile-card-body h3 + p:has(> a) {
-  margin-top: 16px;
 }
 
 .cards-profile .cards-profile-card-body a:any-link {
@@ -105,17 +121,32 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  margin: 16px 4px 0;
+  margin: 0 4px;
   padding: 0;
   border: 0;
-  border-radius: 0;
+  border-radius: 50%;
   overflow: hidden;
-  font-size: 0;
-  line-height: 0;
+  font-size: 0; /* hide the full "Facebook"/"Twitter"/"Instagram" label */
+  line-height: 1;
   text-decoration: none;
   background-color: var(--text-color);
   color: var(--background-color);
   vertical-align: top;
+}
+
+/* Re-expose a single platform initial inside the circle, keyed off the link's
+   title (reliable across all profiles; some hrefs are just "#"). The source
+   uses icon glyphs from a proprietary font we can't ship. */
+.cards-profile .cards-profile-card-body a[title*='facebook' i]::before { content: 'f'; }
+.cards-profile .cards-profile-card-body a[title*='twitter' i]::before { content: 't'; }
+.cards-profile .cards-profile-card-body a[title*='instagram' i]::before { content: 'i'; }
+
+.cards-profile .cards-profile-card-body a:any-link::before {
+  font-family: var(--heading-font-family);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: lowercase;
 }
 
 .cards-profile .cards-profile-card-body a:any-link:hover {
