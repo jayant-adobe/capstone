@@ -103,13 +103,12 @@
 }
 
 /* ------------------------------------------------- social link row
-   Each social link is imported wrapped in its own <p>. The source shows small
-   icon-only buttons; we can't reproduce its proprietary wknd-icon-font glyphs,
-   so render the links as a compact CENTERED HORIZONTAL ROW of circular buttons
-   showing the platform initial (f / t / i) — faithful in shape/placement and,
-   unlike empty boxes, still legible. Each <p> collapses to an inline-block so
-   the three buttons sit side by side (they'd stack if promoted into the
-   card-body's flex column). */
+   Each social link is imported wrapped in its own <p>. Render them as a compact
+   CENTERED HORIZONTAL ROW of dark circular buttons, each showing the real
+   Facebook / Twitter / Instagram brand glyph (from icons/social-*.svg, applied
+   as a CSS mask so the button colour drives the glyph). Each <p> collapses to an
+   inline-block so the three buttons sit side by side (they'd stack if promoted
+   into the card-body's flex column). */
 .cards-profile .cards-profile-card-body p:has(> a) {
   display: inline-block;
   margin: 0;
@@ -126,32 +125,44 @@
   border: 0;
   border-radius: 50%;
   overflow: hidden;
-  font-size: 0; /* hide the full "Facebook"/"Twitter"/"Instagram" label */
-  line-height: 1;
+  font-size: 0; /* hide the "Facebook"/"Twitter"/"Instagram" label text */
+  line-height: 0;
   text-decoration: none;
   background-color: var(--text-color);
-  color: var(--background-color);
   vertical-align: top;
 }
 
-/* Re-expose a single platform initial inside the circle, keyed off the link's
-   title (reliable across all profiles; some hrefs are just "#"). The source
-   uses icon glyphs from a proprietary font we can't ship. */
-.cards-profile .cards-profile-card-body a[title*='facebook' i]::before { content: 'f'; }
-.cards-profile .cards-profile-card-body a[title*='twitter' i]::before { content: 't'; }
-.cards-profile .cards-profile-card-body a[title*='instagram' i]::before { content: 'i'; }
-
+/* the brand glyph: a masked square coloured with the button's contrasting ink */
 .cards-profile .cards-profile-card-body a:any-link::before {
-  font-family: var(--heading-font-family);
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1;
-  text-transform: lowercase;
+  content: '';
+  width: 18px;
+  height: 18px;
+  background-color: var(--background-color);
+  mask: var(--profile-social-icon) center / contain no-repeat;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask: var(--profile-social-icon) center / contain no-repeat;
+}
+
+/* pick the glyph per platform (title is reliable; some hrefs are just "#") */
+.cards-profile .cards-profile-card-body a[title*='facebook' i] {
+  --profile-social-icon: url('/icons/social-facebook.svg');
+}
+
+.cards-profile .cards-profile-card-body a[title*='twitter' i] {
+  --profile-social-icon: url('/icons/social-twitter.svg');
+}
+
+.cards-profile .cards-profile-card-body a[title*='instagram' i] {
+  --profile-social-icon: url('/icons/social-instagram.svg');
 }
 
 .cards-profile .cards-profile-card-body a:any-link:hover {
   background-color: var(--accent-color);
-  color: var(--accent-text-color);
+}
+
+.cards-profile .cards-profile-card-body a:any-link:hover::before {
+  background-color: var(--accent-text-color);
 }
 
 /* ------------------------------------------------------------ >= 600px */
