@@ -3,16 +3,20 @@
 /**
  * Parser for variant: columns
  * Base block: columns
- * Source: https://wknd.site/us/en.html
+ * Source: homepage, magazine landing, adventures landing
  *   Instances:
- *     - div.teaser.cmp-teaser--featured (Featured Article, with eyebrow)
- *     - div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom (Next Adventures)
- * Generated: 2026-08-07
+ *     - div.teaser.cmp-teaser--featured (Featured Article: eyebrow + H2 + description + CTA)
+ *     - div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom (Next Adventures: H2 + description + CTA)
+ *     - div.teaser.cmp-teaser--hero (Adventures landing intro: H2 + description, NO eyebrow, NO CTA)
+ * Generated: 2026-08-07 (extended 2026-08-09 for the eyebrow-less / CTA-less hero intro)
  *
  * Block Collection "Columns" model (teaser variant): 2 columns.
  *   Row 1: block name ("Columns").
  *   Row 2: [ image | copy ].
  *     copy cell = optional eyebrow + H2 heading + description paragraph + optional CTA link.
+ *
+ * Degrades gracefully: eyebrow and CTA are optional, so the eyebrow-less /
+ * CTA-less hero-intro teaser produces a copy cell of just heading + description.
  *
  * Runs once per matched teaser instance.
  */

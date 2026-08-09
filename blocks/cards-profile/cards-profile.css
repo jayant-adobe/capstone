@@ -1,0 +1,184 @@
+/*
+ * cards-profile — WKND team-member / contributor profile grid.
+ *
+ * Variant of the vanilla `cards` block, created from
+ * https://wknd.site/us/en/about-us.html (the "Our Contributors" and
+ * "WKND Guides" grids). Distinct from the project's article `cards` block
+ * (rectangular 1.3-ratio image, left-aligned uppercase title, ellipsis
+ * description): profile cards use a CIRCULAR centered portrait, a centered
+ * name + role, and a centered horizontal row of dark social-icon buttons.
+ *
+ * Content model (per card row): cell 1 = portrait image, cell 2 = text
+ * (h3 name, h5 role, and social links Facebook/Twitter/Instagram).
+ *
+ * Values measured from the source @1440px. Colors/fonts use brand tokens.
+ * NOTE: icon-only rendering of the social links (swapping the label text for
+ * the platform SVG icons) is finalized during content import + visual
+ * critique; this file establishes the faithful layout + button treatment.
+ */
+
+/* On About Us the import produced one profile per block (a single-card ul), and
+   the page-level section grid (styles.css) arranges the blocks into the 4-up /
+   3-up rows. So the block's own list is a plain full-width block, not a grid —
+   a single-item grid track was resolving the card's `width:100%` against its
+   own content width and collapsing the card. If this variant is ever authored
+   as a multi-card block, the section grid still lays the siblings out. */
+.cards-profile > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cards-profile > ul > li {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  min-width: 0;
+  text-align: center;
+}
+
+/* ---------------------------------------------------- circular portrait
+   Size the circle on the image CELL and the <picture> wrapper (164px), then let
+   the <img> fill it. Sizing only the <img> fails: the inline-block <picture>
+   collapses to a tiny width and the global `main img{max-width:100%}` then clamps
+   the image down to that collapsed width. */
+.cards-profile .cards-profile-card-image {
+  display: block;
+  width: 164px;
+  margin: 0 auto;
+  line-height: 0;
+}
+
+.cards-profile .cards-profile-card-image picture {
+  display: block;
+  width: 164px;
+  height: 164px;
+}
+
+.cards-profile > ul > li img {
+  display: block;
+  width: 164px;
+  height: 164px;
+  max-width: 100%;
+  margin: 0 auto;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------- text content
+   Centered block: name/role are block headings; the social <p>s flow inline as
+   a centered row (see below). (A flex column would force the three social <p>s
+   to stack, so plain centered block layout is used instead.) */
+.cards-profile .cards-profile-card-body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+/* name — Asar serif 24px/36px, ~14px below the portrait, 6px above the role
+   (values measured from the source). */
+.cards-profile .cards-profile-card-body h3 {
+  margin: 14px 0 6px;
+  font-family: var(--heading-font-family);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+/* role — Source Sans Pro 14px/21px 600 uppercase, dark ink (#202020), no
+   letter-spacing (source). 16px gap down to the social icon row. */
+.cards-profile .cards-profile-card-body h5 {
+  margin: 0 0 16px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+/* ------------------------------------------------- social link row
+   Each social link is imported wrapped in its own <p>. Render them as a compact
+   CENTERED HORIZONTAL ROW of dark circular buttons, each showing the real
+   Facebook / Twitter / Instagram brand glyph (from icons/social-*.svg, applied
+   as a CSS mask so the button colour drives the glyph). Each <p> collapses to an
+   inline-block so the three buttons sit side by side (they'd stack if promoted
+   into the card-body's flex column). */
+.cards-profile .cards-profile-card-body p:has(> a) {
+  display: inline-block;
+  margin: 0;
+}
+
+.cards-profile .cards-profile-card-body a:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  font-size: 0; /* hide the "Facebook"/"Twitter"/"Instagram" label text */
+  line-height: 0;
+  text-decoration: none;
+  background-color: var(--text-color);
+  vertical-align: top;
+}
+
+/* the brand glyph: a masked square coloured with the button's contrasting ink */
+.cards-profile .cards-profile-card-body a:any-link::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  background-color: var(--background-color);
+  mask: var(--profile-social-icon) center / contain no-repeat;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask: var(--profile-social-icon) center / contain no-repeat;
+}
+
+/* pick the glyph per platform (title is reliable; some hrefs are just "#") */
+.cards-profile .cards-profile-card-body a[title*='facebook' i] {
+  --profile-social-icon: url('/icons/social-facebook.svg');
+}
+
+.cards-profile .cards-profile-card-body a[title*='twitter' i] {
+  --profile-social-icon: url('/icons/social-twitter.svg');
+}
+
+.cards-profile .cards-profile-card-body a[title*='instagram' i] {
+  --profile-social-icon: url('/icons/social-instagram.svg');
+}
+
+.cards-profile .cards-profile-card-body a:any-link:hover {
+  background-color: var(--accent-color);
+}
+
+.cards-profile .cards-profile-card-body a:any-link:hover::before {
+  background-color: var(--accent-text-color);
+}
+
+/* ------------------------------------------------------------ >= 600px */
+@media (width >= 600px) {
+  .cards-profile > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------ >= 900px */
+@media (width >= 900px) {
+  /* 4-up desktop grid, matching the source contributor layout
+     (aem-GridColumn--default--3). The 3-item Guides grid left-aligns. */
+  .cards-profile > ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "variantName": "tabs-filter",
+  "baseBlock": "tabs",
+  "version": "1.0.0",
+  "created": "2026-08-09T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/adventures.html",
+    "originPage": "WKND Adventures section-landing page",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "category-filter",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "row-per-category-label (All + N categories) controlling a sibling cards grid",
+    "buttonCount": 6,
+    "imageCount": 0
+  },
+  "behavior": {
+    "type": "filter",
+    "controls": "the next sibling .cards block in the same section",
+    "matchAttribute": "data-categories (space-separated category class names on each card li)",
+    "allCategory": "all",
+    "notPanelSwitcher": true,
+    "note": "Unlike the vanilla tabs block (one content panel per tab), this variant renders only a category filter bar and toggles the visibility (hidden) of cards in a sibling cards block. This avoids nesting a cards block inside tab panels (David's Model: blocks must not be nested)."
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "category/tag filtering over a card grid",
+      "section-landing pages that filter a repeatable list of items",
+      "any page where a shared item grid is filtered by non-exclusive categories"
+    ],
+    "notSuitableFor": [
+      "true tabbed content where each tab has distinct, independent panel content (use the vanilla tabs block)",
+      "filtering when items are not authored as a sibling cards block"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/adventures"],
+    "reuseCount": 1,
+    "lastUsed": "2026-08-09T00:00:00.000Z"
+  }
+}

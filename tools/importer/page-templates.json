@@ -93,6 +93,343 @@
           ]
         }
       ]
+    },
+    {
+      "name": "section-landing-magazine",
+      "urls": [
+        "https://wknd.site/us/en/magazine.html"
+      ],
+      "coverageGaps": [],
+      "description": "Magazine landing page. Structure: (1) H1 page title, (2) Featured Article teaser (div.teaser.cmp-teaser--featured: image + copy) -> columns, (3) 'All Articles' underlined H2, (4) a card grid (div.image-list.list) of magazine-article teasers -> cards, (5) 'Members Only' underlined H2 + sign-in body text + separator, (6) two members-only secure teasers (div.teaser.cmp-teaser--secure) -> cards. Reuses columns + cards; no new blocks.",
+      "blocks": [
+        {
+          "name": "columns",
+          "instances": [
+            "div.teaser.cmp-teaser--featured"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            "div.image-list.list",
+            "div.teaser.cmp-teaser--secure"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc2",
+          "name": "Page Title",
+          "selector": "main div.title:not(.cmp-title--underline)",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "main div.title:not(.cmp-title--underline) h1"
+          ]
+        },
+        {
+          "id": "rc3",
+          "name": "Featured Article",
+          "selector": "div.teaser.cmp-teaser--featured",
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc5",
+          "name": "All Articles",
+          "selector": "div.image-list.list",
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": [
+            "div.title.cmp-title--underline:nth-of-type(3)"
+          ]
+        },
+        {
+          "id": "rc9",
+          "name": "Members Only",
+          "selector": "div.teaser.cmp-teaser--secure",
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": [
+            "div.title.cmp-title--underline:nth-of-type(5)",
+            "main div.text",
+            "div.separator.cmp-separator--space-medium"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "section-landing-adventures",
+      "urls": [
+        "https://wknd.site/us/en/adventures.html"
+      ],
+      "coverageGaps": [],
+      "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers, (4) a separator. Reuses columns (teaser) + cards (image-list); tab filter maps to a tabs block wrapping the cards.",
+      "blocks": [
+        {
+          "name": "columns",
+          "instances": [
+            "div.teaser.cmp-teaser--hero"
+          ]
+        },
+        {
+          "name": "tabs-filter",
+          "instances": [
+            "div.tabs.panelcontainer"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            "div.cmp-tabs__tabpanel--active div.image-list.list"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc2",
+          "name": "Page Title",
+          "selector": "main.container.responsivegrid.cmp-layout-container--fixed:nth-of-type(1)",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "main.container.responsivegrid.cmp-layout-container--fixed:nth-of-type(1) h1"
+          ]
+        },
+        {
+          "id": "rc3",
+          "name": "Intro Teaser",
+          "selector": "div.teaser.cmp-teaser--hero",
+          "style": null,
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc5",
+          "name": "Current Adventures",
+          "selector": "div.tabs.panelcontainer",
+          "style": null,
+          "blocks": [
+            "tabs-filter",
+            "cards"
+          ],
+          "defaultContent": [
+            "div.title.cmp-title--underline"
+          ]
+        },
+        {
+          "id": "rc6",
+          "name": "Closing Divider",
+          "selector": "div.separator",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "div.separator"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "faqs",
+      "urls": [
+        "https://wknd.site/us/en/faqs.html"
+      ],
+      "coverageGaps": [],
+      "description": "FAQs page. Two-column fixed layout: main column (underlined H1 'FAQs', hero photo, intro paragraph, and a 7-item Q/A accordion -> accordion block) + a 'Need more help?' sidebar (heading + contact paragraph). Reuses the accordion block; sidebar and intro are default content.",
+      "blocks": [
+        {
+          "name": "accordion",
+          "instances": [
+            "div.accordion.panelcontainer"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "name": "Main FAQ content",
+          "selector": "main div.container.responsivegrid.aem-GridColumn--default--8",
+          "style": null,
+          "blocks": [
+            "accordion"
+          ],
+          "defaultContent": [
+            "div.title.cmp-title--underline",
+            "main div.container.responsivegrid.aem-GridColumn--default--8 div.image",
+            "main div.container.responsivegrid.aem-GridColumn--default--8 div.text"
+          ]
+        },
+        {
+          "id": "s2",
+          "name": "Need more help? (sidebar)",
+          "selector": "main div.container.responsivegrid.aem-GridColumn--default--3",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "main div.container.responsivegrid.aem-GridColumn--default--3 div.title",
+            "main div.container.responsivegrid.aem-GridColumn--default--3 div.text"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "about-us",
+      "urls": [
+        "https://wknd.site/us/en/about-us.html"
+      ],
+      "coverageGaps": [],
+      "description": "About Us page. Structure: (1) H1 'About Us', (2) 'Our Contributors' underlined H2 + intro paragraph, then a grid of 4 team-member profiles, (3) 'WKND Guides' underlined H2 + intro paragraph, then a grid of 3 profiles. Each profile = circular portrait + name (h3) + role (h5) + 3 social icon links (hrefs are '#'/anchor placeholders, no internal links). Profiles map to a NEW cards-profile variant (circular portraits + social-icon row). The two grids are consecutive profile containers separated by the two H2 headings (default content); the import parser groups consecutive profile containers into one cards-profile block per grid.",
+      "blocks": [
+        {
+          "name": "cards-profile",
+          "instances": [
+            "main div.container.responsivegrid.cmp-layout-container--fixed:has(div.title):has(div.button.cmp-button--icononly)"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "name": "Our Contributors",
+          "selector": "main.container.responsivegrid.cmp-layout-container--fixed",
+          "style": null,
+          "blocks": [
+            "cards-profile"
+          ],
+          "defaultContent": [
+            "h1",
+            "div.title.cmp-title--underline:nth-of-type(1)",
+            "div.text.cmp-text--font-small:nth-of-type(1)",
+            "div.title.cmp-title--underline:nth-of-type(2)",
+            "div.text.cmp-text--font-small:nth-of-type(2)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "adventure-detail",
+      "urls": [
+        "https://wknd.site/us/en/adventures/bali-surf-camp.html",
+        "https://wknd.site/us/en/adventures/beervana-portland.html",
+        "https://wknd.site/us/en/adventures/climbing-new-zealand.html",
+        "https://wknd.site/us/en/adventures/colorado-rock-climbing.html",
+        "https://wknd.site/us/en/adventures/cycling-southern-utah.html",
+        "https://wknd.site/us/en/adventures/cycling-tuscany.html",
+        "https://wknd.site/us/en/adventures/downhill-skiing-wyoming.html",
+        "https://wknd.site/us/en/adventures/gastronomic-marais-tour.html",
+        "https://wknd.site/us/en/adventures/napa-wine-tasting.html",
+        "https://wknd.site/us/en/adventures/riverside-camping-australia.html",
+        "https://wknd.site/us/en/adventures/ski-touring-mont-blanc.html",
+        "https://wknd.site/us/en/adventures/surf-camp-costa-rica.html",
+        "https://wknd.site/us/en/adventures/tahoe-skiing.html",
+        "https://wknd.site/us/en/adventures/west-coast-cycling.html",
+        "https://wknd.site/us/en/adventures/whistler-mountain-biking.html",
+        "https://wknd.site/us/en/adventures/yosemite-backpacking.html"
+      ],
+      "coverageGaps": [],
+      "description": "Adventure detail page (16 pages, structurally identical). Structure: (1) mini image carousel at top (div.carousel.panelcontainer.cmp-carousel--mini) -> carousel, (2) underlined H1 adventure title -> default content, (3) an overview spec content fragment (div.contentfragment.cmp-contentfragment--elements: Activity / Adventure Type / Trip Length / Group Size / Difficulty / Price) -> table-overview (new variant; 2-col label|value table), (4) 'Share this Adventure' H5 + share widget -> default content, (5) itinerary tabs (div.tabs.panelcontainer; Overview/Itinerary/What to Bring) wrapping a rich-text content fragment -> tabs. The footer teaser/CTA (Follow Us) is the site-wide footer experience fragment, NOT page content. Breadcrumb nav is chrome, not migrated.",
+      "blocks": [
+        {
+          "name": "carousel",
+          "instances": [
+            "div.carousel.panelcontainer.cmp-carousel--mini"
+          ]
+        },
+        {
+          "name": "table-overview",
+          "instances": [
+            "div.contentfragment.cmp-contentfragment--elements"
+          ]
+        },
+        {
+          "name": "tabs",
+          "instances": [
+            "main div.tabs.panelcontainer"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "s1",
+          "name": "Adventure Carousel",
+          "selector": "div.carousel.panelcontainer.cmp-carousel--mini",
+          "style": null,
+          "blocks": [
+            "carousel"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "s2",
+          "name": "Adventure Detail",
+          "selector": "main.container.responsivegrid.cmp-layout-container--fixed",
+          "style": null,
+          "blocks": [
+            "table-overview",
+            "tabs"
+          ],
+          "defaultContent": [
+            "main div.title.cmp-title--underline",
+            "main h5"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "magazine-article",
+      "urls": [
+        "https://wknd.site/us/en/magazine/arctic-surfing.html",
+        "https://wknd.site/us/en/magazine/guide-la-skateparks.html",
+        "https://wknd.site/us/en/magazine/san-diego-surf.html",
+        "https://wknd.site/us/en/magazine/ski-touring.html",
+        "https://wknd.site/us/en/magazine/western-australia.html"
+      ],
+      "coverageGaps": [],
+      "description": "Magazine article page (5 pages, structurally identical). Structure: (1) article body (main.cmp-layout-container--fixed): full-bleed lead image + H1 + byline (h4) + long-form rich text (paragraphs, a blockquote pull-quote, H2 subheads, inline images) -> ALL DEFAULT CONTENT; (2) author bio experience fragment (portrait + name h2 + role + social icon links) -> cards-byline (new horizontal author-card variant); (3) related-articles sidebar (aside.cmp-layoutcontainer--sidebar: 'SHARE THIS STORY' h5 + a list of 4 related-article links with dates, hrefs -> /us/en/magazine/<slug>.html) -> default content. The footer teaser (Follow Us) and breadcrumb are site chrome, not page content.",
+      "blocks": [
+        {
+          "name": "cards-byline",
+          "instances": [
+            "main main div.experiencefragment"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "Article Body",
+          "selector": "main main.container.responsivegrid.cmp-layout-container--fixed",
+          "style": null,
+          "blocks": [
+            "cards-byline"
+          ],
+          "defaultContent": [
+            "main main.container.responsivegrid.cmp-layout-container--fixed h1",
+            "main main.container.responsivegrid.cmp-layout-container--fixed h4",
+            "main main.container.responsivegrid.cmp-layout-container--fixed article"
+          ]
+        },
+        {
+          "id": "rc3",
+          "name": "Related Articles",
+          "selector": "aside.container.responsivegrid.cmp-layoutcontainer--sidebar",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "aside.container.responsivegrid.cmp-layoutcontainer--sidebar h5",
+            "aside.container.responsivegrid.cmp-layoutcontainer--sidebar ul"
+          ]
+        }
+      ]
     }
   ]
 }

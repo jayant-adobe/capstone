@@ -1,0 +1,133 @@
+/*
+ * cards-byline — author byline card.
+ *
+ * Variant of the vanilla `cards` block, created from
+ * https://wknd.site/us/en/magazine/arctic-surfing.html (end-of-article
+ * "Jacob Wester / Skater, Writer" author byline; repeats on all 5 magazine
+ * articles). Distinct from cards-profile (a CENTERED circular-portrait
+ * contributor GRID for the About Us page) and from the article `cards` block
+ * (rectangular image grid): the byline is a SINGLE horizontal row — small
+ * round portrait on the left, name + role stacked in the middle, and a
+ * horizontal row of dark social-icon buttons on the right.
+ *
+ * Content model (per card row): cell 1 = portrait image, cell 2 = text
+ * (name heading, role, social links Facebook/Twitter/Instagram).
+ * Colors/fonts use brand tokens.
+ * NOTE: icon-only rendering of the social links (swapping label text for the
+ * platform SVG icons) is finalized during content import + visual critique;
+ * this file establishes the faithful layout + button treatment.
+ */
+
+.cards-byline > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* horizontal byline row, preceded by a full-width top separator */
+.cards-byline > ul > li {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 0;
+  padding: 32px 0 0;
+  border: none;
+  border-top: 1px solid var(--border-color, #dadada);
+  background: none;
+  box-shadow: none;
+  min-width: 0;
+}
+
+/* --------------------------------------------------- small round portrait */
+.cards-byline .cards-byline-card-image {
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.cards-byline .cards-byline-card-image img {
+  display: block;
+  width: 60px;
+  height: 60px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ------------------------------------------------------------- name + role */
+.cards-byline .cards-byline-card-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+/* name — heading font */
+.cards-byline .cards-byline-card-body h1,
+.cards-byline .cards-byline-card-body h2,
+.cards-byline .cards-byline-card-body h3,
+.cards-byline .cards-byline-card-body h4 {
+  margin: 0;
+  font-family: var(--heading-font-family);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-color);
+}
+
+/* role — body font, uppercase, muted, tracked out */
+.cards-byline .cards-byline-card-body h5,
+.cards-byline .cards-byline-card-body h6 {
+  margin: 4px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted-color, #696969);
+}
+
+/* -------------------------------------------------- social button row (right) */
+
+/* Links may arrive as direct anchors or each wrapped in its own paragraph;
+   keep them inline so the row stays compact regardless of imported shape. */
+.cards-byline .cards-byline-card-body p:has(> a) {
+  display: inline;
+  margin: 0;
+}
+
+.cards-byline .cards-byline-card-body a:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+  text-decoration: none;
+  background-color: var(--text-color);
+  color: var(--background-color);
+  vertical-align: middle;
+}
+
+.cards-byline .cards-byline-card-body a:any-link:hover {
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
+}
+
+/* On wider screens the social icons sit at the far right of the byline row.
+   The body cell holds both the name/role and the links; push links right by
+   letting the name/role flow left and aligning the link group to the end. */
+@media (width >= 600px) {
+  .cards-byline .cards-byline-card-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}

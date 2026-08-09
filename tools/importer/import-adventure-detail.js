@@ -6,8 +6,8 @@
 
 // PARSER IMPORTS
 import carouselParser from './parsers/carousel.js';
-import columnsParser from './parsers/columns.js';
-import cardsParser from './parsers/cards.js';
+import tableOverviewParser from './parsers/table-overview.js';
+import tabsParser from './parsers/tabs.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -17,43 +17,57 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 // PARSER REGISTRY
 const parsers = {
   'carousel': carouselParser,
-  'columns': columnsParser,
-  'cards': cardsParser,
+  'table-overview': tableOverviewParser,
+  'tabs': tabsParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
-  "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "name": "adventure-detail",
+  "description": "Adventure detail page (16 pages, structurally identical). Structure: (1) mini image carousel at top (div.carousel.panelcontainer.cmp-carousel--mini) -> carousel, (2) underlined H1 adventure title -> default content, (3) an overview spec content fragment (div.contentfragment.cmp-contentfragment--elements: Activity / Adventure Type / Trip Length / Group Size / Difficulty / Price) -> table-overview (new variant; 2-col label|value table), (4) 'Share this Adventure' H5 + share widget -> default content, (5) itinerary tabs (div.tabs.panelcontainer; Overview/Itinerary/What to Bring) wrapping a rich-text content fragment -> tabs. The footer teaser/CTA (Follow Us) is the site-wide footer experience fragment, NOT page content. Breadcrumb nav is chrome, not migrated.",
   "urls": [
-    "https://wknd.site/us/en.html"
+    "https://wknd.site/us/en/adventures/bali-surf-camp.html",
+    "https://wknd.site/us/en/adventures/beervana-portland.html",
+    "https://wknd.site/us/en/adventures/climbing-new-zealand.html",
+    "https://wknd.site/us/en/adventures/colorado-rock-climbing.html",
+    "https://wknd.site/us/en/adventures/cycling-southern-utah.html",
+    "https://wknd.site/us/en/adventures/cycling-tuscany.html",
+    "https://wknd.site/us/en/adventures/downhill-skiing-wyoming.html",
+    "https://wknd.site/us/en/adventures/gastronomic-marais-tour.html",
+    "https://wknd.site/us/en/adventures/napa-wine-tasting.html",
+    "https://wknd.site/us/en/adventures/riverside-camping-australia.html",
+    "https://wknd.site/us/en/adventures/ski-touring-mont-blanc.html",
+    "https://wknd.site/us/en/adventures/surf-camp-costa-rica.html",
+    "https://wknd.site/us/en/adventures/tahoe-skiing.html",
+    "https://wknd.site/us/en/adventures/west-coast-cycling.html",
+    "https://wknd.site/us/en/adventures/whistler-mountain-biking.html",
+    "https://wknd.site/us/en/adventures/yosemite-backpacking.html"
   ],
   "blocks": [
     {
       "name": "carousel",
       "instances": [
-        "div.carousel.cmp-carousel--hero"
+        "div.carousel.panelcontainer.cmp-carousel--mini"
       ]
     },
     {
-      "name": "columns",
+      "name": "table-overview",
       "instances": [
-        "div.teaser.cmp-teaser--featured",
-        "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
+        "div.contentfragment.cmp-contentfragment--elements"
       ]
     },
     {
-      "name": "cards",
+      "name": "tabs",
       "instances": [
-        "div.image-list.list"
+        "main div.tabs.panelcontainer"
       ]
     }
   ],
   "sections": [
     {
-      "id": "rc2",
-      "name": "Hero",
-      "selector": "div.carousel.cmp-carousel--hero",
+      "id": "s1",
+      "name": "Adventure Carousel",
+      "selector": "div.carousel.panelcontainer.cmp-carousel--mini",
       "style": null,
       "blocks": [
         "carousel"
@@ -61,53 +75,17 @@ const PAGE_TEMPLATE = {
       "defaultContent": []
     },
     {
-      "id": "rc3",
-      "name": "Featured Article",
-      "selector": "div.teaser.cmp-teaser--featured",
+      "id": "s2",
+      "name": "Adventure Detail",
+      "selector": "main.container.responsivegrid.cmp-layout-container--fixed",
       "style": null,
       "blocks": [
-        "columns"
-      ],
-      "defaultContent": []
-    },
-    {
-      "id": "rc5",
-      "name": "Recent Articles",
-      "selector": "div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
+        "table-overview",
+        "tabs"
       ],
       "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(2)",
-        "div.button.cmp-button--primary",
-        "div.separator"
-      ]
-    },
-    {
-      "id": "rc9",
-      "name": "Next Adventures",
-      "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(6)"
-      ]
-    },
-    {
-      "id": "rc11",
-      "name": "Where do you want to go?",
-      "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
-      ],
-      "defaultContent": [
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
+        "main div.title.cmp-title--underline",
+        "main h5"
       ]
     }
   ]

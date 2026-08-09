@@ -5,7 +5,6 @@
 // Orchestrates block parsers + site-wide transformers (cleanup -> links -> sections).
 
 // PARSER IMPORTS
-import carouselParser from './parsers/carousel.js';
 import columnsParser from './parsers/columns.js';
 import cardsParser from './parsers/cards.js';
 
@@ -16,49 +15,42 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
 const parsers = {
-  'carousel': carouselParser,
   'columns': columnsParser,
   'cards': cardsParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
-  "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "name": "section-landing-magazine",
+  "description": "Magazine landing page. Structure: (1) H1 page title, (2) Featured Article teaser (div.teaser.cmp-teaser--featured: image + copy) -> columns, (3) 'All Articles' underlined H2, (4) a card grid (div.image-list.list) of magazine-article teasers -> cards, (5) 'Members Only' underlined H2 + sign-in body text + separator, (6) two members-only secure teasers (div.teaser.cmp-teaser--secure) -> cards. Reuses columns + cards; no new blocks.",
   "urls": [
-    "https://wknd.site/us/en.html"
+    "https://wknd.site/us/en/magazine.html"
   ],
   "blocks": [
     {
-      "name": "carousel",
-      "instances": [
-        "div.carousel.cmp-carousel--hero"
-      ]
-    },
-    {
       "name": "columns",
       "instances": [
-        "div.teaser.cmp-teaser--featured",
-        "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
+        "div.teaser.cmp-teaser--featured"
       ]
     },
     {
       "name": "cards",
       "instances": [
-        "div.image-list.list"
+        "div.image-list.list",
+        "div.teaser.cmp-teaser--secure"
       ]
     }
   ],
   "sections": [
     {
       "id": "rc2",
-      "name": "Hero",
-      "selector": "div.carousel.cmp-carousel--hero",
+      "name": "Page Title",
+      "selector": "main div.title:not(.cmp-title--underline)",
       "style": null,
-      "blocks": [
-        "carousel"
-      ],
-      "defaultContent": []
+      "blocks": [],
+      "defaultContent": [
+        "main div.title:not(.cmp-title--underline) h1"
+      ]
     },
     {
       "id": "rc3",
@@ -72,42 +64,28 @@ const PAGE_TEMPLATE = {
     },
     {
       "id": "rc5",
-      "name": "Recent Articles",
+      "name": "All Articles",
       "selector": "div.image-list.list",
       "style": null,
       "blocks": [
         "cards"
       ],
       "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(2)",
-        "div.button.cmp-button--primary",
-        "div.separator"
+        "div.title.cmp-title--underline:nth-of-type(3)"
       ]
     },
     {
       "id": "rc9",
-      "name": "Next Adventures",
-      "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(6)"
-      ]
-    },
-    {
-      "id": "rc11",
-      "name": "Where do you want to go?",
-      "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
+      "name": "Members Only",
+      "selector": "div.teaser.cmp-teaser--secure",
       "style": null,
       "blocks": [
         "cards"
       ],
       "defaultContent": [
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
+        "div.title.cmp-title--underline:nth-of-type(5)",
+        "main div.text",
+        "div.separator.cmp-separator--space-medium"
       ]
     }
   ]

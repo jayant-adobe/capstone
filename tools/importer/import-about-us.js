@@ -5,9 +5,7 @@
 // Orchestrates block parsers + site-wide transformers (cleanup -> links -> sections).
 
 // PARSER IMPORTS
-import carouselParser from './parsers/carousel.js';
-import columnsParser from './parsers/columns.js';
-import cardsParser from './parsers/cards.js';
+import cardsProfileParser from './parsers/cards-profile.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -16,98 +14,39 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
 const parsers = {
-  'carousel': carouselParser,
-  'columns': columnsParser,
-  'cards': cardsParser,
+  'cards-profile': cardsProfileParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
-  "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "name": "about-us",
+  "description": "About Us page. Structure: (1) H1 'About Us', (2) 'Our Contributors' underlined H2 + intro paragraph, then a grid of 4 team-member profiles, (3) 'WKND Guides' underlined H2 + intro paragraph, then a grid of 3 profiles. Each profile = circular portrait + name (h3) + role (h5) + 3 social icon links (hrefs are '#'/anchor placeholders, no internal links). Profiles map to a NEW cards-profile variant (circular portraits + social-icon row). The two grids are consecutive profile containers separated by the two H2 headings (default content); the import parser groups consecutive profile containers into one cards-profile block per grid.",
   "urls": [
-    "https://wknd.site/us/en.html"
+    "https://wknd.site/us/en/about-us.html"
   ],
   "blocks": [
     {
-      "name": "carousel",
+      "name": "cards-profile",
       "instances": [
-        "div.carousel.cmp-carousel--hero"
-      ]
-    },
-    {
-      "name": "columns",
-      "instances": [
-        "div.teaser.cmp-teaser--featured",
-        "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
-      ]
-    },
-    {
-      "name": "cards",
-      "instances": [
-        "div.image-list.list"
+        "main div.container.responsivegrid.cmp-layout-container--fixed:has(div.title):has(div.button.cmp-button--icononly)"
       ]
     }
   ],
   "sections": [
     {
-      "id": "rc2",
-      "name": "Hero",
-      "selector": "div.carousel.cmp-carousel--hero",
+      "id": "s1",
+      "name": "Our Contributors",
+      "selector": "main.container.responsivegrid.cmp-layout-container--fixed",
       "style": null,
       "blocks": [
-        "carousel"
-      ],
-      "defaultContent": []
-    },
-    {
-      "id": "rc3",
-      "name": "Featured Article",
-      "selector": "div.teaser.cmp-teaser--featured",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": []
-    },
-    {
-      "id": "rc5",
-      "name": "Recent Articles",
-      "selector": "div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
+        "cards-profile"
       ],
       "defaultContent": [
+        "h1",
+        "div.title.cmp-title--underline:nth-of-type(1)",
+        "div.text.cmp-text--font-small:nth-of-type(1)",
         "div.title.cmp-title--underline:nth-of-type(2)",
-        "div.button.cmp-button--primary",
-        "div.separator"
-      ]
-    },
-    {
-      "id": "rc9",
-      "name": "Next Adventures",
-      "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(6)"
-      ]
-    },
-    {
-      "id": "rc11",
-      "name": "Where do you want to go?",
-      "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
-      ],
-      "defaultContent": [
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
+        "div.text.cmp-text--font-small:nth-of-type(2)"
       ]
     }
   ]

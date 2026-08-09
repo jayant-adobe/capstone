@@ -5,9 +5,7 @@
 // Orchestrates block parsers + site-wide transformers (cleanup -> links -> sections).
 
 // PARSER IMPORTS
-import carouselParser from './parsers/carousel.js';
-import columnsParser from './parsers/columns.js';
-import cardsParser from './parsers/cards.js';
+import accordionParser from './parsers/accordion.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -16,98 +14,48 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 
 // PARSER REGISTRY
 const parsers = {
-  'carousel': carouselParser,
-  'columns': columnsParser,
-  'cards': cardsParser,
+  'accordion': accordionParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
-  "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "name": "faqs",
+  "description": "FAQs page. Two-column fixed layout: main column (underlined H1 'FAQs', hero photo, intro paragraph, and a 7-item Q/A accordion -> accordion block) + a 'Need more help?' sidebar (heading + contact paragraph). Reuses the accordion block; sidebar and intro are default content.",
   "urls": [
-    "https://wknd.site/us/en.html"
+    "https://wknd.site/us/en/faqs.html"
   ],
   "blocks": [
     {
-      "name": "carousel",
+      "name": "accordion",
       "instances": [
-        "div.carousel.cmp-carousel--hero"
-      ]
-    },
-    {
-      "name": "columns",
-      "instances": [
-        "div.teaser.cmp-teaser--featured",
-        "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom"
-      ]
-    },
-    {
-      "name": "cards",
-      "instances": [
-        "div.image-list.list"
+        "div.accordion.panelcontainer"
       ]
     }
   ],
   "sections": [
     {
-      "id": "rc2",
-      "name": "Hero",
-      "selector": "div.carousel.cmp-carousel--hero",
+      "id": "s1",
+      "name": "Main FAQ content",
+      "selector": "main div.container.responsivegrid.aem-GridColumn--default--8",
       "style": null,
       "blocks": [
-        "carousel"
-      ],
-      "defaultContent": []
-    },
-    {
-      "id": "rc3",
-      "name": "Featured Article",
-      "selector": "div.teaser.cmp-teaser--featured",
-      "style": null,
-      "blocks": [
-        "columns"
-      ],
-      "defaultContent": []
-    },
-    {
-      "id": "rc5",
-      "name": "Recent Articles",
-      "selector": "div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
+        "accordion"
       ],
       "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(2)",
-        "div.button.cmp-button--primary",
-        "div.separator"
+        "div.title.cmp-title--underline",
+        "main div.container.responsivegrid.aem-GridColumn--default--8 div.image",
+        "main div.container.responsivegrid.aem-GridColumn--default--8 div.text"
       ]
     },
     {
-      "id": "rc9",
-      "name": "Next Adventures",
-      "selector": "div.teaser.cmp-teaser--hero.cmp-teaser--imagebottom",
+      "id": "s2",
+      "name": "Need more help? (sidebar)",
+      "selector": "main div.container.responsivegrid.aem-GridColumn--default--3",
       "style": null,
-      "blocks": [
-        "columns"
-      ],
+      "blocks": [],
       "defaultContent": [
-        "div.title.cmp-title--underline:nth-of-type(6)"
-      ]
-    },
-    {
-      "id": "rc11",
-      "name": "Where do you want to go?",
-      "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
-      "style": null,
-      "blocks": [
-        "cards"
-      ],
-      "defaultContent": [
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.button.cmp-button--primary",
-        "main.cmp-layout-container--fixed:nth-of-type(2) div.separator"
+        "main div.container.responsivegrid.aem-GridColumn--default--3 div.title",
+        "main div.container.responsivegrid.aem-GridColumn--default--3 div.text"
       ]
     }
   ]

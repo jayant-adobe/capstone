@@ -54,15 +54,16 @@ body.appear {
 }
 
 /* Reserve the WKND header's rendered height before the nav block hydrates so it
-   does not push the hero down on load (prevents CLS). Mobile header is ~109px,
-   desktop ~133px. min-height reserves the space but lets the header grow. */
+   does not push the hero down on load (prevents CLS). Mobile header is ~109px;
+   desktop is ~194px (25px utility band + a tall ~169px white bar, matching the
+   source). min-height reserves the space but lets the header grow. */
 header {
   min-height: var(--nav-height);
 }
 
 @media (width >= 900px) {
   header {
-    min-height: 133px;
+    min-height: 194px;
   }
 }
 
@@ -299,6 +300,14 @@ main > .section .carousel-wrapper {
   margin-bottom: 72px;
 }
 
+/* Adventure-detail pages open with a MINI image carousel (not the tall homepage
+   hero). The source leaves only ~27px below it before the H1. The H1 also has a
+   ~16px top margin that adds to the gap, so use ~11px here to land near 27px.
+   Override the 72px hero spacing on pages that contain the adventure table. */
+main:has(.table-overview) > .section .carousel-wrapper {
+  margin-bottom: 11px;
+}
+
 /* WKND section-title accent: short yellow bar (84px) beneath default-content
    section headings, matching the source's cmp-title--underline ::after. */
 main > .section > div > h2 {
@@ -356,11 +365,20 @@ main .default-content-wrapper p:has(> a:only-child) {
   border-bottom: 1px solid var(--light-color);
 }
 
-/* The final CTA divider ("All Trips") is the last thing in main and would sit
-   flush against the footer, hiding the rule. The source leaves ~112px of clear
-   space below it before the footer — reserve that gap on the last section only
-   so the mid-page "All Articles" divider is unaffected. */
+/* Trailing space before the footer, per page type.
+   Default: content pages (magazine landing, magazine article) leave ~62px below
+   the last block before the footer, matching the source. More-specific overrides
+   below adjust adventure-detail (~48px) and the homepage CTA (~112px). Rules are
+   ordered least- to most-specific to satisfy no-descending-specificity. */
 main > .section:last-child {
+  margin-bottom: 62px;
+}
+
+main:has(.table-overview) > .section:last-child {
+  margin-bottom: 48px;
+}
+
+main > .section:last-child:has(.default-content-wrapper p > a:only-child) {
   margin-bottom: 112px;
 }
 
@@ -376,4 +394,267 @@ main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
   padding: 40px 0;
+}
+
+/* ---------------------------------------------------------------- FAQs page
+   The source renders FAQs as a two-column desktop layout: the main content
+   (title + image + intro + accordion) sits in a ~66% left column and the
+   "Need more help?" block is a ~30% right sidebar, both starting at the same
+   top. The migrated page has exactly two sections in <main> — the accordion
+   section (main) and a following default-content section (the sidebar) — so we
+   make <main> a two-column grid at desktop and stack on mobile (matching the
+   source's responsive behavior). Scoped via :has() so only the FAQs-style page
+   (a section that contains an accordion) is affected. */
+@media (width >= 900px) {
+  main:has(> .section.accordion-container .accordion) {
+    display: grid;
+    grid-template-columns: 748fr 291fr; /* source column ratio (main : sidebar) */
+    column-gap: 48px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* the section wrappers no longer center/max-width themselves — the grid
+     column is their bounding box now. Reset only the horizontal centering
+     (max-width / auto side-margins / side-padding); leave vertical margins free
+     so the source spacing rhythm below still applies. */
+  main:has(> .section.accordion-container .accordion) > .section > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+/* FAQs H1: source uses the 40px title size (not the 54px hero H1) with the
+   WKND short yellow underline accent (cmp-title--underline). */
+main > .section.accordion-container:has(.accordion) h1 {
+  font-size: 40px;
+  margin-top: 27px;
+  margin-bottom: 13.5px;
+  padding-bottom: 12px;
+}
+
+main > .section.accordion-container:has(.accordion) h1::after {
+  content: '';
+  display: block;
+  width: 84px;
+  margin-top: 12px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/* FAQs intro paragraph: source uses relaxed 45px line spacing. */
+main > .section.accordion-container:has(.accordion) > .default-content-wrapper p {
+  line-height: 2.5;
+}
+
+/* FAQs spacing rhythm (match source): H1 -> image ~21px, image -> intro ~14px,
+   intro -> accordion ~14px. The image and intro are each their own <p>; the
+   accordion is a sibling .accordion-wrapper. */
+main > .section.accordion-container:has(.accordion) > .default-content-wrapper p:has(img) {
+  /* H1 -> image gap is ~21px in the source. The image <p>'s top margin collapses
+     with the H1's 13.5px bottom margin, so set 21px here to win the collapse. */
+  margin-top: 21px;
+  margin-bottom: 14px;
+}
+
+main > .section.accordion-container:has(.accordion) > .accordion-wrapper {
+  margin-top: 14px;
+}
+
+/* Source leaves ~48px of clear space below the accordion before the footer.
+   Reserve it on the accordion section so the two-column grid keeps a bottom gap. */
+main > .section.accordion-container:has(.accordion) {
+  margin-bottom: 48px;
+}
+
+/* "Need more help?" sidebar (source): the heading is the 24px Asar serif title
+   (weight 400); the contact paragraph is 14px/35px body copy with blue links. */
+main > .section.accordion-container:has(.accordion) + .section h3 {
+  font-family: var(--heading-font-family);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 27px 0 13.5px;
+}
+
+main > .section.accordion-container:has(.accordion) + .section .default-content-wrapper p {
+  font-size: 14px;
+  line-height: 35px;
+  color: var(--text-color);
+  margin: 0 0 13.5px;
+}
+
+main > .section.accordion-container:has(.accordion) + .section .default-content-wrapper p a:any-link {
+  font-weight: 400;
+  color: #0045ff;
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------- Magazine article page
+   Source layout: the article body (title + byline + rich text + author bio) is a
+   ~72% left column and the "SHARE THIS STORY" related-articles list is a ~28%
+   right sidebar, both starting at the same top. The migrated page has two
+   sibling sections in <main> — the article-body section (holds the cards-byline
+   author card) and a following default-content section (the related list). Make
+   <main> a two-column grid at desktop; stack on mobile. Scoped via :has() to the
+   cards-byline block so only the magazine-article page is affected. */
+@media (width >= 900px) {
+  main:has(> .section.cards-byline-container) {
+    display: grid;
+    grid-template-columns: 776fr 291fr; /* source column ratio (body : sidebar) */
+    column-gap: 48px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  main:has(> .section.cards-byline-container) > .section > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+/* "SHARE THIS STORY" sidebar heading: source is a small uppercase label. */
+main > .section.cards-byline-container + .section h5 {
+  margin: 0 0 13.5px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Related-articles list: no bullets, comfortable row spacing. */
+main > .section.cards-byline-container + .section ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+main > .section.cards-byline-container + .section li {
+  margin: 0 0 18px;
+}
+
+/* ------------------------------------------------------ Adventure detail page
+   Source layout below the mini carousel: the H1 spans full width, then the
+   overview spec list ("Activity/Trip Length/…") + share heading form a narrow
+   ~28% left column, and the itinerary tabs fill a ~72% right column beside them.
+   The migrated content section holds, in order: H1 (default content),
+   table-overview, "Share this Adventure" heading (default content), tabs. Turn
+   that section's inner grid into a 2-column layout at desktop: the H1 and the
+   share heading span both columns, the overview table sits left, the tabs right.
+   Stack on mobile. Scoped via :has(.table-overview). */
+@media (width >= 900px) {
+  main:has(.table-overview) > .section:has(.table-overview) {
+    display: grid;
+    grid-template-columns: 291fr 748fr; /* overview : itinerary (source ratio) */
+    column-gap: 48px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* The wrappers are direct children of the section; the section's usual inner
+     centering div isn't used for these, so neutralize the wrappers' own widths. */
+  main:has(.table-overview) > .section:has(.table-overview) > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  /* H1 (first default-content) spans both columns on the top row. */
+  main:has(.table-overview) > .section:has(.table-overview) > .default-content-wrapper:first-child {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /* Overview spec table -> left column, second row. */
+  main:has(.table-overview) > .section:has(.table-overview) > .table-overview-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  /* The "Share this Adventure" heading sits under the overview table (left col). */
+  main:has(.table-overview) > .section:has(.table-overview) > .default-content-wrapper:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  /* Itinerary tabs -> right column, spanning the table + share rows. */
+  main:has(.table-overview) > .section:has(.table-overview) > .tabs-wrapper {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+  }
+}
+
+/* ------------------------------------------------------------- About Us page
+   Source layout: two team-profile grids — "Our Contributors" (4 across) and
+   "WKND Guides" (3 across) — each an aem-GridColumn--default--3 row of circular
+   portrait cards. The migration produced one `.cards-profile` block per profile
+   (seven sibling `.cards-profile-wrapper` divs) plus two `.default-content-wrapper`
+   headings ("Our Contributors" and "WKND Guides"), all direct children of the
+   section. Make the section a 4-column grid: the heading blocks span the full
+   row (starting a new grid row), and each profile wrapper occupies one cell —
+   reproducing the 4-up then 3-up source grids. Stacks on mobile. */
+@media (width >= 900px) {
+  main > .section.cards-profile-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 48px 24px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* the section's own children no longer center themselves — the grid cell is
+     their box. Neutralize the wrappers' horizontal centering. */
+  main > .section.cards-profile-container > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  /* headings ("About Us"/"Our Contributors" and "WKND Guides") span the full
+     row so the profile row below them always starts at column 1. */
+  main > .section.cards-profile-container > .default-content-wrapper {
+    grid-column: 1 / -1;
+  }
+
+  /* each profile occupies a single grid cell (its inner single-card grid just
+     fills the cell). */
+  main > .section.cards-profile-container > .cards-profile-wrapper {
+    grid-column: span 1;
+  }
+}
+
+/* On tablet (>=600px, <900px) show 2-up to match the block's own breakpoint. */
+@media (width >= 600px) and (width < 900px) {
+  main > .section.cards-profile-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 24px;
+    align-items: start;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  main > .section.cards-profile-container > div {
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  main > .section.cards-profile-container > .default-content-wrapper {
+    grid-column: 1 / -1;
+  }
 }
