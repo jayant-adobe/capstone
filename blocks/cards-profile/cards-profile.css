@@ -77,6 +77,12 @@
   width: 100%;
   margin: 0;
   padding: 0;
+
+  /* font-size:0 collapses the whitespace between the three inline-block social
+     <p> wrappers so the buttons butt together into one continuous dark bar
+     (source: 3x48 = 144px, gap 0). The name/role/glyph each set their own
+     explicit font-size, so only the inter-button whitespace is affected. */
+  font-size: 0;
   text-align: center;
 }
 
