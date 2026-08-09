@@ -1,6 +1,47 @@
 import { toClassName } from '../../scripts/aem.js';
 
 /**
+ * Category membership for the WKND adventures, keyed by the adventure's URL slug
+ * (the last path segment of its detail link). Extracted from the source filter
+ * (wknd.site/us/en/adventures) by reading which cards each category tab reveals.
+ * A slug may belong to multiple categories (e.g. cycling-tuscany is Cycling +
+ * Travel). The source uses the card's authored category tags for this; our
+ * import did not carry them onto the cards, so we reconstruct the mapping here.
+ */
+const SLUG_CATEGORIES = {
+  'climbing-new-zealand': ['climbing'],
+  'colorado-rock-climbing': ['climbing'],
+  'whistler-mountain-biking': ['cycling'],
+  'cycling-tuscany': ['cycling', 'travel'],
+  'west-coast-cycling': ['cycling'],
+  'downhill-skiing-wyoming': ['skiing'],
+  'ski-touring-mont-blanc': ['skiing'],
+  'tahoe-skiing': ['skiing'],
+  'bali-surf-camp': ['surfing'],
+  'surf-camp-costa-rica': ['surfing'],
+  'beervana-portland': ['travel'],
+  'gastronomic-marais-tour': ['travel'],
+  'napa-wine-tasting': ['travel'],
+  'riverside-camping-australia': ['travel'],
+  'yosemite-backpacking': ['travel'],
+};
+
+/**
+ * Resolve a card's categories. Prefers an explicit `data-categories` attribute
+ * (if the import ever populates it); otherwise derives them from the adventure
+ * slug in the card's detail link via SLUG_CATEGORIES.
+ * @param {Element} card the card `li`
+ * @returns {string[]} lower-case category class names
+ */
+function categoriesForCard(card) {
+  const explicit = (card.dataset.categories || '').split(/\s+/).filter(Boolean);
+  if (explicit.length) return explicit;
+  const href = card.querySelector('a[href]')?.getAttribute('href') || '';
+  const slug = href.match(/\/adventures\/([^./?#]+)/)?.[1];
+  return (slug && SLUG_CATEGORIES[slug]) || [];
+}
+
+/**
  * Tabs Filter block.
  *
  * A category filter bar that toggles the visibility of cards in a sibling
@@ -56,7 +97,7 @@ export default function decorate(block) {
     const cards = findCards();
     if (!cards) return;
     cards.querySelectorAll('li').forEach((card) => {
-      const cats = (card.dataset.categories || '').split(/\s+/).filter(Boolean);
+      const cats = categoriesForCard(card);
       const show = category === 'all' || cats.includes(category);
       card.hidden = !show;
     });
