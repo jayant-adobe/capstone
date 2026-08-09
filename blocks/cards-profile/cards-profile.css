@@ -92,9 +92,9 @@
 }
 
 /* role — Source Sans Pro 14px/21px 600 uppercase, dark ink (#202020), no
-   letter-spacing (source). 16px gap down to the social icon row. */
+   letter-spacing (source). ~22px gap down to the social icon row (source). */
 .cards-profile .cards-profile-card-body h5 {
-  margin: 0 0 16px;
+  margin: 0 0 22px;
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 600;

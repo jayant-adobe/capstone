@@ -617,9 +617,10 @@ main > .section.cards-profile-container {
 
     /* source rhythm: ~23px between an intro block and the profile row below it.
        The intro paragraph's own bottom margin adds ~5px, so an 18px row-gap
-       lands the visible gap at ~23px. 24px column-gap. The larger ~45px gap
-       above the "WKND Guides" heading is added via its margin-top. */
-    gap: 18px 24px;
+       lands the visible gap at ~23px. 28px column-gap between profiles (source).
+       The larger ~45px gap above the "WKND Guides" heading is added via its
+       margin-top. */
+    gap: 18px 28px;
     align-items: start;
     max-width: var(--content-max-width);
 
@@ -675,7 +676,7 @@ main > .section.cards-profile-container {
   main > .section.cards-profile-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 23px 24px;
+    gap: 23px 28px;
     align-items: start;
     max-width: var(--content-max-width);
     margin: 0 auto 66px;
