@@ -67,7 +67,13 @@
   z-index: 1;
   position: relative;
   width: 100%;
-  max-width: var(--content-max-width);
+
+  /* Source: the white overlay box is content-width + 56px, i.e. it bleeds 28px
+     into each gutter (box left 124 at 1440) and the 28px interior padding brings
+     the text back onto the 152px content grid — aligned with the logo, nav and
+     every heading. Matching content-max-width exactly (no bleed) would push the
+     text 28px off-grid to 180. */
+  max-width: calc(var(--content-max-width) + 56px);
   box-sizing: border-box;
   padding: 0 20px 36px;
   background-color: var(--background-color);
