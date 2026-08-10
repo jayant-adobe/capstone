@@ -46,23 +46,44 @@ const SLUG_CATEGORIES = {
   'yosemite-backpacking': ['Travel'],
 };
 
+// Author-controlled display order per adventure slug. The dynamic adventure-cards
+// block sorts by this ascending, then applies its `limit` — so the homepage teaser
+// (limit 4) shows orders 1–4, and raising the limit to 5 pulls in order 5, etc.
+// Injected as an "Order" metadata row so the query-index exposes an `order` column.
+// Values seeded to the original alphabetical display order (1-based); change a
+// page's number to move it in the teaser/listing without touching code.
+const SLUG_ORDER = {
+  'bali-surf-camp': 1,
+  'beervana-portland': 2,
+  'climbing-new-zealand': 3,
+  'colorado-rock-climbing': 4,
+  'cycling-southern-utah': 5,
+  'cycling-tuscany': 6,
+  'downhill-skiing-wyoming': 7,
+  'gastronomic-marais-tour': 8,
+  'napa-wine-tasting': 9,
+  'riverside-camping-australia': 10,
+  'ski-touring-mont-blanc': 11,
+  'surf-camp-costa-rica': 12,
+  'tahoe-skiing': 13,
+  'west-coast-cycling': 14,
+  'whistler-mountain-biking': 15,
+  'yosemite-backpacking': 16,
+};
+
 /**
- * Append a "Category" row to the Metadata block that WebImporter.rules.createMetadata
- * produced, using the adventure slug from the page URL. This becomes a
- * `<meta name="category">` on the published page, which the adventures
- * query-index (helix-query.yaml) reads into its `category` column.
+ * Append a `<tr><td>key</td><td>value</td></tr>` row to the Metadata block that
+ * WebImporter.rules.createMetadata produced. createMetadata emits a <table> whose
+ * header cell reads "Metadata" (the `.metadata` class only appears after the
+ * md2da conversion, so match by header text here). No-op if the value is empty
+ * or the metadata table isn't found.
  * @param {Element} main document.body after createMetadata has run
  * @param {Document} document
- * @param {string} originalURL the source page URL
+ * @param {string} key the metadata key (becomes a `<meta name="key">`)
+ * @param {string} value the metadata value
  */
-function injectCategoryMetadata(main, document, originalURL) {
-  const slug = new URL(originalURL).pathname.match(/\/adventures\/([^./?#]+)/)?.[1];
-  const cats = (slug && SLUG_CATEGORIES[slug]) || [];
-  if (!cats.length) return; // untagged → no category row (shows only under "All")
-
-  // createMetadata appends a <table> whose header cell reads "Metadata" (the
-  // `.metadata` class only appears after the md2da conversion, so match by the
-  // header text here). Append a "Category" row: <tr><td>Category</td><td>…</td></tr>.
+function appendMetadataRow(main, document, key, value) {
+  if (!value) return;
   const metaTable = [...main.querySelectorAll('table')].reverse().find((t) => {
     const head = t.querySelector('th, td');
     return head && head.textContent.trim().toLowerCase() === 'metadata';
@@ -71,11 +92,39 @@ function injectCategoryMetadata(main, document, originalURL) {
 
   const tr = document.createElement('tr');
   const keyCell = document.createElement('td');
-  keyCell.textContent = 'Category';
+  keyCell.textContent = key;
   const valCell = document.createElement('td');
-  valCell.textContent = cats.join(', ');
+  valCell.textContent = value;
   tr.append(keyCell, valCell);
   metaTable.append(tr);
+}
+
+/**
+ * Append a "Category" row to the Metadata block, using the adventure slug from
+ * the page URL. Becomes a `<meta name="category">` feeding the query-index
+ * `category` column. Untagged adventures get no row (shown only under "All").
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectCategoryMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/adventures\/([^./?#]+)/)?.[1];
+  const cats = (slug && SLUG_CATEGORIES[slug]) || [];
+  appendMetadataRow(main, document, 'Category', cats.join(', '));
+}
+
+/**
+ * Append an "Order" row to the Metadata block, using the adventure slug from the
+ * page URL. Becomes a `<meta name="order">` feeding the query-index `order`
+ * column, which the adventure-cards block sorts by before applying its limit.
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectOrderMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/adventures\/([^./?#]+)/)?.[1];
+  const order = slug && SLUG_ORDER[slug];
+  appendMetadataRow(main, document, 'Order', order ? String(order) : '');
 }
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
@@ -245,6 +294,9 @@ export default {
     // add a Category metadata row (from the adventure slug) so the query-index
     // exposes a `category` column for the dynamic adventure-cards + filter.
     injectCategoryMetadata(main, document, params.originalURL);
+    // add an Order metadata row so the query-index exposes an `order` column the
+    // adventure-cards block sorts by before applying its limit.
+    injectOrderMetadata(main, document, params.originalURL);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
 
