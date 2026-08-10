@@ -221,8 +221,15 @@
   .columns:not(:has(strong)) > div:has(.columns-img-col) > div:last-child {
     box-sizing: border-box;
     min-height: 180px;
-    max-width: var(--content-max-width);
-    margin: -180px auto 0;
+
+    /* Source: the white overlay box bleeds 28px into each gutter (its 28px interior
+       padding then brings the heading/copy back onto the 152px content grid — the
+       same cmp-teaser--hero pattern as the hero carousel). The box sits in the
+       1136px content wrapper, so widen it with negative side margins rather than
+       max-width (which a 1136px parent would clip). Without this the text sits 28px
+       off-grid at 180 instead of aligning with the rest of the page at 152. */
+    width: auto;
+    margin: -180px -28px 0;
     padding: 28px 28px 32px;
   }
 }
