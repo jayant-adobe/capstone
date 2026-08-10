@@ -56,6 +56,18 @@ header.scrolly .nav-wrapper {
   box-shadow: 0 8px 20px 0 rgb(0 0 0 / 26%);
 }
 
+/* Scroll-shrink (matches the source): at rest the desktop header is ~194px (the
+   white bar carries generous 54px top/bottom padding); once scrolled past the
+   threshold the source collapses that padding so the bar becomes a compact
+   sticky strip (~114px total). Animate the padding change so it eases like the
+   source. Desktop only — the mobile bar is already compact. */
+@media (width >= 900px) {
+  header.scrolly .nav-main {
+    padding-top: 16px;
+    padding-bottom: 8px;
+  }
+}
+
 header nav {
   display: block;
   margin: 0;
@@ -234,6 +246,9 @@ header .nav-main {
   margin: 0 auto;
   padding: 24px;
   background-color: var(--background-color);
+
+  /* ease the scroll-shrink padding change (see header.scrolly .nav-main) */
+  transition: padding 0.3s ease;
 }
 
 /* Desktop: the source white bar is taller (~169px) — the 48px logo sits with
@@ -481,18 +496,8 @@ header .nav-sections .nav-home-mobile {
     color: var(--text-color);
   }
 
-  /* hamburger → cross when open */
-  header nav[aria-expanded='true'] .nav-hamburger-icon {
-    background-color: transparent;
-  }
-
-  header nav[aria-expanded='true'] .nav-hamburger-icon::before {
-    top: 0;
-    transform: rotate(45deg);
-  }
-
-  header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-    top: 0;
-    transform: rotate(-45deg);
-  }
+  /* The hamburger stays a menu (3-bar) icon while the drawer is open — matching
+     the source, which has no close/X button. The drawer is dismissed by tapping
+     the hamburger again, tapping a nav link, pressing Escape, or tapping outside
+     (see header.js). No aria-expanded X-morph here by design. */
 }

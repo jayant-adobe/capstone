@@ -327,10 +327,22 @@ export default async function decorate(block) {
     }
   });
 
-  // close the locale dropdown on outside click
+  // close the locale dropdown on outside click; also dismiss the open mobile
+  // drawer when tapping outside it (matches the source, which has no close
+  // button — the drawer closes on outside tap / link tap / hamburger / Escape).
   document.addEventListener('click', (e) => {
     const locale = nav.querySelector('.nav-locale.open');
     if (locale && !locale.contains(e.target)) closeLocale(locale);
+
+    if (!isDesktop.matches && nav.getAttribute('aria-expanded') === 'true') {
+      const drawer = nav.querySelector('.nav-sections');
+      const hamburgerBtn = nav.querySelector('.nav-hamburger');
+      // ignore clicks on the drawer itself or the hamburger (it toggles its own)
+      if (drawer && !drawer.contains(e.target)
+        && hamburgerBtn && !hamburgerBtn.contains(e.target)) {
+        closeMobileNav(nav);
+      }
+    }
   });
 
   // Escape closes the locale dropdown, then the mobile nav
