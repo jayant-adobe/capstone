@@ -131,6 +131,53 @@ function wireMagazineCards(bodyHtml, rel) {
   });
 }
 
+/**
+ * Replace the authored About Us `cards-profile` blocks (one per person) with two
+ * dynamic `profile-cards` blocks that render from /us/en/contributors.json:
+ * the contributor profiles (before the "WKND Guides" heading) become
+ * profile-cards(team=contributor); the guide profiles become
+ * profile-cards(team=guide). Each authored block is a `<div class="cards-profile">`
+ * — remove the whole run of them in each section and drop in one block.
+ * @param {string} bodyHtml
+ * @param {string} rel output path (e.g. us/en/about-us.html)
+ * @returns {string}
+ */
+function wireProfileCards(bodyHtml, rel) {
+  if (rel !== 'us/en/about-us.html') return bodyHtml;
+
+  // Replace a maximal run of adjacent `<div class="cards-profile">…</div>`
+  // (ignoring whitespace between them) starting at `fromIndex` with a single
+  // profile-cards block for `team`. Returns { html, end } or null if none there.
+  const replaceRun = (html, fromIndex, team) => {
+    const openRe = /<div class="cards-profile">/gi;
+    openRe.lastIndex = fromIndex;
+    const m = openRe.exec(html);
+    if (!m) return null;
+    const runStart = m.index;
+    let cursor = runStart;
+    // consume consecutive cards-profile blocks (only whitespace allowed between)
+    for (;;) {
+      const end = matchingDivEnd(html, cursor);
+      if (end === -1) break;
+      const after = html.slice(end);
+      const next = after.match(/^\s*<div class="cards-profile">/i);
+      if (next) { cursor = end + after.indexOf('<div'); } else { cursor = end; break; }
+    }
+    const block = `<div class="profile-cards"><div><div>team</div><div>${team}</div></div></div>`;
+    return { html: html.slice(0, runStart) + block + html.slice(cursor), runStart, blockLen: block.length };
+  };
+
+  let out = bodyHtml;
+  const first = replaceRun(out, 0, 'contributor');
+  if (first) {
+    out = first.html;
+    // search for the guides run AFTER the just-inserted contributor block
+    const second = replaceRun(out, first.runStart + first.blockLen, 'guide');
+    if (second) out = second.html;
+  }
+  return out;
+}
+
 const files = walk(join(contentDir, 'us', 'en'));
 // the homepage lives at content/us/en.plain.html — a SIBLING of the us/en/
 // directory the walk covers — so add it explicitly (publishes to /us/en).
@@ -146,6 +193,7 @@ for (const file of files) {
   let body = readFileSync(file, 'utf8').trim();
   body = wireAdventureCards(body, rel);
   body = wireMagazineCards(body, rel);
+  body = wireProfileCards(body, rel);
   const doc = `<body>
   <header></header>
   <main>
