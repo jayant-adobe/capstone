@@ -94,7 +94,11 @@ function buildBreadcrumb(main) {
 
   const parentPath = `/${segs.slice(0, secIdx + 1).join('/')}`;
   const parentLabel = sections[segs[secIdx]];
-  const title = (document.querySelector('main h1')?.textContent || document.title).trim();
+  // Current-page label: use the short page title (og:title, e.g. "Arctic
+  // Surfing"), NOT the article H1 ("Aloha Spirits in Northern Norway"). The
+  // source breadcrumb shows the page/nav title; on most detail pages the H1 and
+  // title match, but magazine articles have a distinct editorial H1.
+  const title = (document.title || document.querySelector('main h1')?.textContent || '').trim();
 
   const nav = document.createElement('nav');
   nav.className = 'breadcrumb';
