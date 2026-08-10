@@ -119,6 +119,14 @@
   color: var(--accent-text-color);
 }
 
+/* the injected social glyph (SVG, currentColor) — white on the dark square,
+   ~18px inside the 34px button, matching the source byline icons */
+.cards-byline .cards-byline-card-body a:any-link svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 /* On wider screens the social icons sit at the far right of the byline row.
    The body cell holds both the name/role and the links; push links right by
    letting the name/role flow left and aligning the link group to the end. */
