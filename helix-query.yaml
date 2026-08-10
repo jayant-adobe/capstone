@@ -26,6 +26,14 @@ indices:
       category:
         select: head > meta[name="category"]
         value: attribute(el, "content")
+      order:
+        # Author-controlled sort position (meta[name="order"] on each detail page,
+        # injected at import from SLUG_ORDER). Stored as the raw string; the
+        # adventure-cards block parses it to a number and sorts ascending before
+        # applying its limit, so e.g. limit=5 shows the five lowest-order
+        # adventures. Missing/blank order sorts last (see the block).
+        select: head > meta[name="order"]
+        value: attribute(el, "content")
       lastModified:
         select: none
         value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")

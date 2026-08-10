@@ -19,6 +19,11 @@ import { createOptimizedPicture, toClassName } from '../../scripts/aem.js';
  *   | limit | 4 |            (optional; omit = show all)
  * A `limit` row (or a numeric first cell) caps the number of cards — e.g. the
  * homepage teaser shows 4, the full Adventures listing shows all.
+ *
+ * Order is author-controlled per adventure: each detail page carries a numeric
+ * `order` metadata (exposed as the index `order` column). Cards render sorted by
+ * that order ascending, THEN the limit is applied — so raising limit to 5 shows
+ * the five lowest-order adventures. Untagged (no order) adventures sort last.
  */
 
 const INDEX_PATH = '/us/en/adventures/query-index.json';
@@ -54,6 +59,26 @@ async function fetchAdventures() {
   } catch (e) {
     return [];
   }
+}
+
+/**
+ * Sort index rows by their author-controlled `order` (meta[name="order"] on the
+ * detail page, exposed as an index column). Lower order first; rows with no
+ * valid order sort after all ordered rows, keeping their original index order
+ * (stable) so the sequence is always deterministic. This is what makes a
+ * `limit` meaningful — e.g. limit=5 renders the five lowest-order adventures.
+ * @param {Array} rows index rows
+ * @returns {Array} a new, sorted array
+ */
+function sortByOrder(rows) {
+  const rank = (row) => {
+    const n = parseInt(row.order, 10);
+    return Number.isNaN(n) ? Infinity : n;
+  };
+  return rows
+    .map((row, i) => ({ row, i }))
+    .sort((a, b) => rank(a.row) - rank(b.row) || a.i - b.i)
+    .map((entry) => entry.row);
 }
 
 /**
@@ -120,7 +145,10 @@ export default async function decorate(block) {
     return;
   }
 
-  const rows = limit > 0 ? adventures.slice(0, limit) : adventures;
+  // order by the author-controlled `order` column first, then cap to `limit`
+  // (so limit=5 shows the five lowest-order adventures, not the first five by path)
+  const ordered = sortByOrder(adventures);
+  const rows = limit > 0 ? ordered.slice(0, limit) : ordered;
   const ul = document.createElement('ul');
   rows.forEach((row) => ul.append(buildCard(row)));
   block.append(ul);
