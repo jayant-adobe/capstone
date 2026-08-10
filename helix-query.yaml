@@ -37,3 +37,35 @@ indices:
       lastModified:
         select: none
         value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  # Magazine article pages under /us/en/magazine/<slug>. Powers the dynamic,
+  # index-driven "Recent Articles" cards on the homepage (blocks/magazine-cards).
+  # Same pattern as `adventures`: each article's own head metadata is the single
+  # source of truth — no article content is hardcoded in JS or authored into the
+  # homepage document.
+  magazine:
+    include:
+      - '/us/en/magazine/**'
+    exclude:
+      # the Magazine landing page itself is not an article card
+      - '/us/en/magazine'
+    target: /us/en/magazine/query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      order:
+        # Author-controlled sort position (meta[name="order"], injected at import
+        # from SLUG_ORDER). The magazine-cards block parses it to a number and
+        # sorts ascending before applying its limit; missing/blank sorts last.
+        select: head > meta[name="order"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")

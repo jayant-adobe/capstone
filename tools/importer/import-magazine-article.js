@@ -55,6 +55,64 @@ function restructureRelatedList(document) {
   });
 }
 
+// Author-controlled display order per magazine slug. The dynamic magazine-cards
+// block sorts by this ascending, then applies its `limit` — so the homepage
+// "Recent Articles" grid (limit 4) shows orders 1–4. Seeded to the live source's
+// homepage order (guide-la-skateparks, ski-touring, arctic-surfing,
+// san-diego-surf), with western-australia last since the source features it
+// separately above the grid rather than inside it. Injected as an "Order"
+// metadata row so the magazine query-index exposes an `order` column. Change a
+// page's number to reorder the homepage cards without touching code.
+const SLUG_ORDER = {
+  'guide-la-skateparks': 1,
+  'ski-touring': 2,
+  'arctic-surfing': 3,
+  'san-diego-surf': 4,
+  'western-australia': 5,
+};
+
+/**
+ * Append a `<tr><td>key</td><td>value</td></tr>` row to the Metadata block that
+ * WebImporter.rules.createMetadata produced. createMetadata emits a <table> whose
+ * header cell reads "Metadata" (the `.metadata` class only appears after the
+ * md2da conversion, so match by header text here). No-op if the value is empty
+ * or the metadata table isn't found.
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} key the metadata key (becomes a `<meta name="key">`)
+ * @param {string} value the metadata value
+ */
+function appendMetadataRow(main, document, key, value) {
+  if (!value) return;
+  const metaTable = [...main.querySelectorAll('table')].reverse().find((t) => {
+    const head = t.querySelector('th, td');
+    return head && head.textContent.trim().toLowerCase() === 'metadata';
+  });
+  if (!metaTable) return;
+
+  const tr = document.createElement('tr');
+  const keyCell = document.createElement('td');
+  keyCell.textContent = key;
+  const valCell = document.createElement('td');
+  valCell.textContent = value;
+  tr.append(keyCell, valCell);
+  metaTable.append(tr);
+}
+
+/**
+ * Append an "Order" row to the Metadata block, using the magazine slug from the
+ * page URL. Becomes a `<meta name="order">` feeding the magazine query-index
+ * `order` column, which the magazine-cards block sorts by before applying limit.
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectOrderMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/magazine\/([^./?#]+)/)?.[1];
+  const order = slug && SLUG_ORDER[slug];
+  appendMetadataRow(main, document, 'Order', order ? String(order) : '');
+}
+
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "magazine-article",
@@ -202,6 +260,9 @@ export default {
     const hr = document.createElement('hr');
     main.appendChild(hr);
     WebImporter.rules.createMetadata(main, document);
+    // add an Order metadata row so the magazine query-index exposes an `order`
+    // column the magazine-cards block sorts by before applying its limit.
+    injectOrderMetadata(main, document, params.originalURL);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
 
