@@ -719,6 +719,14 @@ main > .section.cards-profile-container {
   margin-bottom: 66px;
 }
 
+/* the two section intros ("Meet the outstanding…" / "Meet our extraordinary…")
+   read at 14px in the source, not the 18px global body size. */
+/* stylelint-disable-next-line no-descending-specificity */
+main > .section.cards-profile-container > .default-content-wrapper p {
+  font-size: var(--body-font-size-xs);
+  line-height: 2.5;
+}
+
 @media (width >= 900px) {
   main > .section.cards-profile-container {
     display: grid;
@@ -726,16 +734,20 @@ main > .section.cards-profile-container {
 
     /* source rhythm: ~23px between an intro block and the profile row below it.
        The intro paragraph's own bottom margin adds ~5px, so an 18px row-gap
-       lands the visible gap at ~23px. 28px column-gap between profiles (source).
-       The larger ~45px gap above the "WKND Guides" heading is added via its
-       margin-top. */
-    gap: 18px 28px;
+       lands the visible gap at ~23px. 56px column-gap between profiles (source:
+       cards 235px at lefts 166/457/748/1039 → 56px gutters). The larger ~45px
+       gap above the "WKND Guides" heading is added via its margin-top. */
+    gap: 18px 56px;
     align-items: start;
     max-width: var(--content-max-width);
 
-    /* ~66px of clear space below the last profile row before the footer */
+    /* ~66px of clear space below the last profile row before the footer. The
+       source insets the profile cards ~14px from the content grid (cards start
+       at 166, grid edge is 152), so pad the grid 14px; the full-width heading
+       wrappers below are pulled back to the 152 grid with a -14px inline margin
+       so H1/H2/intro align with the rest of the site. */
     margin: 0 auto 66px;
-    padding: 0 32px;
+    padding: 0 14px;
     box-sizing: border-box;
   }
 
@@ -748,9 +760,12 @@ main > .section.cards-profile-container {
   }
 
   /* headings ("About Us"/"Our Contributors" and "WKND Guides") span the full
-     row so the profile row below them always starts at column 1. */
+     row so the profile row below them always starts at column 1. Pull them out
+     of the grid's 14px side padding so they sit on the 152 content grid (source:
+     headings at 152, cards inset to 166). */
   main > .section.cards-profile-container > .default-content-wrapper {
     grid-column: 1 / -1;
+    margin-inline: -14px;
   }
 
   /* source has ~41px between the H1 and the "Our Contributors" H2; nudge that
