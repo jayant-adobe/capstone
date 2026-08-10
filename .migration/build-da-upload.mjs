@@ -57,16 +57,20 @@ function matchingDivEnd(html, openStart) {
  * `<div class="cards">` whose links match `linkPattern`, removes the WHOLE
  * element up to its depth-matched `</div>` (the grid nests a div per card, so a
  * naive regex would orphan the card divs) and replaces it with
- * `<div class="{blockClass}">` — with an optional `| limit | N |` row.
- * Returns the body unchanged if no matching grid is present.
+ * `<div class="{blockClass}">` — with optional `| limit | N |` and
+ * `| order-field | … |` rows. Returns the body unchanged if no matching grid.
  * @param {string} bodyHtml the fragment HTML
  * @param {object} opts
  * @param {RegExp} opts.linkPattern identifies the target grid by its card links
  * @param {string} opts.blockClass the dynamic block class to insert
  * @param {number} [opts.limit] optional card cap (emits a `| limit | N |` row)
+ * @param {string} [opts.orderField] index column to sort by (emits an
+ *   `| order-field | … |` row); omit to use the block's default (`order`)
  * @returns {string}
  */
-function wireDynamicCards(bodyHtml, { linkPattern, blockClass, limit }) {
+function wireDynamicCards(bodyHtml, {
+  linkPattern, blockClass, limit, orderField,
+}) {
   const openRe = /<div class="cards">/gi;
   let m = openRe.exec(bodyHtml);
   while (m) {
@@ -76,7 +80,8 @@ function wireDynamicCards(bodyHtml, { linkPattern, blockClass, limit }) {
     const block = bodyHtml.slice(start, end);
     if (linkPattern.test(block)) {
       const limitRow = limit ? `<div><div>limit</div><div>${limit}</div></div>` : '';
-      const replacement = `<div class="${blockClass}">${limitRow}</div>`;
+      const orderRow = orderField ? `<div><div>order-field</div><div>${orderField}</div></div>` : '';
+      const replacement = `<div class="${blockClass}">${limitRow}${orderRow}</div>`;
       return bodyHtml.slice(0, start) + replacement + bodyHtml.slice(end);
     }
     openRe.lastIndex = end; // skip past this (non-matching) cards block
@@ -104,18 +109,25 @@ function wireAdventureCards(bodyHtml, rel) {
 }
 
 /**
- * Replace the authored magazine `cards` grid ("Recent Articles") with the
- * dynamic `magazine-cards` block on the homepage (limit 4).
+ * Replace an authored magazine article `cards` grid with the dynamic
+ * `magazine-cards` block:
+ *   - homepage "Recent Articles" → sort by `order`, limit 4
+ *   - magazine landing "All Articles" → sort by `listOrder`, show all
+ * The landing's "Members Only" locked cards have no `/magazine/` article links,
+ * so `linkPattern` never matches them — they stay authored (dimmed + padlock).
  * @param {string} bodyHtml
  * @param {string} rel output path (e.g. us/en.html)
  * @returns {string}
  */
 function wireMagazineCards(bodyHtml, rel) {
-  if (rel !== 'us/en.html') return bodyHtml;
+  const isHome = rel === 'us/en.html';
+  const isListing = rel === 'us/en/magazine.html';
+  if (!isHome && !isListing) return bodyHtml;
   return wireDynamicCards(bodyHtml, {
     linkPattern: /\/magazine\/[a-z]/,
     blockClass: 'magazine-cards',
-    limit: 4,
+    limit: isHome ? 4 : 0,
+    orderField: isHome ? undefined : 'listOrder',
   });
 }
 

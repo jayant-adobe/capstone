@@ -71,6 +71,20 @@ const SLUG_ORDER = {
   'western-australia': 5,
 };
 
+// Author-controlled display order for the magazine LANDING "All Articles" grid.
+// The same articles appear here in a DIFFERENT order than the homepage teaser
+// (SLUG_ORDER), so this is a separate map. Seeded to the live source landing
+// order: arctic-surfing, san-diego-surf, ski-touring, guide-la-skateparks,
+// western-australia. Injected as a "List Order" metadata row feeding the
+// query-index `listOrder` column, which the landing's magazine-cards sorts by.
+const SLUG_LIST_ORDER = {
+  'arctic-surfing': 1,
+  'san-diego-surf': 2,
+  'ski-touring': 3,
+  'guide-la-skateparks': 4,
+  'western-australia': 5,
+};
+
 /**
  * Append a `<tr><td>key</td><td>value</td></tr>` row to the Metadata block that
  * WebImporter.rules.createMetadata produced. createMetadata emits a <table> whose
@@ -111,6 +125,21 @@ function injectOrderMetadata(main, document, originalURL) {
   const slug = new URL(originalURL).pathname.match(/\/magazine\/([^./?#]+)/)?.[1];
   const order = slug && SLUG_ORDER[slug];
   appendMetadataRow(main, document, 'Order', order ? String(order) : '');
+}
+
+/**
+ * Append a "List Order" row to the Metadata block, using the magazine slug from
+ * the page URL. Becomes a `<meta name="list-order">` feeding the query-index
+ * `listOrder` column, which the magazine landing's "All Articles" grid sorts by
+ * (independently of the homepage teaser's `order`).
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectListOrderMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/magazine\/([^./?#]+)/)?.[1];
+  const order = slug && SLUG_LIST_ORDER[slug];
+  appendMetadataRow(main, document, 'List Order', order ? String(order) : '');
 }
 
 // Optional short card blurb per magazine slug, shown on the homepage cards
@@ -287,6 +316,9 @@ export default {
     // add an Order metadata row so the magazine query-index exposes an `order`
     // column the magazine-cards block sorts by before applying its limit.
     injectOrderMetadata(main, document, params.originalURL);
+    // add a List Order row (magazine landing "All Articles" sequence) → the
+    // query-index `listOrder` column that grid sorts by.
+    injectListOrderMetadata(main, document, params.originalURL);
     // add a Card Description row (when the card blurb differs from the page's
     // og:description) so the magazine-cards block can show a tighter teaser.
     injectCardDescriptionMetadata(main, document, params.originalURL);
