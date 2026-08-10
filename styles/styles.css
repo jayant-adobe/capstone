@@ -592,9 +592,10 @@ main > .section.cards-byline-container > .default-content-wrapper p {
   line-height: 2.5;
 }
 
-/* "SHARE THIS STORY" sidebar heading: source is a small uppercase label. */
+/* "SHARE THIS STORY" sidebar heading: source is a small uppercase label with a
+   ~23px gap below (matches wknd.site). */
 main > .section.cards-byline-container + .section h5 {
-  margin: 0 0 13.5px;
+  margin: 0 0 23px;
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
@@ -607,8 +608,34 @@ main > .section.cards-byline-container + .section ul {
   list-style: none;
 }
 
+/* Each item is `<a>Title</a><br>Date` (import splits the source's title/date
+   spans into two lines). The bare li text (the date after the <br>) is the muted
+   12px line; the link is the 18px uppercase dark headline above it. */
 main > .section.cards-byline-container + .section li {
   margin: 0 0 18px;
+  font-family: var(--body-font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: var(--text-muted-color);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+main > .section.cards-byline-container + .section li a {
+  display: inline-block;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 27px;
+  text-transform: uppercase;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+main > .section.cards-byline-container + .section li a:hover {
+  text-decoration: underline;
 }
 
 /* ------------------------------------------------------ Adventure detail page
