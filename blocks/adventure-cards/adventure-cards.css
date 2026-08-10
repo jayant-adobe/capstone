@@ -1,0 +1,21 @@
+/*
+ * adventure-cards — dynamic adventure card grid.
+ *
+ * The block JS adds the `cards` class to this block and renders the same
+ * `.cards > ul > li` markup the article cards use, so the grid/card visuals
+ * (4-up layout, 14px column / 32px row gap, 1.3 image ratio, uppercase titles,
+ * single-line muted descriptions) come from blocks/cards/cards.css. This file
+ * only needs to establish the block as a normal full-width flow element and
+ * reserve a little space while the query-index fetch resolves (avoids layout
+ * jump). Scoped to the block name.
+ */
+.adventure-cards {
+  display: block;
+  width: 100%;
+}
+
+/* while the index is loading (JS not yet appended the <ul>), reserve a minimal
+   height so the section doesn't collapse to 0 and cause a visible jump. */
+.adventure-cards:not(:has(ul)) {
+  min-height: 200px;
+}

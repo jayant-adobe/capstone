@@ -65,7 +65,13 @@ export default function decorate(block) {
     return wrapper.querySelector('.cards');
   };
 
+  // track the active category so late-arriving cards (the dynamic
+  // adventure-cards block renders asynchronously after its query-index fetch)
+  // can be filtered to the current selection when they appear.
+  let activeCategory = 'all';
+
   const applyFilter = (category) => {
+    activeCategory = category;
     const cards = findCards();
     if (!cards) return;
     cards.querySelectorAll('li').forEach((card) => {
@@ -102,4 +108,9 @@ export default function decorate(block) {
 
   // apply the default (first) category on load
   if (labels.length) applyFilter(toClassName(labels[0].text));
+
+  // The dynamic adventure-cards grid fetches its query-index and renders its
+  // <li>s asynchronously, after this filter has decorated. Re-apply the active
+  // category once those cards exist so the initial filter state is correct.
+  document.addEventListener('adventure-cards:rendered', () => applyFilter(activeCategory));
 }
