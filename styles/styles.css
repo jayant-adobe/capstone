@@ -446,8 +446,12 @@ main .section.highlight {
     column-gap: 48px;
     align-items: start;
     max-width: var(--content-max-width);
+
+    /* box sits on the 152/1288 content grid; no interior side padding, so the
+       main column (title/image/intro/accordion) starts at 152 — aligned with the
+       rest of the site. A 32px pad here pushed the whole layout 32px off-grid. */
     margin: 0 auto;
-    padding: 0 32px;
+    padding: 0;
     box-sizing: border-box;
   }
 
