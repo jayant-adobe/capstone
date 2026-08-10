@@ -108,48 +108,98 @@
 
 /* ---------------------------------------------------- Members-only (locked) cards
    Source: https://wknd.site/us/en/magazine.html "Members Only" section. There the
-   gated teasers (cmp-teaser--secure) render as two side-by-side cards, each dimmed
-   to opacity 0.65 with a yellow-triangle + black-padlock badge in the top-left
-   corner to signal locked content.
+   gated teasers (cmp-teaser--secure) render UNLIKE the article cards: the copy is
+   on top (title → description → a grey "READ MORE" button) and the image sits at
+   the BOTTOM. The whole card is dimmed to opacity 0.65 and a yellow-triangle +
+   black-padlock badge sits on the TITLE's top-left corner to signal locked content.
 
    In our content each gated card is authored as its own single-card `cards` block
    (so out of the box the two blocks stack full-width and the lone card is squeezed
    into a 1/4 grid column). A gated card has NO link — its <h3> is plain text, not
    an anchor — so `.cards:not(:has(a))` targets exactly the locked cards and never
-   the article cards (which all link to their detail page). */
+   the article cards (which all link to their detail page). The imported markup per
+   card is `li > [div.cards-card-image, div.cards-card-body(h3, p desc, p "Read
+   More")]`; we reorder with flex so the body comes first and the image last. */
 
 /* single card fills its wrapper instead of a 1/4 grid column */
 .cards:not(:has(a)) > ul {
   grid-template-columns: 1fr;
 }
 
-/* dim the locked card and anchor the badge to its top-left corner */
+/* dim the locked card; stack body-first, image last (source order) */
 .cards:not(:has(a)) > ul > li {
   position: relative;
+  display: flex;
+  flex-direction: column;
   opacity: 0.65;
 }
 
-/* yellow triangle corner */
-.cards:not(:has(a)) > ul > li::before {
+.cards:not(:has(a)) > ul > li > .cards-card-body {
+  order: 1;
+}
+
+.cards:not(:has(a)) > ul > li > .cards-card-image {
+  order: 2;
+  margin-top: 24px;
+}
+
+/* source uses a wider ~1.8 crop for the locked-card image */
+.cards:not(:has(a)) > ul > li > .cards-card-image img {
+  aspect-ratio: 1.8;
+}
+
+/* locked-card copy wraps normally (article cards clip descriptions to one line
+   with an ellipsis; here the full teaser text + CTA must show) */
+.cards:not(:has(a)) .cards-card-body p {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* the title anchors the badge — give it room for the 56px corner and position
+   context, and reset the article-card top margin so it sits at the card top */
+.cards:not(:has(a)) .cards-card-body h3 {
+  position: relative;
+  margin-top: 0;
+  padding-left: 40px;
+  min-height: 40px;
+}
+
+/* yellow triangle corner on the title */
+.cards:not(:has(a)) .cards-card-body h3::before {
   content: '';
   position: absolute;
-  inset: 0 auto auto 0;
+  inset: -6px auto auto -4px;
   z-index: 1;
   border-style: solid;
-  border-width: 56px 56px 0 0;
+  border-width: 44px 44px 0 0;
   border-color: var(--accent-color) transparent transparent;
 }
 
 /* black padlock glyph inside the triangle */
-.cards:not(:has(a)) > ul > li::after {
+.cards:not(:has(a)) .cards-card-body h3::after {
   content: '';
   position: absolute;
-  top: 9px;
-  left: 9px;
+  top: 2px;
+  left: 5px;
   z-index: 2;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* the gated CTA — the last <p> in the body ("Read More") — renders as a small
+   grey button (source: #ebebeb box, muted grey text, 7px/14px padding) */
+.cards:not(:has(a)) .cards-card-body p:last-child {
+  display: inline-block;
+  width: fit-content;
+  margin-top: 20px;
+  padding: 7px 14px;
+  background: #ebebeb;
+  color: var(--text-muted-color);
+  font-size: 14px;
+  text-transform: uppercase;
+  white-space: normal;
 }
 
 /* Two locked cards sit side by side from tablet up (they stack on mobile). Each
