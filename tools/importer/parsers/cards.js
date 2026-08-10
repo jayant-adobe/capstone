@@ -22,6 +22,39 @@
  *
  * Runs once per matched instance (a grid holds multiple cards; a secure teaser is one card).
  */
+/**
+ * Category membership for the WKND adventures, keyed by the adventure's URL slug
+ * (the last path segment of its detail link). This is the source of truth for the
+ * Adventures landing-page category filter and was extracted from the live source
+ * (wknd.site/us/en/adventures) by activating each category tab and recording which
+ * cards it revealed. A slug may belong to multiple categories (e.g. cycling-tuscany
+ * is Cycling + Travel). A slug absent from this map (e.g. cycling-southern-utah,
+ * which the source leaves untagged) is shown only under "All".
+ *
+ * The source computes this from each teaser's authored category tags — data that
+ * lives only in its client-side filter JS, not in the delivered DOM — so we
+ * reconstruct it here, at import time, and BAKE it into the content as a visible
+ * block cell (see below). That way the runtime block reads categories straight
+ * from authored content instead of a hard-coded map in the block JS.
+ */
+const SLUG_CATEGORIES = {
+  'bali-surf-camp': ['Surfing'],
+  'beervana-portland': ['Travel'],
+  'climbing-new-zealand': ['Climbing'],
+  'colorado-rock-climbing': ['Climbing'],
+  'cycling-tuscany': ['Cycling', 'Travel'],
+  'downhill-skiing-wyoming': ['Skiing'],
+  'gastronomic-marais-tour': ['Travel'],
+  'napa-wine-tasting': ['Travel'],
+  'riverside-camping-australia': ['Travel'],
+  'ski-touring-mont-blanc': ['Skiing'],
+  'surf-camp-costa-rica': ['Surfing'],
+  'tahoe-skiing': ['Skiing'],
+  'west-coast-cycling': ['Cycling'],
+  'whistler-mountain-biking': ['Cycling'],
+  'yosemite-backpacking': ['Travel'],
+};
+
 export default function parse(element, { document }) {
   // Helper: clean <img> keeping only src + alt.
   const cleanImage = (srcImg) => {
@@ -69,6 +102,15 @@ export default function parse(element, { document }) {
     // IMAGE-LIST: each card is a list item within the image list.
     const cards = Array.from(element.querySelectorAll('.cmp-image-list__item, li'));
 
+    // Is this grid the one controlled by the category tab filter? The tabs-filter
+    // parser runs BEFORE this one and moves the Adventures grid out of the tabs
+    // subtree (so a `.cmp-tabs` ancestor check no longer works here); before moving
+    // it, that parser stamps `data-filtered-grid` on the grid. Fall back to the
+    // original tabs ancestry in case the grid is parsed in place. The homepage grid
+    // has neither marker, so it stays the plain 2-column [image | text] shape.
+    const isFilteredGrid = element.hasAttribute('data-filtered-grid')
+      || !!element.closest('[class*="cmp-tabs__tabpanel"], .cmp-tabs');
+
     cards.forEach((card) => {
       // Image cell.
       const srcImg = card.querySelector('.cmp-image-list__item-image img, .cmp-image img, img');
@@ -80,8 +122,9 @@ export default function parse(element, { document }) {
       // Linked title — anchor wrapping the title text. Render as a heading with a link.
       const titleLink = card.querySelector('a.cmp-image-list__item-title-link, a[class*="title-link"]');
       const titleText = card.querySelector('.cmp-image-list__item-title, [class*="item-title"]:not([class*="title-link"])');
+      let href = '';
       if (titleLink) {
-        const href = titleLink.getAttribute('href');
+        href = titleLink.getAttribute('href') || '';
         const text = (titleText ? titleText.textContent : titleLink.textContent).trim();
         const h3 = document.createElement('h3');
         if (href) {
@@ -108,7 +151,24 @@ export default function parse(element, { document }) {
       }
 
       if (imageCell || textCell.length) {
-        cells.push([imageCell || '', textCell.length ? textCell : '']);
+        const row = [imageCell || '', textCell.length ? textCell : ''];
+
+        // Bake the category membership into a 3rd cell for the filtered grid. The
+        // categories are keyed by the adventure's detail-link slug (see
+        // SLUG_CATEGORIES). Emit the labels as a comma-joined <p> (matching the
+        // filter tab labels, e.g. "Cycling, Travel"); untagged adventures get the
+        // sentinel "None" so every row stays a clean 3-cell block (no empty cells
+        // to lose in the HTML→markdown round-trip). The runtime cards block reads
+        // this cell into a `data-categories` attribute and removes it from render.
+        if (isFilteredGrid) {
+          const slug = href.match(/\/adventures\/([^./?#]+)/)?.[1] || '';
+          const cats = SLUG_CATEGORIES[slug] || [];
+          const p = document.createElement('p');
+          p.textContent = cats.length ? cats.join(', ') : 'None';
+          row.push([p]);
+        }
+
+        cells.push(row);
       }
     });
   }

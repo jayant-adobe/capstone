@@ -1,10 +1,29 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
+import { createOptimizedPicture, toClassName } from '../../scripts/aem.js';
 
 export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {
     const li = document.createElement('li');
+
+    // Categories cell (baked by the import for the Adventures filter grid): an
+    // EXTRA cell holding only a comma-separated list of category labels (e.g.
+    // "Cycling, Travel"), with no image/heading/link. Lift it into a
+    // `data-categories` attribute (space-separated class names) the tabs-filter
+    // block reads, then drop the cell so it never renders. "None" = untagged
+    // (shown only under "All"). Cards without this cell (e.g. the homepage grid)
+    // are unaffected.
+    const catCell = [...row.children].find((cell) => cell.textContent.trim()
+      && !cell.querySelector('picture, img, a, h1, h2, h3, h4, h5, h6'));
+    if (catCell) {
+      const cats = catCell.textContent
+        .split(',')
+        .map((c) => toClassName(c.trim()))
+        .filter((c) => c && c !== 'none');
+      if (cats.length) li.dataset.categories = cats.join(' ');
+      catCell.remove();
+    }
+
     while (row.firstElementChild) li.append(row.firstElementChild);
     [...li.children].forEach((div) => {
       if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-card-image';

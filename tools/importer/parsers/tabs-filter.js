@@ -78,5 +78,13 @@ export default function parse(element, { document }) {
   // Re-attach the cards grid as a sibling right after the filter block. Appending
   // an existing node moves it (auto-detaching from the now-removed tabs subtree);
   // its identity is unchanged, so the cards block instance reference stays valid.
-  if (grid) block.after(grid);
+  if (grid) {
+    // Mark the grid as filter-controlled BEFORE moving it out of the tabs subtree.
+    // The cards parser runs after this one and can no longer detect the tabs
+    // ancestor (we just detached it), so it keys off this marker to decide whether
+    // to bake per-card category cells. The attribute is parse-time only — it is
+    // never emitted to the block table, so it does not reach the output content.
+    grid.setAttribute('data-filtered-grid', 'true');
+    block.after(grid);
+  }
 }
