@@ -592,6 +592,20 @@ main > .section.cards-byline-container > .default-content-wrapper p {
   line-height: 2.5;
 }
 
+/* Pull-quote: source renders the blockquote tighter than body copy —
+   18px / 27px (1.5) with 18px vertical + 40px left margin — not the relaxed
+   45px the body paragraphs use. Target the blockquote and its inner <p> so the
+   quote text doesn't inherit the loose body line-height above. */
+main > .section.cards-byline-container > .default-content-wrapper blockquote {
+  margin: 18px 0 18px 40px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+main > .section.cards-byline-container > .default-content-wrapper blockquote p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* "SHARE THIS STORY" sidebar heading: source is a small uppercase label with a
    ~23px gap below (matches wknd.site). */
 main > .section.cards-byline-container + .section h5 {
