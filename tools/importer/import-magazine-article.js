@@ -113,6 +113,30 @@ function injectOrderMetadata(main, document, originalURL) {
   appendMetadataRow(main, document, 'Order', order ? String(order) : '');
 }
 
+// Optional short card blurb per magazine slug, shown on the homepage cards
+// instead of the full page description. Seeded from the live source's card
+// teasers where they differ from the article's og:description — e.g. San Diego
+// shows "Best beach breaks" on the card but a longer SEO description on the
+// page. Slugs omitted here fall back to the og:description. Injected as a
+// "Card Description" metadata row feeding the query-index `cardDescription`.
+const SLUG_CARD_DESCRIPTION = {
+  'san-diego-surf': 'Best beach breaks',
+};
+
+/**
+ * Append a "Card Description" row to the Metadata block, using the magazine slug
+ * from the page URL. Becomes a `<meta name="card-description">` feeding the
+ * query-index `cardDescription` column, which the magazine-cards block prefers
+ * over the full description when rendering a card blurb.
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectCardDescriptionMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/magazine\/([^./?#]+)/)?.[1];
+  appendMetadataRow(main, document, 'Card Description', (slug && SLUG_CARD_DESCRIPTION[slug]) || '');
+}
+
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "magazine-article",
@@ -263,6 +287,9 @@ export default {
     // add an Order metadata row so the magazine query-index exposes an `order`
     // column the magazine-cards block sorts by before applying its limit.
     injectOrderMetadata(main, document, params.originalURL);
+    // add a Card Description row (when the card blurb differs from the page's
+    // og:description) so the magazine-cards block can show a tighter teaser.
+    injectCardDescriptionMetadata(main, document, params.originalURL);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
 

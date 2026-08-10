@@ -57,6 +57,14 @@ indices:
       description:
         select: head > meta[property="og:description"]
         value: attribute(el, "content")
+      cardDescription:
+        # Optional short blurb shown on the card instead of the full
+        # og:description (meta[name="card-description"], injected at import from
+        # SLUG_CARD_DESCRIPTION). Lets an author give a card a tighter teaser —
+        # e.g. "Best beach breaks" for San Diego — without changing the page's
+        # SEO description. The magazine-cards block prefers this when present.
+        select: head > meta[name="card-description"]
+        value: attribute(el, "content")
       image:
         select: head > meta[property="og:image"]
         value: attribute(el, "content")
