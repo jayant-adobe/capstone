@@ -102,8 +102,37 @@ function sortByOrder(rows, field) {
 }
 
 /**
+ * Build the card's image element. Prefer the source per-article thumbnail
+ * (`cardImage`) over the article's og:image (`image`, the hero). Same-origin
+ * images are optimized via createOptimizedPicture; a cross-origin cardImage
+ * (the source's wknd.site coreimg thumbnail) is kept as a plain <img> —
+ * createOptimizedPicture is path-only and would mangle an external URL (same
+ * reason the cards-byline avatar is left un-optimized).
+ * @param {object} row index row
+ * @returns {Element|null} <picture> or <img>, or null if no image
+ */
+function buildCardImage(row) {
+  const src = row.cardImage || row.image;
+  if (!src) return null;
+  let sameOrigin = false;
+  try {
+    sameOrigin = new URL(src, window.location.href).origin === window.location.origin;
+  } catch (e) {
+    sameOrigin = false;
+  }
+  if (sameOrigin) {
+    return createOptimizedPicture(src, row.title || '', false, [{ width: '750' }]);
+  }
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = row.title || '';
+  img.loading = 'lazy';
+  return img;
+}
+
+/**
  * Build one card <li> matching the article cards markup.
- * @param {object} row an index row {path,title,description,cardDescription,image}
+ * @param {object} row an index row {path,title,description,cardDescription,image,cardImage}
  * @returns {Element} the <li>
  */
 function buildCard(row) {
@@ -113,12 +142,13 @@ function buildCard(row) {
   // below is the accessible/keyboard target, matching the article cards)
   const imageWrap = document.createElement('div');
   imageWrap.className = 'cards-card-image';
-  if (row.image) {
+  const pic = buildCardImage(row);
+  if (pic) {
     const link = document.createElement('a');
     link.href = row.path;
     link.setAttribute('aria-hidden', 'true');
     link.setAttribute('tabindex', '-1');
-    link.append(createOptimizedPicture(row.image, row.title || '', false, [{ width: '750' }]));
+    link.append(pic);
     imageWrap.append(link);
   }
 

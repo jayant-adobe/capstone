@@ -76,6 +76,13 @@ indices:
       image:
         select: head > meta[property="og:image"]
         value: attribute(el, "content")
+      cardImage:
+        # Optional card thumbnail shown instead of the article's og:image (hero).
+        # The source homepage/landing cards use a distinct per-article thumbnail
+        # (meta[name="card-image"], injected at import from SLUG_CARD_IMAGE), not
+        # the article's lead image. The magazine-cards block prefers this.
+        select: head > meta[name="card-image"]
+        value: attribute(el, "content")
       order:
         # Author-controlled sort position for the HOMEPAGE "Recent Articles"
         # teaser (meta[name="order"], injected from SLUG_ORDER). The
