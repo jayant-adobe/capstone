@@ -1,0 +1,167 @@
+/*
+ * profile-cards — dynamic team profile grid (About Us contributors / guides).
+ *
+ * The block JS adds the `cards-profile` class and renders the same markup the
+ * authored profile cards use, but EDS loads a block's CSS by its REGISTERED
+ * NAME (profile-cards.css) — so this file must own the full layout rather than
+ * rely on blocks/cards-profile/cards-profile.css being present. Values mirror
+ * that file (measured from wknd.site/us/en/about-us): a 4-up grid of centered
+ * cards, circular 164px portrait, 24px Asar name, 14px/600 uppercase role, and
+ * a row of three 48px dark social-icon buttons (real brand glyphs via CSS mask).
+ * Scoped to the block name.
+ */
+
+.profile-cards {
+  display: block;
+  width: 100%;
+}
+
+.profile-cards:not(:has(ul)) {
+  min-height: 200px; /* reserve space while the data sheet loads (no jump) */
+}
+
+.profile-cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px 28px;
+}
+
+.profile-cards > ul > li {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  min-width: 0;
+  text-align: center;
+}
+
+/* ---------------------------------------------------- circular portrait */
+.profile-cards .cards-profile-card-image {
+  display: block;
+  width: 164px;
+  margin: 0 auto;
+  line-height: 0;
+}
+
+.profile-cards .cards-profile-card-image picture {
+  display: block;
+  width: 164px;
+  height: 164px;
+}
+
+.profile-cards > ul > li img {
+  display: block;
+  width: 164px;
+  height: 164px;
+  max-width: 100%;
+  margin: 0 auto;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------- text content */
+.profile-cards .cards-profile-card-body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* collapse whitespace between the three inline-block social <p>s so the
+     buttons butt together into one continuous 144px dark bar (source). */
+  font-size: 0;
+  text-align: center;
+}
+
+/* name — Asar serif 24px, ~14px below the portrait, 6px above the role */
+.profile-cards .cards-profile-card-body h3 {
+  margin: 14px 0 6px;
+  font-family: var(--heading-font-family);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+/* role — Source Sans Pro 14px/600 uppercase dark ink, ~22px above social row */
+.profile-cards .cards-profile-card-body h5 {
+  margin: 0 0 22px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+/* ------------------------------------------------- social link row */
+.profile-cards .cards-profile-card-body p:has(> a) {
+  display: inline-block;
+  margin: 0;
+}
+
+.profile-cards .cards-profile-card-body a:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 0; /* hide the label text */
+  line-height: 0;
+  text-decoration: none;
+  background-color: var(--dark-color);
+  vertical-align: top;
+}
+
+/* brand glyph: ~17.5px masked square in the source's light grey */
+.profile-cards .cards-profile-card-body a:any-link::before {
+  content: '';
+  width: 17.5px;
+  height: 17.5px;
+  background-color: var(--light-color);
+  mask: var(--profile-social-icon) center / contain no-repeat;
+
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask: var(--profile-social-icon) center / contain no-repeat;
+}
+
+.profile-cards .cards-profile-card-body a[title*='facebook' i] {
+  --profile-social-icon: url('/icons/social-facebook.svg');
+}
+
+.profile-cards .cards-profile-card-body a[title*='twitter' i] {
+  --profile-social-icon: url('/icons/social-twitter.svg');
+}
+
+.profile-cards .cards-profile-card-body a[title*='instagram' i] {
+  --profile-social-icon: url('/icons/social-instagram.svg');
+}
+
+.profile-cards .cards-profile-card-body a:any-link:hover {
+  background-color: var(--accent-color);
+}
+
+.profile-cards .cards-profile-card-body a:any-link:hover::before {
+  background-color: var(--text-color);
+}
+
+@media (width >= 600px) {
+  .profile-cards > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  /* 4-up desktop grid; the 3-item Guides grid left-aligns (source) */
+  .profile-cards > ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
