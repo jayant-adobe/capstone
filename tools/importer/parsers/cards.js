@@ -95,6 +95,18 @@ export default function parse(element, { document }) {
       textCell.push(p);
     }
 
+    // Gated CTA label: the source shows a "Read More" affordance on each secure
+    // teaser, but the content is member-gated so it's plain (non-linked) text —
+    // emit it as a paragraph, NOT an anchor, so the locked-card styling
+    // (.cards:not(:has(a)): dimmed + padlock badge) still applies.
+    const action = element.querySelector('.cmp-teaser__action-link, .cmp-teaser__action-container, [class*="action"]');
+    const actionText = action && action.textContent.trim();
+    if (actionText) {
+      const cta = document.createElement('p');
+      cta.textContent = actionText;
+      textCell.push(cta);
+    }
+
     if (imageCell || textCell.length) {
       cells.push([imageCell || '', textCell.length ? textCell : '']);
     }
