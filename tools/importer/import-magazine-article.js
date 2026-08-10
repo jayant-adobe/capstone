@@ -166,6 +166,33 @@ function injectCardDescriptionMetadata(main, document, originalURL) {
   appendMetadataRow(main, document, 'Card Description', (slug && SLUG_CARD_DESCRIPTION[slug]) || '');
 }
 
+// Per-article card thumbnail. The source homepage/landing magazine cards use a
+// distinct thumbnail per article — NOT the article's og:image (lead/hero image).
+// These are the source's own coreimg card assets (verified 200). Injected as a
+// "Card Image" metadata row feeding the query-index `cardImage` column, which the
+// magazine-cards block prefers over `image`. Slugs omitted fall back to og:image.
+const SLUG_CARD_IMAGE = {
+  'guide-la-skateparks': 'https://wknd.site/us/en/magazine/guide-la-skateparks/_jcr_content/root/container/container/contentfragment/par2/image_copy.coreimg.png/1660323783259/article-01-picture-01.png',
+  'ski-touring': 'https://wknd.site/us/en/magazine/ski-touring/_jcr_content/root/container/container/contentfragment/par1/image.coreimg.jpeg/1660323789866/skitouring5sjoeberg.jpeg',
+  'arctic-surfing': 'https://wknd.site/us/en/magazine/arctic-surfing/_jcr_content/root/container/container/contentfragment/par1/image.coreimg.jpeg/1660323789770/surfer-wave-02.jpeg',
+  'san-diego-surf': 'https://wknd.site/us/en/magazine/san-diego-surf/_jcr_content/root/container/container/contentfragment/par1/image.coreimg.jpeg/1660323790169/adobestock-164735399.jpeg',
+  'western-australia': 'https://wknd.site/us/en/magazine/western-australia/_jcr_content/root/container/container/contentfragment/par2/image.coreimg.jpeg/1660323770369/adobe-waadobe-wa-b6a7083.jpeg',
+};
+
+/**
+ * Append a "Card Image" row to the Metadata block, using the magazine slug from
+ * the page URL. Becomes a `<meta name="card-image">` feeding the query-index
+ * `cardImage` column, which the magazine-cards block prefers over the article's
+ * og:image (hero) so the cards show the source's per-article thumbnail.
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectCardImageMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/magazine\/([^./?#]+)/)?.[1];
+  appendMetadataRow(main, document, 'Card Image', (slug && SLUG_CARD_IMAGE[slug]) || '');
+}
+
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "magazine-article",
@@ -322,6 +349,9 @@ export default {
     // add a Card Description row (when the card blurb differs from the page's
     // og:description) so the magazine-cards block can show a tighter teaser.
     injectCardDescriptionMetadata(main, document, params.originalURL);
+    // add a Card Image row (source per-article card thumbnail, not the hero) so
+    // the magazine-cards block renders the source thumbnail instead of og:image.
+    injectCardImageMetadata(main, document, params.originalURL);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
 
