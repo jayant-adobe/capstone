@@ -8,7 +8,8 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
  * /us/en/magazine/**) at runtime and renders one card per article — image +
  * linked title + description, each linking to the article. The index is the
  * single source of truth; no article content lives in this JS or the authored
- * document. Powers the homepage "Recent Articles" grid.
+ * document. Powers the homepage "Recent Articles" grid and the magazine
+ * landing "All Articles" grid.
  *
  * It renders the SAME `.cards > ul > li` structure the article `cards` block
  * uses (and adds the `cards` class), but owns its own grid CSS in
@@ -17,33 +18,50 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
  *
  * Authoring:
  *   | Magazine Cards |
- *   | limit | 4 |            (optional; omit = show all)
- * A `limit` row (or a numeric first cell) caps the number of cards — e.g. the
- * homepage "Recent Articles" shows 4.
+ *   | limit | 4 |               (optional; omit = show all)
+ *   | order-field | listOrder | (optional; which index column to sort by)
+ * A `limit` row (or a numeric first cell) caps the number of cards — the
+ * homepage "Recent Articles" shows 4; the landing "All Articles" shows all.
  *
- * Order is author-controlled per article: each article carries a numeric
- * `order` metadata (exposed as the index `order` column). Cards render sorted by
- * that order ascending, THEN the limit is applied. Articles with no order sort
- * last.
+ * Order is author-controlled per article. Each article carries two order metas
+ * exposed as index columns: `order` (homepage teaser sequence) and `listOrder`
+ * (magazine landing sequence) — the same articles appear in different orders on
+ * the two pages. `order-field` selects which column this instance sorts by
+ * (default `order`). Cards render sorted ascending, THEN the limit is applied;
+ * articles with no value for that column sort last.
  */
 
 const INDEX_PATH = '/us/en/magazine/query-index.json';
 
 /**
- * Read an optional numeric limit from the block's authored rows
- * (`| limit | 4 |` or a bare number), then empty the block for re-render.
+ * Read the block's authored key/value rows into a config object.
+ * Recognised keys:
+ *   - `limit` (number): cap the number of cards (0/absent = show all)
+ *   - `order-field` (string): which index column to sort by; defaults to
+ *     `order` (homepage teaser). The magazine landing passes `listOrder` so the
+ *     two grids can order the same articles independently.
+ * A bare numeric first cell (no key) is also accepted as the limit.
  * @param {Element} block
- * @returns {number} the limit, or 0 for "no limit"
+ * @returns {{limit: number, orderField: string}}
  */
-function readLimit(block) {
-  let limit = 0;
+function readConfig(block) {
+  const cfg = { limit: 0, orderField: 'order' };
   block.querySelectorAll(':scope > div').forEach((row) => {
-    const cells = [...row.children];
-    const text = cells.map((c) => c.textContent.trim()).join(' ');
-    const num = text.match(/\d+/);
-    if (num) limit = parseInt(num[0], 10);
+    const cells = [...row.children].map((c) => c.textContent.trim());
+    const key = (cells[0] || '').toLowerCase();
+    const val = cells[1] || '';
+    if (key === 'limit') {
+      const n = (val.match(/\d+/) || [])[0];
+      if (n) cfg.limit = parseInt(n, 10);
+    } else if (key === 'order-field' && val) {
+      cfg.orderField = val;
+    } else if (cells.length === 1) {
+      // bare numeric row → limit
+      const n = (key.match(/\d+/) || [])[0];
+      if (n) cfg.limit = parseInt(n, 10);
+    }
   });
-  return limit;
+  return cfg;
 }
 
 /**
@@ -63,17 +81,18 @@ async function fetchArticles() {
 }
 
 /**
- * Sort index rows by their author-controlled `order` (meta[name="order"] on the
- * article, exposed as an index column). Lower order first; rows with no valid
- * order sort after all ordered rows, keeping their original index order (stable)
- * so the sequence is deterministic. This makes a `limit` meaningful — e.g.
- * limit=4 renders the four lowest-order articles.
+ * Sort index rows by an author-controlled order column (default `order`; the
+ * landing uses `listOrder`). Lower value first; rows with no valid value sort
+ * after all ordered rows, keeping their original index order (stable) so the
+ * sequence is deterministic. This makes a `limit` meaningful — e.g. limit=4
+ * renders the four lowest-order articles.
  * @param {Array} rows index rows
+ * @param {string} field the index column to sort by
  * @returns {Array} a new, sorted array
  */
-function sortByOrder(rows) {
+function sortByOrder(rows, field) {
   const rank = (row) => {
-    const n = parseInt(row.order, 10);
+    const n = parseInt(row[field], 10);
     return Number.isNaN(n) ? Infinity : n;
   };
   return rows
@@ -130,7 +149,7 @@ function buildCard(row) {
  * @param {Element} block
  */
 export default async function decorate(block) {
-  const limit = readLimit(block);
+  const { limit, orderField } = readConfig(block);
   block.textContent = '';
 
   // render the same .cards markup (magazine-cards.css scopes the grid visuals)
@@ -142,8 +161,8 @@ export default async function decorate(block) {
     return;
   }
 
-  // order by the author-controlled `order` column first, then cap to `limit`
-  const ordered = sortByOrder(articles);
+  // order by the author-controlled order column first, then cap to `limit`
+  const ordered = sortByOrder(articles, orderField);
   const rows = limit > 0 ? ordered.slice(0, limit) : ordered;
   const ul = document.createElement('ul');
   rows.forEach((row) => ul.append(buildCard(row)));

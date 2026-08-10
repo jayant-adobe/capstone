@@ -69,10 +69,17 @@ indices:
         select: head > meta[property="og:image"]
         value: attribute(el, "content")
       order:
-        # Author-controlled sort position (meta[name="order"], injected at import
-        # from SLUG_ORDER). The magazine-cards block parses it to a number and
-        # sorts ascending before applying its limit; missing/blank sorts last.
+        # Author-controlled sort position for the HOMEPAGE "Recent Articles"
+        # teaser (meta[name="order"], injected from SLUG_ORDER). The
+        # magazine-cards block sorts ascending before applying its limit.
         select: head > meta[name="order"]
+        value: attribute(el, "content")
+      listOrder:
+        # Author-controlled sort position for the magazine landing "All Articles"
+        # grid (meta[name="list-order"], injected from SLUG_LIST_ORDER). The same
+        # articles appear in a different order here than in the homepage teaser,
+        # so this is a separate column the landing's magazine-cards sorts by.
+        select: head > meta[name="list-order"]
         value: attribute(el, "content")
       lastModified:
         select: none
