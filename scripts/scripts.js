@@ -74,22 +74,26 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
- * Build the adventure-detail breadcrumb ("ADVENTURES ▸ <Title>"), matching the
- * source, which shows a breadcrumb above the mini carousel on every
- * /adventures/<slug> detail page. Derived from the URL path + document title —
- * no authored content needed. Only runs on adventure-detail pages (a path like
- * /…/adventures/<slug>, i.e. a segment AFTER "adventures"); the Adventures
- * landing itself has no breadcrumb.
+ * Build the section-detail breadcrumb ("<Section> ▸ <Title>"), matching the
+ * source, which shows a breadcrumb on every detail page under a section landing:
+ *   - adventure-detail (/…/adventures/<slug>): "Adventures ▸ <Title>"
+ *   - magazine-article (/…/magazine/<slug>):   "Magazine ▸ <Title>"
+ * Derived from the URL path + document title — no authored content needed. Only
+ * runs when there is a slug segment AFTER the section ("adventures"/"magazine");
+ * the section landing pages themselves have no breadcrumb.
  * @param {Element} main The container element
  */
 function buildBreadcrumb(main) {
   const segs = window.location.pathname.replace(/\.html$/, '').split('/').filter(Boolean);
-  const advIdx = segs.indexOf('adventures');
-  // must have a slug segment after "adventures" (detail page), not the landing
-  if (advIdx === -1 || advIdx >= segs.length - 1) return;
+  // detail pages live directly under a section landing; support both sections
+  const sections = { adventures: 'Adventures', magazine: 'Magazine' };
+  const secIdx = segs.findIndex((s) => sections[s]);
+  // must have a slug segment after the section (detail page), not the landing
+  if (secIdx === -1 || secIdx >= segs.length - 1) return;
   if (main.querySelector('.breadcrumb')) return;
 
-  const parentPath = `/${segs.slice(0, advIdx + 1).join('/')}`;
+  const parentPath = `/${segs.slice(0, secIdx + 1).join('/')}`;
+  const parentLabel = sections[segs[secIdx]];
   const title = (document.querySelector('main h1')?.textContent || document.title).trim();
 
   const nav = document.createElement('nav');
@@ -100,7 +104,7 @@ function buildBreadcrumb(main) {
   const parentLi = document.createElement('li');
   const parentLink = document.createElement('a');
   parentLink.href = parentPath;
-  parentLink.textContent = 'Adventures';
+  parentLink.textContent = parentLabel;
   parentLi.append(parentLink);
 
   const currentLi = document.createElement('li');
