@@ -17,6 +17,44 @@ const parsers = {
   'cards-byline': cardsBylineParser,
 };
 
+/**
+ * Restructure the "SHARE THIS STORY" related-articles list so each item's TITLE
+ * and DATE survive the Markdown round-trip as two distinct lines (matching the
+ * source, which wraps them in separate `.cmp-list__item-title` /
+ * `.cmp-list__item-date` spans inside the link).
+ *
+ * The source markup is `<li><a><span title/><span date/></a></li>`. A markdown
+ * link can only hold inline text, so both spans collapse into one flat link
+ * ("Title Date") with no way to style/line-break them apart. We rewrite each
+ * item to `<li><a>Title</a><br>Date</li>` — the link keeps only the title (the
+ * clickable headline), and the date follows as plain text after a hard break, so
+ * CSS can render the title over a muted date line.
+ * @param {Document} document
+ */
+function restructureRelatedList(document) {
+  const items = document.querySelectorAll('aside ul li, .cmp-list__item');
+  items.forEach((li) => {
+    const link = li.querySelector('a');
+    if (!link) return;
+    const titleEl = link.querySelector('.cmp-list__item-title');
+    const dateEl = link.querySelector('.cmp-list__item-date');
+    // Prefer the explicit spans; fall back to splitting a "Title … <date>" string
+    // on the trailing weekday-led date if the spans were already stripped.
+    let title;
+    let date;
+    if (titleEl && dateEl) {
+      title = titleEl.textContent.trim();
+      date = dateEl.textContent.trim();
+    } else {
+      const m = link.textContent.trim().match(/^(.*?)\s+((?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day,.*)$/);
+      if (!m) return;
+      [, title, date] = m;
+    }
+    link.textContent = title; // link = clickable headline only
+    li.replaceChildren(link, document.createElement('br'), document.createTextNode(date));
+  });
+}
+
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "magazine-article",
@@ -133,6 +171,11 @@ export default {
 
     // 1. beforeTransform (initial cleanup)
     executeTransformers('beforeTransform', main, payload);
+
+    // 1b. Restructure the related-articles ("SHARE THIS STORY") list so each
+    // item's title and date survive as two lines (source parity). Runs while the
+    // `.cmp-list__item-title`/`-date` spans still exist, before md conversion.
+    restructureRelatedList(document);
 
     // 2. Discover blocks from embedded template
     const pageBlocks = findBlocksOnPage(document, PAGE_TEMPLATE);
