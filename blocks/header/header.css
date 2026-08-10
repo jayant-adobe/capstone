@@ -319,6 +319,15 @@ header .nav-sections a:hover {
   text-decoration: none;
 }
 
+/* current section highlighted with the brand-yellow background (source shows
+   e.g. MAGAZINE highlighted on any /us/en/magazine* page). JS adds .nav-current
+   to the matching <li> and aria-current="page" to its link. */
+header .nav-sections .nav-current > a,
+header .nav-sections a[aria-current='page'] {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
 /* search */
 header .nav-search {
   flex: 0 0 auto;

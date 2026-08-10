@@ -584,12 +584,13 @@ main > .section.cards-byline-container > .default-content-wrapper h4 {
   color: var(--text-color);
 }
 
-/* Article body copy: source uses relaxed 18px / 45px line spacing for the
-   long-form paragraphs. */
+/* Article body copy: source uses relaxed 18px / 45px line spacing and JUSTIFIED
+   text for the long-form paragraphs. */
 /* stylelint-disable-next-line no-descending-specificity */
 main > .section.cards-byline-container > .default-content-wrapper p {
   font-size: 18px;
   line-height: 2.5;
+  text-align: justify;
 }
 
 /* Pull-quote: source renders the blockquote tighter than body copy —
@@ -627,6 +628,8 @@ main > .section.cards-byline-container + .section ul {
    12px line; the link is the 18px uppercase dark headline above it. */
 main > .section.cards-byline-container + .section li {
   margin: 0 0 18px;
+  padding-left: 16px;
+  border-left: 5px solid var(--light-color);
   font-family: var(--body-font-family);
   font-size: 12px;
   font-weight: 400;
