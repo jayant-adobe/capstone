@@ -156,20 +156,20 @@
   text-overflow: clip;
 }
 
-/* the title anchors the badge — give it room for the 56px corner and position
-   context, and reset the article-card top margin so it sits at the card top */
+/* the title anchors the badge. Source: the title text starts at the card's left
+   edge (no indent) and the yellow-triangle + padlock badge sits ON TOP of the
+   title's top-left corner, overlapping the first letters — so reset the
+   article-card top margin and give position context, but NO left padding. */
 .cards:not(:has(a)) .cards-card-body h3 {
   position: relative;
   margin-top: 0;
-  padding-left: 40px;
-  min-height: 40px;
 }
 
-/* yellow triangle corner on the title */
+/* yellow triangle corner overlapping the title's top-left */
 .cards:not(:has(a)) .cards-card-body h3::before {
   content: '';
   position: absolute;
-  inset: -6px auto auto -4px;
+  inset: 0 auto auto 0;
   z-index: 1;
   border-style: solid;
   border-width: 44px 44px 0 0;
@@ -180,8 +180,8 @@
 .cards:not(:has(a)) .cards-card-body h3::after {
   content: '';
   position: absolute;
-  top: 2px;
-  left: 5px;
+  top: 6px;
+  left: 6px;
   z-index: 2;
   width: 18px;
   height: 18px;
