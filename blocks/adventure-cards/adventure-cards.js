@@ -83,7 +83,7 @@ function sortByOrder(rows) {
 
 /**
  * Build one card <li> matching the article cards markup so cards.css applies.
- * @param {object} row an index row {path,title,description,image,category}
+ * @param {object} row an index row {path,title,description,cardDescription,image,category}
  * @returns {Element} the <li>
  */
 function buildCard(row) {
@@ -118,9 +118,12 @@ function buildCard(row) {
   titleLink.textContent = row.title || '';
   h3.append(titleLink);
   body.append(h3);
-  if (row.description) {
+  // prefer the author's short card blurb (meta[name="card-description"]) over
+  // the full page description when one is set for this adventure
+  const blurb = row.cardDescription || row.description;
+  if (blurb) {
     const p = document.createElement('p');
-    p.textContent = row.description;
+    p.textContent = blurb;
     body.append(p);
   }
 
