@@ -21,6 +21,63 @@ const parsers = {
   'tabs': tabsParser,
 };
 
+// Category membership per adventure slug — the authoritative set captured from
+// the live source's "Current Adventures" filter tabs (mirrors SLUG_CATEGORIES in
+// parsers/cards.js). Injected as a "Category" metadata row on each detail page so
+// the adventures query-index exposes a `category` column; the dynamic
+// adventure-cards block + tabs-filter read categories from the index rather than
+// a hard-coded JS map. Untagged adventures (e.g. cycling-southern-utah) get no
+// category and therefore only appear under "All".
+const SLUG_CATEGORIES = {
+  'bali-surf-camp': ['Surfing'],
+  'beervana-portland': ['Travel'],
+  'climbing-new-zealand': ['Climbing'],
+  'colorado-rock-climbing': ['Climbing'],
+  'cycling-tuscany': ['Cycling', 'Travel'],
+  'downhill-skiing-wyoming': ['Skiing'],
+  'gastronomic-marais-tour': ['Travel'],
+  'napa-wine-tasting': ['Travel'],
+  'riverside-camping-australia': ['Travel'],
+  'ski-touring-mont-blanc': ['Skiing'],
+  'surf-camp-costa-rica': ['Surfing'],
+  'tahoe-skiing': ['Skiing'],
+  'west-coast-cycling': ['Cycling'],
+  'whistler-mountain-biking': ['Cycling'],
+  'yosemite-backpacking': ['Travel'],
+};
+
+/**
+ * Append a "Category" row to the Metadata block that WebImporter.rules.createMetadata
+ * produced, using the adventure slug from the page URL. This becomes a
+ * `<meta name="category">` on the published page, which the adventures
+ * query-index (helix-query.yaml) reads into its `category` column.
+ * @param {Element} main document.body after createMetadata has run
+ * @param {Document} document
+ * @param {string} originalURL the source page URL
+ */
+function injectCategoryMetadata(main, document, originalURL) {
+  const slug = new URL(originalURL).pathname.match(/\/adventures\/([^./?#]+)/)?.[1];
+  const cats = (slug && SLUG_CATEGORIES[slug]) || [];
+  if (!cats.length) return; // untagged → no category row (shows only under "All")
+
+  // createMetadata appends a <table> whose header cell reads "Metadata" (the
+  // `.metadata` class only appears after the md2da conversion, so match by the
+  // header text here). Append a "Category" row: <tr><td>Category</td><td>…</td></tr>.
+  const metaTable = [...main.querySelectorAll('table')].reverse().find((t) => {
+    const head = t.querySelector('th, td');
+    return head && head.textContent.trim().toLowerCase() === 'metadata';
+  });
+  if (!metaTable) return;
+
+  const tr = document.createElement('tr');
+  const keyCell = document.createElement('td');
+  keyCell.textContent = 'Category';
+  const valCell = document.createElement('td');
+  valCell.textContent = cats.join(', ');
+  tr.append(keyCell, valCell);
+  metaTable.append(tr);
+}
+
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "adventure-detail",
@@ -185,6 +242,9 @@ export default {
     const hr = document.createElement('hr');
     main.appendChild(hr);
     WebImporter.rules.createMetadata(main, document);
+    // add a Category metadata row (from the adventure slug) so the query-index
+    // exposes a `category` column for the dynamic adventure-cards + filter.
+    injectCategoryMetadata(main, document, params.originalURL);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
 
