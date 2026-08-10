@@ -52,23 +52,21 @@ function matchingDivEnd(html, openStart) {
 }
 
 /**
- * Swap an authored adventure `cards` grid for the dynamic `adventure-cards`
- * block, so the homepage teaser and the Adventures listing render from the
- * query-index instead of hardcoded content. Finds the `<div class="cards">`
- * whose links point at `/adventures/…`, then removes the WHOLE element up to its
- * depth-matched `</div>` (the grid nests a div per card, so a naive regex would
- * orphan the card divs) and replaces it with `<div class="adventure-cards">…`.
- * On the homepage a `limit` row caps the teaser at 4; the listing shows all.
- * Returns the body unchanged if no adventure cards grid is present.
+ * Swap an authored `cards` grid for a dynamic, index-driven cards block, so a
+ * page renders from a query-index instead of hardcoded content. Finds the first
+ * `<div class="cards">` whose links match `linkPattern`, removes the WHOLE
+ * element up to its depth-matched `</div>` (the grid nests a div per card, so a
+ * naive regex would orphan the card divs) and replaces it with
+ * `<div class="{blockClass}">` — with an optional `| limit | N |` row.
+ * Returns the body unchanged if no matching grid is present.
  * @param {string} bodyHtml the fragment HTML
- * @param {string} rel the output path (e.g. us/en.html)
+ * @param {object} opts
+ * @param {RegExp} opts.linkPattern identifies the target grid by its card links
+ * @param {string} opts.blockClass the dynamic block class to insert
+ * @param {number} [opts.limit] optional card cap (emits a `| limit | N |` row)
  * @returns {string}
  */
-function wireAdventureCards(bodyHtml, rel) {
-  const isHome = rel === 'us/en.html';
-  const isListing = rel === 'us/en/adventures.html';
-  if (!isHome && !isListing) return bodyHtml;
-
+function wireDynamicCards(bodyHtml, { linkPattern, blockClass, limit }) {
   const openRe = /<div class="cards">/gi;
   let m = openRe.exec(bodyHtml);
   while (m) {
@@ -76,15 +74,49 @@ function wireAdventureCards(bodyHtml, rel) {
     const end = matchingDivEnd(bodyHtml, start);
     if (end === -1) break;
     const block = bodyHtml.slice(start, end);
-    if (/\/adventures\/[a-z]/.test(block)) {
-      const limitRow = isHome ? '<div><div>limit</div><div>4</div></div>' : '';
-      const replacement = `<div class="adventure-cards">${limitRow}</div>`;
+    if (linkPattern.test(block)) {
+      const limitRow = limit ? `<div><div>limit</div><div>${limit}</div></div>` : '';
+      const replacement = `<div class="${blockClass}">${limitRow}</div>`;
       return bodyHtml.slice(0, start) + replacement + bodyHtml.slice(end);
     }
-    openRe.lastIndex = end; // skip past this (non-adventure) cards block
+    openRe.lastIndex = end; // skip past this (non-matching) cards block
     m = openRe.exec(bodyHtml);
   }
   return bodyHtml;
+}
+
+/**
+ * Replace the authored adventure `cards` grid with the dynamic `adventure-cards`
+ * block on the homepage teaser (limit 4) and the full Adventures listing.
+ * @param {string} bodyHtml
+ * @param {string} rel output path (e.g. us/en.html)
+ * @returns {string}
+ */
+function wireAdventureCards(bodyHtml, rel) {
+  const isHome = rel === 'us/en.html';
+  const isListing = rel === 'us/en/adventures.html';
+  if (!isHome && !isListing) return bodyHtml;
+  return wireDynamicCards(bodyHtml, {
+    linkPattern: /\/adventures\/[a-z]/,
+    blockClass: 'adventure-cards',
+    limit: isHome ? 4 : 0,
+  });
+}
+
+/**
+ * Replace the authored magazine `cards` grid ("Recent Articles") with the
+ * dynamic `magazine-cards` block on the homepage (limit 4).
+ * @param {string} bodyHtml
+ * @param {string} rel output path (e.g. us/en.html)
+ * @returns {string}
+ */
+function wireMagazineCards(bodyHtml, rel) {
+  if (rel !== 'us/en.html') return bodyHtml;
+  return wireDynamicCards(bodyHtml, {
+    linkPattern: /\/magazine\/[a-z]/,
+    blockClass: 'magazine-cards',
+    limit: 4,
+  });
 }
 
 const files = walk(join(contentDir, 'us', 'en'));
@@ -101,6 +133,7 @@ for (const file of files) {
   const rel = relative(contentDir, file).replace(/\.plain\.html$/, '.html');
   let body = readFileSync(file, 'utf8').trim();
   body = wireAdventureCards(body, rel);
+  body = wireMagazineCards(body, rel);
   const doc = `<body>
   <header></header>
   <main>
