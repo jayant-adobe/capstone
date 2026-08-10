@@ -22,8 +22,22 @@ export default function decorate(block) {
     ul.append(li);
   });
   ul.querySelectorAll('picture > img').forEach((img) => {
-    const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '200' }]);
-    img.closest('picture').replaceWith(optimizedPic);
+    // The author portrait is an absolute URL on the source origin (an
+    // experience-fragment asset, e.g. wknd.site/content/.../jacob-wester.jpeg).
+    // createOptimizedPicture rewrites the path with ?width/&format params that
+    // only the EDS media pipeline serves — the external origin 404s them, so the
+    // avatar breaks. Only optimize same-origin/relative images; leave absolute
+    // cross-origin sources as their original <img>.
+    let sameOrigin = false;
+    try {
+      sameOrigin = new URL(img.src, window.location.href).origin === window.location.origin;
+    } catch (e) {
+      sameOrigin = false;
+    }
+    if (sameOrigin) {
+      const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '200' }]);
+      img.closest('picture').replaceWith(optimizedPic);
+    }
   });
   block.textContent = '';
   block.append(ul);

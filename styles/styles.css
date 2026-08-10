@@ -546,8 +546,12 @@ main > .section.accordion-container:has(.accordion) + .section .default-content-
     column-gap: 48px;
     align-items: start;
     max-width: var(--content-max-width);
+
+    /* box sits on the 152/1288 content grid; no interior side padding, so the
+       article column starts at 152 — aligned with the rest of the site. A 32px
+       pad here pushed the whole article + sidebar 32px off-grid to 184. */
     margin: 0 auto;
-    padding: 0 32px;
+    padding: 0;
     box-sizing: border-box;
   }
 
@@ -556,6 +560,36 @@ main > .section.accordion-container:has(.accordion) + .section .default-content-
     margin-inline: 0;
     padding-inline: 0;
   }
+
+  /* the breadcrumb (prepended to <main> by buildBreadcrumb) is a grid item on
+     the magazine-article two-column grid — span both columns so it sits full
+     width above the article/sidebar, and drop its own centering/padding since
+     the grid box already sits on the 152 content edge. */
+  main:has(> .section.cards-byline-container) > .breadcrumb {
+    grid-column: 1 / -1;
+    max-width: none;
+    margin: 0 0 13.5px;
+    padding: 0;
+  }
+}
+
+/* Article byline ("By Jacob Wester"): source renders the h4 as a 16px/600
+   uppercase Source Sans Pro label (not the Asar heading default). */
+main > .section.cards-byline-container > .default-content-wrapper h4 {
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+/* Article body copy: source uses relaxed 18px / 45px line spacing for the
+   long-form paragraphs. */
+/* stylelint-disable-next-line no-descending-specificity */
+main > .section.cards-byline-container > .default-content-wrapper p {
+  font-size: 18px;
+  line-height: 2.5;
 }
 
 /* "SHARE THIS STORY" sidebar heading: source is a small uppercase label. */

@@ -95,6 +95,12 @@ export default function transform(hookName, element, payload) {
       // is removed; the sibling H5 heading that labels it and the related-articles
       // list are separate elements and are KEPT as authorable content.
       'div.sharing',
+      // Content-fragment title (magazine-article rich text): the article body's
+      // <h3 class="cmp-contentfragment__title"> repeats the page H1 and is
+      // display:none in the source (visually hidden), so it is NOT authored
+      // content. Left in, it renders as a duplicate title heading beneath the
+      // byline. Remove it so the article goes H1 -> byline -> body like the source.
+      '.cmp-contentfragment__title',
     ]);
 
     // Attribute cleanup: strip Core Components tracking/behavior hooks

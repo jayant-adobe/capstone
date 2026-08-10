@@ -67,20 +67,20 @@
 .cards-byline .cards-byline-card-body h4 {
   margin: 0;
   font-family: var(--heading-font-family);
-  font-size: 22px;
+  font-size: 24px; /* source: author name 24px Asar */
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.5;
   color: var(--text-color);
 }
 
-/* role — body font, uppercase, muted, tracked out */
+/* role — body font, uppercase, muted (source: 12px #696969) */
 .cards-byline .cards-byline-card-body h5,
 .cards-byline .cards-byline-card-body h6 {
   margin: 4px 0 0;
   font-family: var(--body-font-family);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.5;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted-color, #696969);
