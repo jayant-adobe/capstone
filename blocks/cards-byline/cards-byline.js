@@ -62,6 +62,26 @@ export default function decorate(block) {
     }
   });
 
+  // Group the body cell to match the source layout: name + role stacked on the
+  // left, the social buttons collected into one adjacent group on the right.
+  // The imported links arrive as separate paragraphs; without grouping the flex
+  // row spreads every heading/paragraph apart instead of clustering the icons.
+  ul.querySelectorAll('.cards-byline-card-body').forEach((body) => {
+    const social = document.createElement('div');
+    social.className = 'cards-byline-social';
+    body.querySelectorAll('a').forEach((a) => social.append(a));
+    // drop the now-empty paragraphs the links were wrapped in
+    [...body.querySelectorAll('p')].forEach((p) => {
+      if (!p.textContent.trim() && !p.querySelector('a, img, svg')) p.remove();
+    });
+    // wrap the remaining name/role into a left-aligned meta group
+    const meta = document.createElement('div');
+    meta.className = 'cards-byline-meta';
+    [...body.children].forEach((child) => meta.append(child));
+    body.append(meta);
+    if (social.children.length) body.append(social);
+  });
+
   block.textContent = '';
   block.append(ul);
 }
