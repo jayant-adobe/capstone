@@ -32,7 +32,7 @@
   margin: 0;
   padding: 32px 0 0;
   border: none;
-  border-top: 1px solid var(--border-color, #dadada);
+  border-top: 1px solid var(--light-color, #ebebeb);
   background: none;
   box-shadow: none;
   min-width: 0;
@@ -53,11 +53,20 @@
   border-radius: 50%;
 }
 
-/* ------------------------------------------------------------- name + role */
+/* name + role on the left, social button group on the right (source layout);
+   the body cell fills the remaining width after the avatar */
 .cards-byline .cards-byline-card-body {
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cards-byline .cards-byline-meta {
+  min-width: 0;
 }
 
 /* name — heading font */
@@ -86,22 +95,23 @@
   color: var(--text-muted-color, #696969);
 }
 
-/* -------------------------------------------------- social button row (right) */
+/* -------------------------------------------------- social button group (right) */
 
-/* Links may arrive as direct anchors or each wrapped in its own paragraph;
-   keep them inline so the row stays compact regardless of imported shape. */
-.cards-byline .cards-byline-card-body p:has(> a) {
-  display: inline;
-  margin: 0;
+/* the three buttons abut as one group at the far right (source: 48px dark
+   squares, no gap, no radius, white glyph) */
+.cards-byline .cards-byline-social {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
 }
 
-.cards-byline .cards-byline-card-body a:any-link {
+.cards-byline .cards-byline-social a:any-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  margin: 0 2px;
+  width: 48px;
+  height: 48px;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -110,32 +120,18 @@
   line-height: 0;
   text-decoration: none;
   background-color: var(--text-color);
-  color: var(--background-color);
-  vertical-align: middle;
+  color: var(--light-color, #ebebeb);
 }
 
-.cards-byline .cards-byline-card-body a:any-link:hover {
+.cards-byline .cards-byline-social a:any-link:hover {
   background-color: var(--accent-color);
-  color: var(--accent-text-color);
+  color: var(--text-color);
 }
 
-/* the injected social glyph (SVG, currentColor) — white on the dark square,
-   ~18px inside the 34px button, matching the source byline icons */
-.cards-byline .cards-byline-card-body a:any-link svg {
+/* the injected social glyph (SVG, currentColor) — ~18px inside the 48px button,
+   matching the source byline icons */
+.cards-byline .cards-byline-social a:any-link svg {
   width: 18px;
   height: 18px;
   display: block;
-}
-
-/* On wider screens the social icons sit at the far right of the byline row.
-   The body cell holds both the name/role and the links; push links right by
-   letting the name/role flow left and aligning the link group to the end. */
-@media (width >= 600px) {
-  .cards-byline .cards-byline-card-body {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
 }
