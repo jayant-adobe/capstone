@@ -296,6 +296,20 @@ export default async function decorate(block) {
     if (homeLi) homeLi.classList.add('nav-home-mobile');
   }
 
+  // Highlight the current top-level section link (source shows a yellow bg on the
+  // active nav item, e.g. MAGAZINE on any /us/en/magazine* page). Match the nav
+  // link whose section segment equals the current page's section segment.
+  const currentSection = window.location.pathname.replace(/\.html?$/, '').split('/').filter(Boolean)[2];
+  if (currentSection) {
+    navSections.querySelectorAll('a[href]').forEach((a) => {
+      const seg = (a.getAttribute('href') || '').replace(/\.html?$/, '').split('/').filter(Boolean)[2];
+      if (seg && seg === currentSection) {
+        a.setAttribute('aria-current', 'page');
+        a.closest('li')?.classList.add('nav-current');
+      }
+    });
+  }
+
   // search (built in JS)
   const search = buildSearch();
 
