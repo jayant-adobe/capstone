@@ -247,6 +247,10 @@ for (const file of files) {
   // helpers above only convert a static `cards` grid, so this backfills the row.
   body = ensureSourceRow(body, 'adventure-cards', '/us/en/adventures/query-index.json');
   body = ensureSourceRow(body, 'magazine-cards', '/us/en/magazine/query-index.json');
+  // The adventures-landing category filter derives its tabs from the SAME
+  // adventures index at runtime, so author that path into the tabs-filter block
+  // too (dynamic filter, best practice — no hardcoded category list needed).
+  body = ensureSourceRow(body, 'tabs-filter', '/us/en/adventures/query-index.json');
   const doc = `<body>
   <header></header>
   <main>
