@@ -1,0 +1,93 @@
+/*
+ * faq-accordion — self-contained styling for the dynamic FAQ accordion.
+ *
+ * The block renders the same details/summary markup as the authored `accordion`
+ * block and adds the `accordion` class, but EDS loads a block's CSS by its
+ * registered name — so on the FAQs page only faq-accordion.css is loaded, not
+ * accordion.css. These rules therefore mirror blocks/accordion/accordion.css
+ * (WKND cmp-accordion look: borderless items with a 2px light rule, uppercase
+ * 16px/600 question, +/- caret, 14px/21px answer), scoped to .faq-accordion.
+ */
+.faq-accordion details {
+  border: 0;
+  border-bottom: 2px solid var(--light-color);
+}
+
+.faq-accordion details + details {
+  margin-top: 0;
+}
+
+.faq-accordion details .accordion-item-body {
+  padding: 7px 0 14px 7px;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--text-color);
+}
+
+.faq-accordion details .accordion-item-body p {
+  margin: 0 0 0.8em;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.faq-accordion details summary {
+  position: relative;
+  padding: 13px 46px 13px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: var(--text-color);
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 0.2s;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.faq-accordion details summary p {
+  margin: 0;
+  display: inline;
+}
+
+.faq-accordion details[open] summary,
+.faq-accordion details summary:focus,
+.faq-accordion details summary:hover {
+  background-color: transparent;
+}
+
+.faq-accordion details summary::-webkit-details-marker {
+  display: none;
+}
+
+/* +/- toggle: a plus that becomes a minus when open */
+.faq-accordion details summary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 14px;
+  height: 2px;
+  background-color: var(--text-color);
+  transform: translateY(-50%);
+}
+
+.faq-accordion details summary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 22px;
+  width: 2px;
+  height: 14px;
+  background-color: var(--text-color);
+  transform: translateY(-50%);
+  transition: opacity 0.2s;
+}
+
+.faq-accordion details[open] summary::after {
+  opacity: 0;
+}
+
+.faq-accordion details[open] .accordion-item-body {
+  border-top: 0;
+  background-color: transparent;
+}

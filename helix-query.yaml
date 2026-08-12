@@ -99,3 +99,31 @@ indices:
       lastModified:
         select: none
         value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  # FAQ pages under /us/en/faqs/<slug>. Powers the dynamic, index-driven FAQ
+  # accordion on the FAQs landing (blocks/faq-accordion). Each FAQ is its own
+  # crawlable page whose head metadata is the single source of truth — the
+  # question is the title, the answer the description, and `order` sets the
+  # accordion sequence.
+  faqs:
+    include:
+      - '/us/en/faqs/**'
+    exclude:
+      # the FAQs landing page itself is not a FAQ item
+      - '/us/en/faqs'
+    target: /us/en/faqs/query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      order:
+        # Author-controlled accordion position (meta[name="order"] on each FAQ
+        # page). The faq-accordion block sorts ascending before rendering.
+        select: head > meta[name="order"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")

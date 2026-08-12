@@ -97,6 +97,29 @@ function wireDynamicCards(bodyHtml, {
 }
 
 /**
+ * Replace the authored FAQ `accordion` block on the FAQs landing with the
+ * dynamic `faq-accordion` block, which renders from the FAQ query-index
+ * (/us/en/faqs/query-index.json) at runtime. Depth-matches the whole accordion
+ * element (it nests a div per Q/A row) and drops in a config-only block with a
+ * `source` row (query-index path explicit in the document, EDS best practice).
+ * @param {string} bodyHtml
+ * @param {string} rel output path (e.g. us/en/faqs.html)
+ * @returns {string}
+ */
+function wireFaqAccordion(bodyHtml, rel) {
+  if (rel !== 'us/en/faqs.html') return bodyHtml;
+  const openRe = /<div class="accordion">/i;
+  const m = openRe.exec(bodyHtml);
+  if (!m) return bodyHtml;
+  const start = m.index;
+  const end = matchingDivEnd(bodyHtml, start);
+  if (end === -1) return bodyHtml;
+  const sourceRow = '<div><div>source</div><div>/us/en/faqs/query-index.json</div></div>';
+  const replacement = `<div class="faq-accordion">${sourceRow}</div>`;
+  return bodyHtml.slice(0, start) + replacement + bodyHtml.slice(end);
+}
+
+/**
  * Ensure an ALREADY-dynamic block (e.g. `<div class="adventure-cards">`) carries
  * a `| source | <path> |` row, appending one if absent. wireDynamicCards only
  * converts a STATIC `<div class="cards">` grid; when the source content is
@@ -241,6 +264,7 @@ for (const file of files) {
   body = wireAdventureCards(body, rel);
   body = wireMagazineCards(body, rel);
   body = wireProfileCards(body, rel);
+  body = wireFaqAccordion(body, rel);
   // Author the query-index path into the dynamic card blocks (best practice:
   // the data source is explicit in the da.live document, not just a JS default).
   // Covers blocks already baked in as dynamic in the source content — the wire*
