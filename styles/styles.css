@@ -542,44 +542,52 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   text-decoration: none;
 }
 
-/* Desktop two-column FAQ layout (matches source): the FAQ column takes the
-   left ~8/12 and the "Need more help?" sidebar sits in the right ~3/12 (with a
-   ~1/12 gutter). These are two separate stacked sections; on desktop the FAQ
-   inner content is capped to the left column, and the adjacent sidebar section
-   is absolutely positioned into the top-right of the FAQ section (so its
-   height never has to be guessed). Below 900px both stack full-width, matching
-   the source's responsive behaviour. */
+/* Desktop two-column FAQ layout (matches source): the FAQ content takes the
+   left ~8/12 and the "Need more help?" sidebar sits in the right ~3/12, aligned
+   near the top beside the H1.
+
+   The FAQ content and the sidebar are two separate top-level <section>s, so a
+   CSS grid can't cleanly place them as side-by-side cells (they have no shared
+   grid parent that also excludes the metadata/other sections reliably). The
+   robust approach is a `float`: on desktop the FAQ section floats left at the
+   ~8/12 column and the adjacent sidebar section takes the remaining right
+   column, wrapping naturally beneath the shorter of the two — pure flow, so
+   nothing can overflow above the nav. A clearing rule keeps the footer below
+   both. Below 900px the float is off and both stack full-width (source parity). */
 @media (width >= 900px) {
-  /* the FAQ section is the positioning context for the overlaid sidebar */
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) {
-    position: relative;
-  }
-
-  /* FAQ content occupies the left ~8/12 (reserve the right ~4/12 for the
-     sidebar + gutter) */
-  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > div {
-    max-width: var(--content-max-width);
-    margin-inline: auto;
+    float: left;
+    width: 66.67%;
     box-sizing: border-box;
-    padding-right: calc(24px + 33.33%);
   }
 
-  /* Sidebar section: pin it to the top-right column of the FAQ section. Its
-     inner div is width-capped and right-aligned within the centered content
-     column, so it lands in the right ~3/12 regardless of accordion height. */
-  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section {
-    position: absolute;
-    inset: 0 0 auto;
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > div {
+    max-width: none;
     margin: 0;
-    pointer-events: none; /* let clicks fall through the empty left area */
+    padding-left: max(24px, calc((100vw - var(--content-max-width)) / 2 + 24px));
+    padding-right: 24px;
+  }
+
+  /* sidebar section fills the right column beside the floated FAQ column */
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section {
+    overflow: hidden; /* form a block-formatting context beside the float */
+    margin: 0;
   }
 
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section > div {
-    max-width: var(--content-max-width);
-    margin-inline: auto;
-    box-sizing: border-box;
-    padding-left: calc(24px + 66.67%); /* push content into the right ~4/12 */
-    pointer-events: auto; /* re-enable interaction on the actual sidebar content */
+    max-width: none;
+    margin: 0;
+    padding-left: 24px;
+    padding-right: max(24px, calc((100vw - var(--content-max-width)) / 2 + 24px));
+  }
+
+  /* the footer (or any following section) must clear the float */
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section + * {
+    clear: both;
+  }
+
+  body:has(main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion))) footer {
+    clear: both;
   }
 }
 
