@@ -542,6 +542,47 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   text-decoration: none;
 }
 
+/* Desktop two-column FAQ layout (matches source): the FAQ column takes the
+   left ~8/12 and the "Need more help?" sidebar sits in the right ~3/12 (with a
+   ~1/12 gutter). These are two separate stacked sections; on desktop the FAQ
+   inner content is capped to the left column, and the adjacent sidebar section
+   is absolutely positioned into the top-right of the FAQ section (so its
+   height never has to be guessed). Below 900px both stack full-width, matching
+   the source's responsive behaviour. */
+@media (width >= 900px) {
+  /* the FAQ section is the positioning context for the overlaid sidebar */
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) {
+    position: relative;
+  }
+
+  /* FAQ content occupies the left ~8/12 (reserve the right ~4/12 for the
+     sidebar + gutter) */
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > div {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    box-sizing: border-box;
+    padding-right: calc(24px + 33.33%);
+  }
+
+  /* Sidebar section: pin it to the top-right column of the FAQ section. Its
+     inner div is width-capped and right-aligned within the centered content
+     column, so it lands in the right ~3/12 regardless of accordion height. */
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section {
+    position: absolute;
+    inset: 0 0 auto;
+    margin: 0;
+    pointer-events: none; /* let clicks fall through the empty left area */
+  }
+
+  main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section > div {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    box-sizing: border-box;
+    padding-left: calc(24px + 66.67%); /* push content into the right ~4/12 */
+    pointer-events: auto; /* re-enable interaction on the actual sidebar content */
+  }
+}
+
 /* ------------------------------------------------------- Magazine article page
    Source layout: the article body (title + byline + rich text + author bio) is a
    ~72% left column and the "SHARE THIS STORY" related-articles list is a ~28%
