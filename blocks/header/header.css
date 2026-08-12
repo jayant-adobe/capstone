@@ -510,3 +510,166 @@ header .nav-sections .nav-home-mobile {
      the hamburger again, tapping a nav link, pressing Escape, or tapping outside
      (see header.js). No aria-expanded X-morph here by design. */
 }
+
+/* ── Sign In modal ─────────────────────────────────────────────────────────
+   Dark panel dialog matching the WKND source: serif "Sign In" title with an
+   accent underline, "Welcome Back", username/password fields, a forgot-password
+   link, and an accent submit button. Uses the native <dialog> element. */
+.nav-signin-modal {
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: var(--light-color);
+  max-width: 540px;
+  width: calc(100% - 32px);
+  max-height: calc(100vh - 32px);
+  overflow: auto; /* scroll within the dialog on short viewports */
+}
+
+.nav-signin-modal::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.nav-signin-panel {
+  position: relative;
+  background: var(--dark-color);
+  color: #fff;
+  padding: 48px 56px 56px;
+  box-sizing: border-box;
+}
+
+.nav-signin-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nav-signin-close::before {
+  content: "\00d7"; /* × */
+}
+
+.nav-signin-title {
+  font-family: var(--heading-font-family);
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 16px;
+  color: #fff;
+}
+
+/* accent underline beneath the title, matching the source */
+.nav-signin-title::after {
+  content: "";
+  display: block;
+  width: 108px;
+  height: 4px;
+  margin-top: 16px;
+  background: var(--accent-color);
+}
+
+.nav-signin-welcome {
+  font-family: var(--heading-font-family);
+  font-size: 28px;
+  font-weight: 400;
+  margin: 28px 0 24px;
+  color: #fff;
+}
+
+.nav-signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nav-signin-field {
+  display: block;
+  position: relative;
+}
+
+/* the field label doubles as the placeholder look in the source (uppercase,
+   muted); a real <input placeholder> already shows it, so hide the span but
+   keep it for screen readers */
+.nav-signin-field-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.nav-signin-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px 20px;
+  background: transparent;
+  border: 1px solid rgb(255 255 255 / 35%);
+  color: #fff;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+.nav-signin-field input::placeholder {
+  color: rgb(255 255 255 / 55%);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 14px;
+}
+
+.nav-signin-field input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.nav-signin-forgot {
+  display: block;
+  margin-top: 4px;
+  color: #fff;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.nav-signin-forgot:hover {
+  text-decoration: underline;
+}
+
+.nav-signin-submit {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 16px 44px;
+  border: none;
+  background: var(--accent-color);
+  color: var(--accent-text-color);
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.nav-signin-submit:hover {
+  filter: brightness(0.95);
+}
+
+@media (width < 600px) {
+  .nav-signin-panel {
+    padding: 40px 28px 44px;
+  }
+
+  .nav-signin-title {
+    font-size: 36px;
+  }
+}
