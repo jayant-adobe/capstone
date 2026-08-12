@@ -490,11 +490,10 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   line-height: 2.5;
 }
 
-/* FAQs hero image: source constrains it to the ~492px content column (not full
-   width). Cap the width and keep the aspect ratio. */
+/* FAQs hero image: source fills the FAQ content column (~748px, the left 8/12),
+   not a fixed width. Fill the column and keep the 3:2 aspect ratio. */
 main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > .default-content-wrapper p:has(img) img {
-  width: 492px;
-  max-width: 100%;
+  width: 100%;
   height: auto;
 }
 
