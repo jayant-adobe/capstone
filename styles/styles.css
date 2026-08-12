@@ -562,30 +562,24 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) {
     float: left;
 
-    /* Anchor the column split to the centered content container, NOT the
-       viewport. The float spans from x=0 to (container left edge + the 748px
-       image + the gutter before the sidebar). The source gap image->sidebar is
-       111px; the sidebar section adds its own 24px padding-left, so the float
-       gutter here is 111 - 24 = 87px. This keeps the image->sidebar gap
-       constant (~111px, matching source) at every desktop width, instead of a
-       66.67vw float that balloons on wide screens and strands the fixed-width
-       image in an ever-growing empty column. */
-    width: calc(max(24px, (100vw - var(--content-max-width)) / 2) + 748px + 87px);
+    /* The FAQ content occupies the left ~2/3 of a wide, fluid layout so the hero
+       image and accordion scale up with the viewport (filling the column) rather
+       than sitting at a fixed 748px cap. The column is a proportion of the
+       viewport (2/3), aligned to a gentle page gutter that grows with width. */
+    width: 66.67vw;
     box-sizing: border-box;
   }
 
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > div {
+    max-width: none;
     margin: 0;
     box-sizing: border-box;
 
-    /* Left edge aligns with the centered content column
-       ((100vw - content-max-width)/2 = 152px at 1440). Cap the content itself to
-       the source's 8/12 column width (748/1136 of the content column ≈ 748px)
-       so the hero/accordion match the source instead of stretching to fill the
-       66.67% float. */
-    max-width: calc((100vw - var(--content-max-width)) / 2 + var(--content-max-width) * 748 / 1136);
-    padding-left: max(24px, calc((100vw - var(--content-max-width)) / 2));
-    padding-right: 0;
+    /* Left edge sits at a fluid page gutter (~88px at 1900w, matching the
+       reference), clamped so it stays comfortable on narrow and ultra-wide
+       screens. A small right inset keeps the image off the column edge. */
+    padding-left: clamp(24px, 4.5vw, 152px);
+    padding-right: 32px;
   }
 
   /* sidebar section fills the right column beside the floated FAQ column */
@@ -597,8 +591,8 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section > div {
     max-width: none;
     margin: 0;
-    padding-left: 24px;
-    padding-right: max(24px, calc((100vw - var(--content-max-width)) / 2 + 24px));
+    padding-left: 32px;
+    padding-right: clamp(24px, 4.5vw, 152px);
   }
 
   /* the footer (or any following section) must clear the float */
