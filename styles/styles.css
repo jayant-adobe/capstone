@@ -474,7 +474,6 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   font-size: 40px;
   margin-top: 27px;
   margin-bottom: 13.5px;
-  padding-bottom: 12px;
 }
 
 main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) h1::after {
@@ -494,8 +493,11 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
 }
 
 /* FAQs hero image: source fills the FAQ content column (~748px, the left 8/12),
-   not a fixed width. Fill the column and keep the 3:2 aspect ratio. */
+   not a fixed width. Fill the column and keep the 3:2 aspect ratio. `display:
+   block` drops the inline line-box descender so the image -> intro gap is the
+   true 14px margin (an inline img in a 45px line-height <p> adds ~16px below). */
 main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > .default-content-wrapper p:has(img) img {
+  display: block;
   width: 100%;
   height: auto;
 }
@@ -564,10 +566,17 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   }
 
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > div {
-    max-width: none;
     margin: 0;
-    padding-left: max(24px, calc((100vw - var(--content-max-width)) / 2 + 24px));
-    padding-right: 24px;
+    box-sizing: border-box;
+
+    /* Left edge aligns with the centered content column
+       ((100vw - content-max-width)/2 = 152px at 1440). Cap the content itself to
+       the source's 8/12 column width (748/1136 of the content column ≈ 748px)
+       so the hero/accordion match the source instead of stretching to fill the
+       66.67% float. */
+    max-width: calc((100vw - var(--content-max-width)) / 2 + var(--content-max-width) * 748 / 1136);
+    padding-left: max(24px, calc((100vw - var(--content-max-width)) / 2));
+    padding-right: 0;
   }
 
   /* sidebar section fills the right column beside the floated FAQ column */
