@@ -207,7 +207,11 @@ function buildSignInModal() {
     submit,
   );
 
-  panel.append(close, heading, welcome, form);
+  // thin horizontal divider bar across the bottom of the panel (matches source)
+  const divider = document.createElement('hr');
+  divider.className = 'nav-signin-divider';
+
+  panel.append(close, heading, welcome, form, divider);
   dialog.append(panel);
 
   // close interactions: × button, backdrop click. Esc is native to <dialog>.

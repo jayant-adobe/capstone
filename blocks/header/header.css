@@ -520,7 +520,7 @@ header .nav-sections .nav-home-mobile {
   padding: 0;
   background: transparent;
   color: var(--light-color);
-  max-width: 540px;
+  max-width: 580px;
   width: calc(100% - 32px);
   max-height: calc(100vh - 32px);
   overflow: auto; /* scroll within the dialog on short viewports */
@@ -662,6 +662,15 @@ header .nav-sections .nav-home-mobile {
 
 .nav-signin-submit:hover {
   filter: brightness(0.95);
+}
+
+/* thin horizontal bar across the bottom of the panel, matching the source */
+.nav-signin-divider {
+  width: 100%;
+  height: 0;
+  margin: 28px 0 0;
+  border: none;
+  border-top: 1px solid rgb(255 255 255 / 30%);
 }
 
 @media (width < 600px) {
