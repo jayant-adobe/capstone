@@ -141,6 +141,107 @@ function buildSearch() {
 }
 
 /**
+ * Build the Sign In modal dialog (matching the WKND source): a dark panel with
+ * a "Sign In" heading + accent underline, "Welcome Back", username + password
+ * fields, a "Forgot your password?" link, and an accent "Sign In" button. The
+ * dialog is a native <dialog> for built-in focus management + Esc-to-close.
+ * Created once and reused. Not authored content — it's chrome, so it's built here.
+ * @returns {HTMLDialogElement}
+ */
+function buildSignInModal() {
+  const dialog = document.createElement('dialog');
+  dialog.className = 'nav-signin-modal';
+  dialog.setAttribute('aria-label', 'Sign In');
+
+  const panel = document.createElement('div');
+  panel.className = 'nav-signin-panel';
+
+  // close button (×)
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'nav-signin-close';
+  close.setAttribute('aria-label', 'Close');
+
+  const heading = document.createElement('h2');
+  heading.className = 'nav-signin-title';
+  heading.textContent = 'Sign In';
+
+  const welcome = document.createElement('p');
+  welcome.className = 'nav-signin-welcome';
+  welcome.textContent = 'Welcome Back';
+
+  // form
+  const form = document.createElement('form');
+  form.className = 'nav-signin-form';
+  form.setAttribute('method', 'dialog'); // closes the dialog on submit (demo — no backend)
+
+  const field = (type, name, placeholder) => {
+    const label = document.createElement('label');
+    label.className = 'nav-signin-field';
+    const input = document.createElement('input');
+    input.type = type;
+    input.name = name;
+    input.placeholder = placeholder;
+    input.autocomplete = type === 'password' ? 'current-password' : 'username';
+    const span = document.createElement('span');
+    span.className = 'nav-signin-field-label';
+    span.textContent = placeholder;
+    label.append(span, input);
+    return label;
+  };
+
+  const forgot = document.createElement('a');
+  forgot.className = 'nav-signin-forgot';
+  forgot.href = '#forgot-password';
+  forgot.textContent = 'Forgot your password?';
+
+  const submit = document.createElement('button');
+  submit.type = 'submit';
+  submit.className = 'nav-signin-submit';
+  submit.textContent = 'Sign In';
+
+  form.append(
+    field('text', 'username', 'Username'),
+    field('password', 'password', 'Password'),
+    forgot,
+    submit,
+  );
+
+  panel.append(close, heading, welcome, form);
+  dialog.append(panel);
+
+  // close interactions: × button, backdrop click. Esc is native to <dialog>.
+  close.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (e) => {
+    // click outside the panel (on the ::backdrop area) closes the dialog
+    if (e.target === dialog) dialog.close();
+  });
+
+  return dialog;
+}
+
+/**
+ * Wire a Sign In link to open the modal on click (intercepting navigation to
+ * the authored href, which stays as a no-JS fallback). The dialog is created
+ * lazily on first open and appended to <body>.
+ * @param {HTMLAnchorElement} link the Sign In link
+ */
+function attachSignInModal(link) {
+  let dialog = null;
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!dialog) {
+      dialog = buildSignInModal();
+      document.body.append(dialog);
+    }
+    dialog.showModal();
+    // focus the first field for keyboard users
+    const first = dialog.querySelector('input');
+    if (first) first.focus();
+  });
+}
+
+/**
  * Build the utility bar: Sign In link + locale selector.
  * Reads the sign-in link and the country/locale list from the fragment DOM —
  * no country names, flags, or URLs are hardcoded here.
@@ -157,13 +258,16 @@ function buildUtilityBar(signInContent, localeContent) {
   inner.className = 'nav-utility-inner';
   utility.append(inner);
 
-  // Sign In
+  // Sign In — the link opens a modal sign-in dialog (matching the source), not
+  // a separate page. The authored href (e.g. #sign-in) is kept as a graceful
+  // no-JS fallback but click is intercepted to open the overlay.
   const signInLink = signInContent ? signInContent.querySelector('a') : null;
   if (signInLink) {
     const signIn = document.createElement('div');
     signIn.className = 'nav-signin';
     signIn.append(signInLink);
     inner.append(signIn);
+    attachSignInModal(signInLink);
   }
 
   // Locale selector — the first country's first locale link is the "current"
