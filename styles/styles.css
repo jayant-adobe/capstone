@@ -485,9 +485,12 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
   border-bottom: 2px solid var(--accent-color);
 }
 
-/* FAQs intro paragraph: source uses relaxed 45px line spacing. */
+/* FAQs intro paragraph: source uses relaxed 45px line spacing, justified text,
+   and a 13.5px bottom margin (no top margin). */
 main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > .default-content-wrapper p {
   line-height: 2.5;
+  text-align: justify;
+  margin: 0 0 13.5px;
 }
 
 /* FAQs hero image: source fills the FAQ content column (~748px, the left 8/12),
