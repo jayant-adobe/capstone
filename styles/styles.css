@@ -561,7 +561,16 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
 @media (width >= 900px) {
   main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) {
     float: left;
-    width: 66.67%;
+
+    /* Anchor the column split to the centered content container, NOT the
+       viewport. The float spans from x=0 to (container left edge + the 748px
+       image + the gutter before the sidebar). The source gap image->sidebar is
+       111px; the sidebar section adds its own 24px padding-left, so the float
+       gutter here is 111 - 24 = 87px. This keeps the image->sidebar gap
+       constant (~111px, matching source) at every desktop width, instead of a
+       66.67vw float that balloons on wide screens and strands the fixed-width
+       image in an ever-growing empty column. */
+    width: calc(max(24px, (100vw - var(--content-max-width)) / 2) + 748px + 87px);
     box-sizing: border-box;
   }
 
