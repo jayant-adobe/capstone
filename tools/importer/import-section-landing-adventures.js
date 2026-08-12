@@ -7,7 +7,7 @@
 // PARSER IMPORTS
 import columnsParser from './parsers/columns.js';
 import tabsFilterParser from './parsers/tabs-filter.js';
-import cardsParser from './parsers/cards.js';
+import adventureCardsParser from './parsers/adventure-cards.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -18,13 +18,13 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 const parsers = {
   'columns': columnsParser,
   'tabs-filter': tabsFilterParser,
-  'cards': cardsParser,
+  'adventure-cards': adventureCardsParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "section-landing-adventures",
-  "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers, (4) a separator. Reuses columns (teaser) + cards (image-list); tab filter maps to a tabs block wrapping the cards.",
+  "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers -> the dynamic, index-driven adventure-cards variant (renders all adventures from the query index; the tabs-filter block filters them client-side by the index `category` column), (4) a separator. Reuses columns (teaser); the grid is the dynamic adventure-cards variant, not static cards.",
   "urls": [
     "https://wknd.site/us/en/adventures.html"
   ],
@@ -42,7 +42,7 @@ const PAGE_TEMPLATE = {
       ]
     },
     {
-      "name": "cards",
+      "name": "adventure-cards",
       "instances": [
         "div.cmp-tabs__tabpanel--active div.image-list.list"
       ]
@@ -76,7 +76,7 @@ const PAGE_TEMPLATE = {
       "style": null,
       "blocks": [
         "tabs-filter",
-        "cards"
+        "adventure-cards"
       ],
       "defaultContent": [
         "div.title.cmp-title--underline"

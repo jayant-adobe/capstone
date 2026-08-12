@@ -182,7 +182,7 @@
         "https://wknd.site/us/en/adventures.html"
       ],
       "coverageGaps": [],
-      "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers, (4) a separator. Reuses columns (teaser) + cards (image-list); tab filter maps to a tabs block wrapping the cards.",
+      "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers -> the dynamic, index-driven adventure-cards variant (renders all adventures from the query index; the tabs-filter block filters them client-side by the index `category` column), (4) a separator. Reuses columns (teaser); the grid is the dynamic adventure-cards variant, not static cards.",
       "blocks": [
         {
           "name": "columns",
@@ -197,7 +197,7 @@
           ]
         },
         {
-          "name": "cards",
+          "name": "adventure-cards",
           "instances": [
             "div.cmp-tabs__tabpanel--active div.image-list.list"
           ]
@@ -231,7 +231,7 @@
           "style": null,
           "blocks": [
             "tabs-filter",
-            "cards"
+            "adventure-cards"
           ],
           "defaultContent": [
             "div.title.cmp-title--underline"
