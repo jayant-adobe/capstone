@@ -1,4 +1,5 @@
 import { createOptimizedPicture, toClassName } from '../../scripts/aem.js';
+import queryIndex from '../../scripts/query-index.js';
 
 /*
  * adventure-cards — dynamic, index-driven adventure card grid.
@@ -67,20 +68,15 @@ function readConfig(block) {
 }
 
 /**
- * Fetch an adventures query-index. Returns [] on any failure so the block
- * degrades to an empty (not broken) grid.
+ * Fetch an adventures query-index. Delegates to the shared queryIndex helper,
+ * which follows the sheet's pagination so the FULL set of adventures is returned
+ * even if the index grows past a single page (500 rows). Returns [] on any
+ * failure so the block degrades to an empty (not broken) grid.
  * @param {string} indexPath the query-index path to fetch (default INDEX_PATH)
  * @returns {Promise<Array>} index rows
  */
 async function fetchAdventures(indexPath = INDEX_PATH) {
-  try {
-    const resp = await fetch(indexPath);
-    if (!resp.ok) return [];
-    const json = await resp.json();
-    return Array.isArray(json.data) ? json.data : [];
-  } catch (e) {
-    return [];
-  }
+  return queryIndex(indexPath);
 }
 
 /**

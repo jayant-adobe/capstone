@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import queryIndex from '../../scripts/query-index.js';
 
 /*
  * magazine-cards — dynamic, index-driven magazine article card grid.
@@ -77,20 +78,15 @@ function readConfig(block) {
 }
 
 /**
- * Fetch a magazine query-index. Returns [] on any failure so the block
- * degrades to an empty (not broken) grid.
+ * Fetch a magazine query-index. Delegates to the shared queryIndex helper,
+ * which follows the sheet's pagination so the FULL set of articles is returned
+ * even if the index grows past a single page (500 rows). Returns [] on any
+ * failure so the block degrades to an empty (not broken) grid.
  * @param {string} indexPath the query-index path to fetch (default INDEX_PATH)
  * @returns {Promise<Array>} index rows
  */
 async function fetchArticles(indexPath = INDEX_PATH) {
-  try {
-    const resp = await fetch(indexPath);
-    if (!resp.ok) return [];
-    const json = await resp.json();
-    return Array.isArray(json.data) ? json.data : [];
-  } catch (e) {
-    return [];
-  }
+  return queryIndex(indexPath);
 }
 
 /**
