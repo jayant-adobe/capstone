@@ -66,10 +66,15 @@ function matchingDivEnd(html, openStart) {
  * @param {number} [opts.limit] optional card cap (emits a `| limit | N |` row)
  * @param {string} [opts.orderField] index column to sort by (emits an
  *   `| order-field | … |` row); omit to use the block's default (`order`)
+ * @param {string} [opts.source] the query-index path the block reads (emits a
+ *   `| source | <path> |` row). Making the data source explicit in the authored
+ *   document is the EDS best practice — the index path is visible and editable
+ *   in da.live instead of being an invisible default in the block JS. The block
+ *   falls back to its own default when the row is absent, so this is additive.
  * @returns {string}
  */
 function wireDynamicCards(bodyHtml, {
-  linkPattern, blockClass, limit, orderField,
+  linkPattern, blockClass, limit, orderField, source,
 }) {
   const openRe = /<div class="cards">/gi;
   let m = openRe.exec(bodyHtml);
@@ -81,13 +86,53 @@ function wireDynamicCards(bodyHtml, {
     if (linkPattern.test(block)) {
       const limitRow = limit ? `<div><div>limit</div><div>${limit}</div></div>` : '';
       const orderRow = orderField ? `<div><div>order-field</div><div>${orderField}</div></div>` : '';
-      const replacement = `<div class="${blockClass}">${limitRow}${orderRow}</div>`;
+      const sourceRow = source ? `<div><div>source</div><div>${source}</div></div>` : '';
+      const replacement = `<div class="${blockClass}">${limitRow}${orderRow}${sourceRow}</div>`;
       return bodyHtml.slice(0, start) + replacement + bodyHtml.slice(end);
     }
     openRe.lastIndex = end; // skip past this (non-matching) cards block
     m = openRe.exec(bodyHtml);
   }
   return bodyHtml;
+}
+
+/**
+ * Ensure an ALREADY-dynamic block (e.g. `<div class="adventure-cards">`) carries
+ * a `| source | <path> |` row, appending one if absent. wireDynamicCards only
+ * converts a STATIC `<div class="cards">` grid; when the source content is
+ * already dynamic (the block was baked in at import), this adds the explicit
+ * query-index path to the existing block so it's visible/editable in da.live.
+ * Idempotent: a block that already has a `source` row is left untouched. Appends
+ * the row just before the block's closing `</div>` so it becomes the last
+ * config row.
+ * @param {string} bodyHtml the fragment HTML
+ * @param {string} blockClass the dynamic block class (e.g. 'adventure-cards')
+ * @param {string} source the query-index path to author into the block
+ * @returns {string}
+ */
+function ensureSourceRow(bodyHtml, blockClass, source) {
+  const openRe = new RegExp(`<div class="${blockClass}">`, 'gi');
+  let out = bodyHtml;
+  let m = openRe.exec(out);
+  while (m) {
+    const start = m.index;
+    const end = matchingDivEnd(out, start);
+    if (end === -1) break;
+    const block = out.slice(start, end);
+    // already has a source row → leave as-is (idempotent)
+    if (!/<div><div>source<\/div>/i.test(block)) {
+      const sourceRow = `<div><div>source</div><div>${source}</div></div>`;
+      // insert before the block's final </div> (end points just past it)
+      const closeIdx = out.lastIndexOf('</div>', end - 1);
+      out = out.slice(0, closeIdx) + sourceRow + out.slice(closeIdx);
+      // recompute scan position past the (now longer) block
+      openRe.lastIndex = end + sourceRow.length;
+    } else {
+      openRe.lastIndex = end;
+    }
+    m = openRe.exec(out);
+  }
+  return out;
 }
 
 /**
@@ -105,6 +150,7 @@ function wireAdventureCards(bodyHtml, rel) {
     linkPattern: /\/adventures\/[a-z]/,
     blockClass: 'adventure-cards',
     limit: isHome ? 4 : 0,
+    source: '/us/en/adventures/query-index.json',
   });
 }
 
@@ -128,6 +174,7 @@ function wireMagazineCards(bodyHtml, rel) {
     blockClass: 'magazine-cards',
     limit: isHome ? 4 : 0,
     orderField: isHome ? undefined : 'listOrder',
+    source: '/us/en/magazine/query-index.json',
   });
 }
 
@@ -194,6 +241,16 @@ for (const file of files) {
   body = wireAdventureCards(body, rel);
   body = wireMagazineCards(body, rel);
   body = wireProfileCards(body, rel);
+  // Author the query-index path into the dynamic card blocks (best practice:
+  // the data source is explicit in the da.live document, not just a JS default).
+  // Covers blocks already baked in as dynamic in the source content — the wire*
+  // helpers above only convert a static `cards` grid, so this backfills the row.
+  body = ensureSourceRow(body, 'adventure-cards', '/us/en/adventures/query-index.json');
+  body = ensureSourceRow(body, 'magazine-cards', '/us/en/magazine/query-index.json');
+  // The adventures-landing category filter derives its tabs from the SAME
+  // adventures index at runtime, so author that path into the tabs-filter block
+  // too (dynamic filter, best practice — no hardcoded category list needed).
+  body = ensureSourceRow(body, 'tabs-filter', '/us/en/adventures/query-index.json');
   const doc = `<body>
   <header></header>
   <main>
