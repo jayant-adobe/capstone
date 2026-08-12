@@ -467,15 +467,17 @@ main .section.highlight {
 }
 
 /* FAQs H1: source uses the 40px title size (not the 54px hero H1) with the
-   WKND short yellow underline accent (cmp-title--underline). */
-main > .section.accordion-container:has(.accordion) h1 {
+   WKND short yellow underline accent (cmp-title--underline). Matches both the
+   authored accordion and the dynamic faq-accordion variant (the FAQ accordion
+   is now index-driven; its section/block classes changed accordingly). */
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) h1 {
   font-size: 40px;
   margin-top: 27px;
   margin-bottom: 13.5px;
   padding-bottom: 12px;
 }
 
-main > .section.accordion-container:has(.accordion) h1::after {
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) h1::after {
   content: '';
   display: block;
   width: 84px;
@@ -484,33 +486,42 @@ main > .section.accordion-container:has(.accordion) h1::after {
 }
 
 /* FAQs intro paragraph: source uses relaxed 45px line spacing. */
-main > .section.accordion-container:has(.accordion) > .default-content-wrapper p {
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > .default-content-wrapper p {
   line-height: 2.5;
+}
+
+/* FAQs hero image: source constrains it to the ~492px content column (not full
+   width). Cap the width and keep the aspect ratio. */
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > .default-content-wrapper p:has(img) img {
+  width: 492px;
+  max-width: 100%;
+  height: auto;
 }
 
 /* FAQs spacing rhythm (match source): H1 -> image ~21px, image -> intro ~14px,
    intro -> accordion ~14px. The image and intro are each their own <p>; the
-   accordion is a sibling .accordion-wrapper. */
-main > .section.accordion-container:has(.accordion) > .default-content-wrapper p:has(img) {
+   accordion is a sibling wrapper. */
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > .default-content-wrapper p:has(img) {
   /* H1 -> image gap is ~21px in the source. The image <p>'s top margin collapses
      with the H1's 13.5px bottom margin, so set 21px here to win the collapse. */
   margin-top: 21px;
   margin-bottom: 14px;
 }
 
-main > .section.accordion-container:has(.accordion) > .accordion-wrapper {
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) > :is(.accordion-wrapper, .faq-accordion-wrapper) {
   margin-top: 14px;
 }
 
 /* Source leaves ~48px of clear space below the accordion before the footer.
    Reserve it on the accordion section so the two-column grid keeps a bottom gap. */
-main > .section.accordion-container:has(.accordion) {
+/* stylelint-disable-next-line no-descending-specificity */
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) {
   margin-bottom: 48px;
 }
 
 /* "Need more help?" sidebar (source): the heading is the 24px Asar serif title
    (weight 400); the contact paragraph is 14px/35px body copy with blue links. */
-main > .section.accordion-container:has(.accordion) + .section h3 {
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section h3 {
   font-family: var(--heading-font-family);
   font-size: 24px;
   font-weight: 400;
@@ -518,14 +529,14 @@ main > .section.accordion-container:has(.accordion) + .section h3 {
   margin: 27px 0 13.5px;
 }
 
-main > .section.accordion-container:has(.accordion) + .section .default-content-wrapper p {
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section .default-content-wrapper p {
   font-size: 14px;
   line-height: 35px;
   color: var(--text-color);
   margin: 0 0 13.5px;
 }
 
-main > .section.accordion-container:has(.accordion) + .section .default-content-wrapper p a:any-link {
+main > .section:is(.accordion-container:has(.accordion), .faq-accordion-container:has(.faq-accordion)) + .section .default-content-wrapper p a:any-link {
   font-weight: 400;
   color: #0045ff;
   text-decoration: none;
