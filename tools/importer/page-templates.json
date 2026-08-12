@@ -9,7 +9,7 @@
         "https://wknd.site/us/en.html"
       ],
       "coverageGaps": [],
-      "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+      "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles grid (dynamic magazine-cards, limit 4, index-driven), Next Adventures teaser, and adventure recommendations grid (dynamic adventure-cards, limit 4, index-driven). The two card grids render at runtime from the magazine/adventures query indexes; slide/teaser sections are dynamic/repeatable.",
       "blocks": [
         {
           "name": "carousel",
@@ -25,9 +25,15 @@
           ]
         },
         {
-          "name": "cards",
+          "name": "magazine-cards",
           "instances": [
-            "div.image-list.list"
+            "main.cmp-layout-container--fixed:nth-of-type(1) div.image-list.list"
+          ]
+        },
+        {
+          "name": "adventure-cards",
+          "instances": [
+            "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list"
           ]
         }
       ],
@@ -55,10 +61,10 @@
         {
           "id": "rc5",
           "name": "Recent Articles",
-          "selector": "div.image-list.list",
+          "selector": "main.cmp-layout-container--fixed:nth-of-type(1) div.image-list.list",
           "style": null,
           "blocks": [
-            "cards"
+            "magazine-cards"
           ],
           "defaultContent": [
             "div.title.cmp-title--underline:nth-of-type(2)",
@@ -84,7 +90,7 @@
           "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
           "style": null,
           "blocks": [
-            "cards"
+            "adventure-cards"
           ],
           "defaultContent": [
             "main.cmp-layout-container--fixed:nth-of-type(2) div.title",
@@ -100,7 +106,7 @@
         "https://wknd.site/us/en/magazine.html"
       ],
       "coverageGaps": [],
-      "description": "Magazine landing page. Structure: (1) H1 page title, (2) Featured Article teaser (div.teaser.cmp-teaser--featured: image + copy) -> columns, (3) 'All Articles' underlined H2, (4) a card grid (div.image-list.list) of magazine-article teasers -> cards, (5) 'Members Only' underlined H2 + sign-in body text + separator, (6) two members-only secure teasers (div.teaser.cmp-teaser--secure) -> cards. Reuses columns + cards; no new blocks.",
+      "description": "Magazine landing page. Structure: (1) H1 page title, (2) Featured Article teaser (div.teaser.cmp-teaser--featured: image + copy) -> columns, (3) 'All Articles' underlined H2, (4) a card grid (div.image-list.list) of magazine-article teasers -> magazine-cards (dynamic, index-driven; sorted by listOrder), (5) 'Members Only' underlined H2 + sign-in body text + separator, (6) two members-only secure teasers (div.teaser.cmp-teaser--secure) -> cards. Reuses columns + cards; the All Articles grid is the dynamic magazine-cards variant.",
       "blocks": [
         {
           "name": "columns",
@@ -109,9 +115,14 @@
           ]
         },
         {
+          "name": "magazine-cards",
+          "instances": [
+            "div.image-list.list"
+          ]
+        },
+        {
           "name": "cards",
           "instances": [
-            "div.image-list.list",
             "div.teaser.cmp-teaser--secure"
           ]
         }
@@ -143,7 +154,7 @@
           "selector": "div.image-list.list",
           "style": null,
           "blocks": [
-            "cards"
+            "magazine-cards"
           ],
           "defaultContent": [
             "div.title.cmp-title--underline:nth-of-type(3)"
@@ -171,7 +182,7 @@
         "https://wknd.site/us/en/adventures.html"
       ],
       "coverageGaps": [],
-      "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers, (4) a separator. Reuses columns (teaser) + cards (image-list); tab filter maps to a tabs block wrapping the cards.",
+      "description": "Adventures landing page. Structure: (1) H1 page title, (2) intro teaser (div.teaser.cmp-teaser--hero: 'Experience the world with us' heading + description + large image), (3) 'Current Adventures' block = a category tab filter (div.tabs.panelcontainer; tabs All/Climbing/Cycling/Skiing/Surfing/Travel) wrapping a card grid (div.image-list.list) of 16 adventure teasers -> the dynamic, index-driven adventure-cards variant (renders all adventures from the query index; the tabs-filter block filters them client-side by the index `category` column), (4) a separator. Reuses columns (teaser); the grid is the dynamic adventure-cards variant, not static cards.",
       "blocks": [
         {
           "name": "columns",
@@ -186,7 +197,7 @@
           ]
         },
         {
-          "name": "cards",
+          "name": "adventure-cards",
           "instances": [
             "div.cmp-tabs__tabpanel--active div.image-list.list"
           ]
@@ -220,7 +231,7 @@
           "style": null,
           "blocks": [
             "tabs-filter",
-            "cards"
+            "adventure-cards"
           ],
           "defaultContent": [
             "div.title.cmp-title--underline"
