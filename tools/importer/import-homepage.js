@@ -7,7 +7,8 @@
 // PARSER IMPORTS
 import carouselParser from './parsers/carousel.js';
 import columnsParser from './parsers/columns.js';
-import cardsParser from './parsers/cards.js';
+import magazineCardsParser from './parsers/magazine-cards.js';
+import adventureCardsParser from './parsers/adventure-cards.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/wknd-cleanup.js';
@@ -18,13 +19,14 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 const parsers = {
   'carousel': carouselParser,
   'columns': columnsParser,
-  'cards': cardsParser,
+  'magazine-cards': magazineCardsParser,
+  'adventure-cards': adventureCardsParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "homepage",
-  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles card grid (4), Next Adventures teaser, and adventure recommendations card grid (4). Content-driven card and slide sections are dynamic/repeatable.",
+  "description": "WKND home page: hero carousel (3 slides), Featured Article teaser, Recent Articles grid (dynamic magazine-cards, limit 4, index-driven), Next Adventures teaser, and adventure recommendations grid (dynamic adventure-cards, limit 4, index-driven). The two card grids render at runtime from the magazine/adventures query indexes; slide/teaser sections are dynamic/repeatable.",
   "urls": [
     "https://wknd.site/us/en.html"
   ],
@@ -43,9 +45,15 @@ const PAGE_TEMPLATE = {
       ]
     },
     {
-      "name": "cards",
+      "name": "magazine-cards",
       "instances": [
-        "div.image-list.list"
+        "main.cmp-layout-container--fixed:nth-of-type(1) div.image-list.list"
+      ]
+    },
+    {
+      "name": "adventure-cards",
+      "instances": [
+        "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list"
       ]
     }
   ],
@@ -73,10 +81,10 @@ const PAGE_TEMPLATE = {
     {
       "id": "rc5",
       "name": "Recent Articles",
-      "selector": "div.image-list.list",
+      "selector": "main.cmp-layout-container--fixed:nth-of-type(1) div.image-list.list",
       "style": null,
       "blocks": [
-        "cards"
+        "magazine-cards"
       ],
       "defaultContent": [
         "div.title.cmp-title--underline:nth-of-type(2)",
@@ -102,7 +110,7 @@ const PAGE_TEMPLATE = {
       "selector": "main.cmp-layout-container--fixed:nth-of-type(2) div.image-list.list",
       "style": null,
       "blocks": [
-        "cards"
+        "adventure-cards"
       ],
       "defaultContent": [
         "main.cmp-layout-container--fixed:nth-of-type(2) div.title",

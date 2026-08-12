@@ -6,6 +6,7 @@
 
 // PARSER IMPORTS
 import columnsParser from './parsers/columns.js';
+import magazineCardsParser from './parsers/magazine-cards.js';
 import cardsParser from './parsers/cards.js';
 
 // TRANSFORMER IMPORTS
@@ -16,13 +17,14 @@ import sectionsTransformer from './transformers/wknd-sections.js';
 // PARSER REGISTRY
 const parsers = {
   'columns': columnsParser,
+  'magazine-cards': magazineCardsParser,
   'cards': cardsParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION — embedded from page-templates.json
 const PAGE_TEMPLATE = {
   "name": "section-landing-magazine",
-  "description": "Magazine landing page. Structure: (1) H1 page title, (2) Featured Article teaser (div.teaser.cmp-teaser--featured: image + copy) -> columns, (3) 'All Articles' underlined H2, (4) a card grid (div.image-list.list) of magazine-article teasers -> cards, (5) 'Members Only' underlined H2 + sign-in body text + separator, (6) two members-only secure teasers (div.teaser.cmp-teaser--secure) -> cards. Reuses columns + cards; no new blocks.",
+  "description": "Magazine landing page. Structure: (1) H1 page title, (2) Featured Article teaser (div.teaser.cmp-teaser--featured: image + copy) -> columns, (3) 'All Articles' underlined H2, (4) a card grid (div.image-list.list) of magazine-article teasers -> magazine-cards (dynamic, index-driven; sorted by listOrder), (5) 'Members Only' underlined H2 + sign-in body text + separator, (6) two members-only secure teasers (div.teaser.cmp-teaser--secure) -> cards. Reuses columns + cards; the All Articles grid is the dynamic magazine-cards variant.",
   "urls": [
     "https://wknd.site/us/en/magazine.html"
   ],
@@ -34,9 +36,14 @@ const PAGE_TEMPLATE = {
       ]
     },
     {
+      "name": "magazine-cards",
+      "instances": [
+        "div.image-list.list"
+      ]
+    },
+    {
       "name": "cards",
       "instances": [
-        "div.image-list.list",
         "div.teaser.cmp-teaser--secure"
       ]
     }
@@ -68,7 +75,7 @@ const PAGE_TEMPLATE = {
       "selector": "div.image-list.list",
       "style": null,
       "blocks": [
-        "cards"
+        "magazine-cards"
       ],
       "defaultContent": [
         "div.title.cmp-title--underline:nth-of-type(3)"
