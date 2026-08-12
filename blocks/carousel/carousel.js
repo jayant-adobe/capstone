@@ -68,6 +68,26 @@ function bindEvents(block) {
   });
 }
 
+/**
+ * Tune a slide image's loading priority. The first slide is visible on load and
+ * holds the hero (the page's LCP element), so its image is fetched eagerly at
+ * high priority; every other slide is off-screen and lazy-loaded so it never
+ * competes with the LCP request. Runs once per slide at decoration time.
+ * @param {Element} slide the slide `li`
+ * @param {boolean} isFirst whether this is the first (visible) slide
+ */
+function tuneSlideImagePriority(slide, isFirst) {
+  const img = slide.querySelector('img');
+  if (!img) return;
+  if (isFirst) {
+    img.setAttribute('loading', 'eager');
+    img.setAttribute('fetchpriority', 'high');
+  } else {
+    img.setAttribute('loading', 'lazy');
+    img.removeAttribute('fetchpriority');
+  }
+}
+
 function createSlide(row, slideIndex, carouselId) {
   const slide = document.createElement('li');
   slide.dataset.slideIndex = slideIndex;
@@ -78,6 +98,9 @@ function createSlide(row, slideIndex, carouselId) {
     column.classList.add(`carousel-slide-${colIdx === 0 ? 'image' : 'content'}`);
     slide.append(column);
   });
+
+  // First slide holds the LCP hero image → eager + high priority; rest lazy.
+  tuneSlideImagePriority(slide, slideIndex === 0);
 
   const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
   if (labeledBy) {

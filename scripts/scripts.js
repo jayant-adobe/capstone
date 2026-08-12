@@ -213,6 +213,12 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
+    // Prioritize the LCP image: the boilerplate's waitForFirstImage sets
+    // loading=eager on the first section's first <img>, but not fetchpriority.
+    // Marking it high-priority here (before that image is awaited) tells the
+    // browser to fetch the hero ahead of other resources, improving mobile LCP.
+    const lcpImg = main.querySelector('.section img');
+    if (lcpImg) lcpImg.setAttribute('fetchpriority', 'high');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
 

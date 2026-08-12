@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import queryIndex from '../../scripts/query-index.js';
 
 /*
  * magazine-cards — dynamic, index-driven magazine article card grid.
@@ -18,10 +19,13 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
  *
  * Authoring:
  *   | Magazine Cards |
- *   | limit | 4 |               (optional; omit = show all)
- *   | order-field | listOrder | (optional; which index column to sort by)
+ *   | limit | 4 |                              (optional; omit = show all)
+ *   | order-field | listOrder |                (optional; which index column to sort by)
+ *   | source | /us/en/magazine/query-index.json | (optional; which index to fetch)
  * A `limit` row (or a numeric first cell) caps the number of cards — the
  * homepage "Recent Articles" shows 4; the landing "All Articles" shows all.
+ * `source` overrides which query-index the grid reads (default is the en-US
+ * magazine index) — so an author can repoint the grid without a code change.
  *
  * Order is author-controlled per article. Each article carries two order metas
  * exposed as index columns: `order` (homepage teaser sequence) and `listOrder`
@@ -31,6 +35,9 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
  * articles with no value for that column sort last.
  */
 
+// Default query-index path. Authors may override it per instance with a
+// `| source | <path> |` row (see readConfig) — e.g. to point a grid at a
+// different locale's index — without touching this code.
 const INDEX_PATH = '/us/en/magazine/query-index.json';
 
 /**
@@ -40,12 +47,16 @@ const INDEX_PATH = '/us/en/magazine/query-index.json';
  *   - `order-field` (string): which index column to sort by; defaults to
  *     `order` (homepage teaser). The magazine landing passes `listOrder` so the
  *     two grids can order the same articles independently.
+ *   - `source` (string): the query-index path to fetch; defaults to
+ *     INDEX_PATH. Lets an author repoint the grid at a different index
+ *     (e.g. another locale) straight from the document. A blank value is
+ *     ignored so the default still applies.
  * A bare numeric first cell (no key) is also accepted as the limit.
  * @param {Element} block
- * @returns {{limit: number, orderField: string}}
+ * @returns {{limit: number, orderField: string, source: string}}
  */
 function readConfig(block) {
-  const cfg = { limit: 0, orderField: 'order' };
+  const cfg = { limit: 0, orderField: 'order', source: INDEX_PATH };
   block.querySelectorAll(':scope > div').forEach((row) => {
     const cells = [...row.children].map((c) => c.textContent.trim());
     const key = (cells[0] || '').toLowerCase();
@@ -55,6 +66,8 @@ function readConfig(block) {
       if (n) cfg.limit = parseInt(n, 10);
     } else if (key === 'order-field' && val) {
       cfg.orderField = val;
+    } else if (key === 'source' && val) {
+      cfg.source = val;
     } else if (cells.length === 1) {
       // bare numeric row → limit
       const n = (key.match(/\d+/) || [])[0];
@@ -65,19 +78,15 @@ function readConfig(block) {
 }
 
 /**
- * Fetch the magazine query-index. Returns [] on any failure so the block
- * degrades to an empty (not broken) grid.
+ * Fetch a magazine query-index. Delegates to the shared queryIndex helper,
+ * which follows the sheet's pagination so the FULL set of articles is returned
+ * even if the index grows past a single page (500 rows). Returns [] on any
+ * failure so the block degrades to an empty (not broken) grid.
+ * @param {string} indexPath the query-index path to fetch (default INDEX_PATH)
  * @returns {Promise<Array>} index rows
  */
-async function fetchArticles() {
-  try {
-    const resp = await fetch(INDEX_PATH);
-    if (!resp.ok) return [];
-    const json = await resp.json();
-    return Array.isArray(json.data) ? json.data : [];
-  } catch (e) {
-    return [];
-  }
+async function fetchArticles(indexPath = INDEX_PATH) {
+  return queryIndex(indexPath);
 }
 
 /**
@@ -179,13 +188,13 @@ function buildCard(row) {
  * @param {Element} block
  */
 export default async function decorate(block) {
-  const { limit, orderField } = readConfig(block);
+  const { limit, orderField, source } = readConfig(block);
   block.textContent = '';
 
   // render the same .cards markup (magazine-cards.css scopes the grid visuals)
   block.classList.add('cards');
 
-  const articles = await fetchArticles();
+  const articles = await fetchArticles(source);
   if (!articles.length) {
     // graceful empty state — no broken layout, no error surfaced to the user
     return;

@@ -1,4 +1,5 @@
 import { createOptimizedPicture, toClassName } from '../../scripts/aem.js';
+import queryIndex from '../../scripts/query-index.js';
 
 /*
  * adventure-cards — dynamic, index-driven adventure card grid.
@@ -16,9 +17,12 @@ import { createOptimizedPicture, toClassName } from '../../scripts/aem.js';
  *
  * Authoring:
  *   | Adventure Cards |
- *   | limit | 4 |            (optional; omit = show all)
+ *   | limit | 4 |                                  (optional; omit = show all)
+ *   | source | /us/en/adventures/query-index.json | (optional; which index to fetch)
  * A `limit` row (or a numeric first cell) caps the number of cards — e.g. the
- * homepage teaser shows 4, the full Adventures listing shows all.
+ * homepage teaser shows 4, the full Adventures listing shows all. `source`
+ * overrides which query-index the grid reads (default is the en-US adventures
+ * index) — so an author can repoint the grid without a code change.
  *
  * Order is author-controlled per adventure: each detail page carries a numeric
  * `order` metadata (exposed as the index `order` column). Cards render sorted by
@@ -26,39 +30,53 @@ import { createOptimizedPicture, toClassName } from '../../scripts/aem.js';
  * the five lowest-order adventures. Untagged (no order) adventures sort last.
  */
 
+// Default query-index path. Authors may override it per instance with a
+// `| source | <path> |` row (see readConfig) — e.g. to point a grid at a
+// different locale's index — without touching this code.
 const INDEX_PATH = '/us/en/adventures/query-index.json';
 
 /**
- * Read an optional numeric limit from the block's authored rows
- * (`| limit | 4 |` or a bare number), then empty the block for re-render.
+ * Read the block's authored rows into a config object.
+ * Recognised keys:
+ *   - `limit` (number): cap the number of cards (0/absent = show all). Also
+ *     accepts a bare numeric row (`| 4 |`) for backwards compatibility.
+ *   - `source` (string): the query-index path to fetch; defaults to
+ *     INDEX_PATH. Lets an author repoint the grid at a different index
+ *     (e.g. another locale) straight from the document. A blank value is
+ *     ignored so the default still applies.
  * @param {Element} block
- * @returns {number} the limit, or 0 for "no limit"
+ * @returns {{limit: number, source: string}}
  */
-function readLimit(block) {
-  let limit = 0;
+function readConfig(block) {
+  const cfg = { limit: 0, source: INDEX_PATH };
   block.querySelectorAll(':scope > div').forEach((row) => {
-    const cells = [...row.children];
-    const text = cells.map((c) => c.textContent.trim()).join(' ');
-    const num = text.match(/\d+/);
-    if (num) limit = parseInt(num[0], 10);
+    const cells = [...row.children].map((c) => c.textContent.trim());
+    const key = (cells[0] || '').toLowerCase();
+    const val = cells[1] || '';
+    if (key === 'source' && val) {
+      cfg.source = val;
+    } else if (key === 'limit') {
+      const n = (val.match(/\d+/) || [])[0];
+      if (n) cfg.limit = parseInt(n, 10);
+    } else {
+      // bare numeric row (or `| limit | 4 |` caught above) → limit
+      const n = (cells.join(' ').match(/\d+/) || [])[0];
+      if (n) cfg.limit = parseInt(n, 10);
+    }
   });
-  return limit;
+  return cfg;
 }
 
 /**
- * Fetch the adventures query-index. Returns [] on any failure so the block
- * degrades to an empty (not broken) grid.
+ * Fetch an adventures query-index. Delegates to the shared queryIndex helper,
+ * which follows the sheet's pagination so the FULL set of adventures is returned
+ * even if the index grows past a single page (500 rows). Returns [] on any
+ * failure so the block degrades to an empty (not broken) grid.
+ * @param {string} indexPath the query-index path to fetch (default INDEX_PATH)
  * @returns {Promise<Array>} index rows
  */
-async function fetchAdventures() {
-  try {
-    const resp = await fetch(INDEX_PATH);
-    if (!resp.ok) return [];
-    const json = await resp.json();
-    return Array.isArray(json.data) ? json.data : [];
-  } catch (e) {
-    return [];
-  }
+async function fetchAdventures(indexPath = INDEX_PATH) {
+  return queryIndex(indexPath);
 }
 
 /**
@@ -136,13 +154,13 @@ function buildCard(row) {
  * @param {Element} block
  */
 export default async function decorate(block) {
-  const limit = readLimit(block);
+  const { limit, source } = readConfig(block);
   block.textContent = '';
 
   // render the same .cards markup so cards.css + tabs-filter apply
   block.classList.add('cards');
 
-  const adventures = await fetchAdventures();
+  const adventures = await fetchAdventures(source);
   if (!adventures.length) {
     // graceful empty state — no broken layout, no error surfaced to the user
     return;
