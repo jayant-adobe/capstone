@@ -212,7 +212,14 @@
 @media (width >= 600px) {
   main > .section:has(.cards-wrapper + .cards-wrapper) {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    /* Source (wknd.site magazine): each locked teaser is a FIXED ~360px column,
+       not a stretched half of the container. The two cards sit left-aligned with
+       a 28px gutter, leaving the right of the centred content column empty — so
+       cap the tracks at 360px and start them left rather than filling with 1fr.
+       minmax(0, 360px) lets them shrink gracefully on narrow tablets. */
+    grid-template-columns: repeat(2, minmax(0, 360px));
+    justify-content: start;
     column-gap: 28px;
     max-width: var(--content-max-width);
     margin: 0 auto;
