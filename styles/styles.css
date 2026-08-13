@@ -645,6 +645,30 @@ main > .section:is(.accordion-container:has(.accordion), .faq-accordion-containe
     margin: 0 0 13.5px;
     padding: 0;
   }
+
+  /* lead hero image (lifted to its own section by buildMagazineArticleHero):
+     span both columns so it sits full-width above the body/sidebar row, then
+     the article body + "Share this story" sidebar align together below it. */
+  main:has(> .section.cards-byline-container) > .magazine-hero-container {
+    grid-column: 1 / -1;
+    max-width: none;
+    margin: 0 0 27px;
+    padding: 0;
+  }
+
+  main:has(> .section.cards-byline-container) > .magazine-hero-container > .default-content-wrapper {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* hero image fills its full-width band and keeps its natural aspect ratio */
+/* stylelint-disable-next-line no-descending-specificity */
+main:has(> .section.cards-byline-container) > .magazine-hero-container img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* Article byline ("By Jacob Wester"): source renders the h4 as a 16px/600

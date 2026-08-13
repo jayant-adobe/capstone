@@ -190,6 +190,42 @@ function decorateButtons(main) {
 }
 
 /**
+ * Magazine article page: lift the lead (hero) image out of the article body so
+ * it becomes a full-width band ABOVE the two-column body/sidebar area, matching
+ * the source. As imported, the hero is the first paragraph inside the article
+ * `.default-content-wrapper`, which sits in the left grid column — so it can only
+ * ever be as wide as that column and it pins the "Share this story" sidebar to
+ * the top beside it. Moving the lead image into its own section (placed before
+ * the article section) lets it span the full content width while the body and
+ * sidebar align together in the row below. DOM-only decoration — no content edit.
+ * @param {Element} main The container element
+ */
+function buildMagazineArticleHero(main) {
+  // Detect the article section via the authored `.cards-byline` block class,
+  // which is present from the raw markup — NOT the `.cards-byline-container`
+  // section class, which decorateBlocks only adds later (this runs right after
+  // decorateSections). `.section` and `.default-content-wrapper` already exist.
+  const bylineBlock = main.querySelector('.cards-byline');
+  const article = bylineBlock && bylineBlock.closest('main > .section');
+  if (!article) return;
+  // idempotent — never run twice
+  if (main.querySelector('.magazine-hero-container')) return;
+
+  const wrapper = article.querySelector(':scope > .default-content-wrapper');
+  const leadP = wrapper && wrapper.querySelector(':scope > p:first-child');
+  // only lift a genuine lead image (first paragraph is just a picture/img)
+  if (!leadP || !leadP.querySelector('picture, img')) return;
+
+  const heroSection = document.createElement('div');
+  heroSection.className = 'section magazine-hero-container';
+  const heroWrapper = document.createElement('div');
+  heroWrapper.className = 'default-content-wrapper';
+  heroWrapper.append(leadP);
+  heroSection.append(heroWrapper);
+  article.before(heroSection);
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -198,6 +234,7 @@ export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  buildMagazineArticleHero(main);
   decorateBlocks(main);
   decorateButtons(main);
 }
