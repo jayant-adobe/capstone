@@ -1,7 +1,7 @@
 {
-  "total": 7,
+  "total": 16,
   "offset": 0,
-  "limit": 7,
+  "limit": 16,
   "data": [
     {
       "name": "Hero",
@@ -10,6 +10,26 @@
     {
       "name": "Cards",
       "path": "/block-library/cards"
+    },
+    {
+      "name": "Adventure Cards",
+      "path": "/block-library/adventure-cards"
+    },
+    {
+      "name": "Magazine Cards",
+      "path": "/block-library/magazine-cards"
+    },
+    {
+      "name": "Cards Byline",
+      "path": "/block-library/cards-byline"
+    },
+    {
+      "name": "Cards Profile",
+      "path": "/block-library/cards-profile"
+    },
+    {
+      "name": "Profile Cards",
+      "path": "/block-library/profile-cards"
     },
     {
       "name": "Columns",
@@ -24,12 +44,28 @@
       "path": "/block-library/tabs"
     },
     {
+      "name": "Tabs Filter",
+      "path": "/block-library/tabs-filter"
+    },
+    {
       "name": "Accordion",
       "path": "/block-library/accordion"
     },
     {
+      "name": "FAQ Accordion",
+      "path": "/block-library/faq-accordion"
+    },
+    {
+      "name": "Table Overview",
+      "path": "/block-library/table-overview"
+    },
+    {
       "name": "Embed",
       "path": "/block-library/embed"
+    },
+    {
+      "name": "Widget",
+      "path": "/block-library/widget"
     }
   ],
   ":type": "sheet"
